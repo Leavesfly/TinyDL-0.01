@@ -35,7 +35,7 @@ public class NdArray {
 
     public NdArray(float[] data) {
         shape = new Shape(1, data.length);
-        matrix = new float[shape.row][shape.column];
+        matrix = new float[shape.getRow()][shape.getColumn()];
         matrix[0] = data;
     }
 
@@ -45,8 +45,8 @@ public class NdArray {
     }
 
     public NdArray(Shape _shape) {
-        this.shape = new Shape(_shape.row, _shape.column);
-        matrix = new float[_shape.row][_shape.column];
+        this.shape = new Shape(_shape.getRow(), _shape.getColumn());
+        matrix = new float[_shape.getRow()][_shape.getColumn()];
     }
 
     /**
@@ -112,8 +112,8 @@ public class NdArray {
     public static NdArray likeRandomN(Shape _shape) {
         NdArray like = new NdArray(_shape);
         Random random = new Random(0);
-        for (int i = 0; i < _shape.row; i++) {
-            for (int j = 0; j < _shape.column; j++) {
+        for (int i = 0; i < _shape.getRow(); i++) {
+            for (int j = 0; j < _shape.getColumn(); j++) {
                 like.matrix[i][j] = (float) random.nextGaussian();
             }
         }
@@ -158,8 +158,8 @@ public class NdArray {
     public NdArray add(NdArray other) {
         if (shape.equals(other.shape)) {
             NdArray ndArray = new NdArray(shape);
-            for (int i = 0; i < shape.row; i++) {
-                for (int j = 0; j < shape.column; j++) {
+            for (int i = 0; i < shape.getRow(); i++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     ndArray.getMatrix()[i][j] = matrix[i][j] + other.getMatrix()[i][j];
                 }
             }
@@ -179,8 +179,8 @@ public class NdArray {
     public NdArray sub(NdArray other) {
         if (shape.equals(other.shape)) {
             NdArray ndArray = new NdArray(shape);
-            for (int i = 0; i < shape.row; i++) {
-                for (int j = 0; j < shape.column; j++) {
+            for (int i = 0; i < shape.getRow(); i++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     ndArray.matrix[i][j] = matrix[i][j] - other.getMatrix()[i][j];
                 }
             }
@@ -199,8 +199,8 @@ public class NdArray {
     public NdArray mul(NdArray other) {
         if (shape.equals(other.shape)) {
             NdArray ndArray = new NdArray(shape);
-            for (int i = 0; i < shape.row; i++) {
-                for (int j = 0; j < shape.column; j++) {
+            for (int i = 0; i < shape.getRow(); i++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     ndArray.matrix[i][j] = matrix[i][j] * other.getMatrix()[i][j];
                 }
             }
@@ -236,8 +236,8 @@ public class NdArray {
     public NdArray div(NdArray other) {
         if (shape.equals(other.shape)) {
             NdArray ndArray = new NdArray(shape);
-            for (int i = 0; i < shape.row; i++) {
-                for (int j = 0; j < shape.column; j++) {
+            for (int i = 0; i < shape.getRow(); i++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     ndArray.getMatrix()[i][j] = matrix[i][j] / other.matrix[i][j];
                 }
             }
@@ -302,8 +302,8 @@ public class NdArray {
     public NdArray eq(NdArray other) {
         if (shape.equals(other.shape)) {
             NdArray ndArray = new NdArray(shape);
-            for (int i = 0; i < shape.row; i++) {
-                for (int j = 0; j < shape.column; j++) {
+            for (int i = 0; i < shape.getRow(); i++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     if (matrix[i][j] == other.matrix[i][j]) {
                         ndArray.getMatrix()[i][j] = 1f;
                     } else {
@@ -326,8 +326,8 @@ public class NdArray {
     public NdArray gt(NdArray other) {
         if (shape.equals(other.shape)) {
             NdArray ndArray = new NdArray(shape);
-            for (int i = 0; i < shape.row; i++) {
-                for (int j = 0; j < shape.column; j++) {
+            for (int i = 0; i < shape.getRow(); i++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     if (matrix[i][j] > other.matrix[i][j]) {
                         ndArray.getMatrix()[i][j] = 1f;
                     } else {
@@ -350,8 +350,8 @@ public class NdArray {
     public NdArray lt(NdArray other) {
         if (shape.equals(other.shape)) {
             NdArray ndArray = new NdArray(shape);
-            for (int i = 0; i < shape.row; i++) {
-                for (int j = 0; j < shape.column; j++) {
+            for (int i = 0; i < shape.getRow(); i++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     if (matrix[i][j] > other.matrix[i][j]) {
                         ndArray.getMatrix()[i][j] = 1f;
                     } else {
@@ -530,8 +530,8 @@ public class NdArray {
      */
     public NdArray maximum(Number number) {
         NdArray ndArray = new NdArray(shape);
-        for (int i = 0; i < shape.row; i++) {
-            for (int j = 0; j < shape.column; j++) {
+        for (int i = 0; i < shape.getRow(); i++) {
+            for (int j = 0; j < shape.getColumn(); j++) {
                 ndArray.matrix[i][j] = Math.max(ndArray.matrix[i][j], number.floatValue());
             }
         }
@@ -546,8 +546,8 @@ public class NdArray {
      */
     public NdArray mask(Number number) {
         NdArray ndArray = new NdArray(shape);
-        for (int i = 0; i < shape.row; i++) {
-            for (int j = 0; j < shape.column; j++) {
+        for (int i = 0; i < shape.getRow(); i++) {
+            for (int j = 0; j < shape.getColumn(); j++) {
                 if (this.matrix[i][j] > number.floatValue()) {
                     ndArray.matrix[i][j] = 1;
                 } else {
@@ -569,8 +569,8 @@ public class NdArray {
      */
     public NdArray transpose() {
         NdArray ndArray = new NdArray(new Shape(shape.getColumn(), shape.getRow()));
-        for (int i = 0; i < shape.row; i++) {
-            for (int j = 0; j < shape.column; j++) {
+        for (int i = 0; i < shape.getRow(); i++) {
+            for (int j = 0; j < shape.getColumn(); j++) {
                 ndArray.getMatrix()[j][i] = matrix[i][j];
             }
         }
@@ -583,18 +583,18 @@ public class NdArray {
      * @return
      */
     public NdArray reshape(Shape _shape) {
-        if (shape.row * shape.column != _shape.getRow() * _shape.getColumn()) {
+        if (shape.getRow() * shape.getColumn() != _shape.getRow() * _shape.getColumn()) {
             throw new RuntimeException("_shape size is error!");
         }
         float[][] _matrix = new float[_shape.getRow()][_shape.getColumn()];
         for (int i = 0; i < _shape.getRow() * _shape.getColumn(); i++) {
-            _matrix[i / _shape.getColumn()][i % _shape.getColumn()] = matrix[i / shape.column][i % shape.column];
+            _matrix[i / _shape.getColumn()][i % _shape.getColumn()] = matrix[i / shape.getRow()][i % shape.getColumn()];
         }
         return new NdArray(_matrix);
     }
 
     public NdArray flatten() {
-        return this.reshape(new Shape(1, shape.row * shape.column));
+        return this.reshape(new Shape(1, shape.getRow() * shape.getColumn()));
     }
 
 
@@ -607,23 +607,23 @@ public class NdArray {
      */
     public NdArray mean(int axis) {
         if (axis == 0) {
-            NdArray ndArray = new NdArray(new Shape(1, shape.column));
-            for (int i = 0; i < shape.column; i++) {
+            NdArray ndArray = new NdArray(new Shape(1, shape.getColumn()));
+            for (int i = 0; i < shape.getColumn(); i++) {
                 float sum = 0f;
-                for (int j = 0; j < shape.row; j++) {
+                for (int j = 0; j < shape.getRow(); j++) {
                     sum += matrix[j][i];
                 }
-                ndArray.getMatrix()[0][i] = sum / shape.row;
+                ndArray.getMatrix()[0][i] = sum / shape.getRow();
             }
             return ndArray;
         } else if (axis == 1) {
-            NdArray ndArray = new NdArray(new Shape(shape.row, 1));
-            for (int i = 0; i < shape.row; i++) {
+            NdArray ndArray = new NdArray(new Shape(shape.getRow(), 1));
+            for (int i = 0; i < shape.getRow(); i++) {
                 float sum = 0f;
-                for (int j = 0; j < shape.column; j++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     sum += matrix[i][j];
                 }
-                ndArray.getMatrix()[i][0] = sum / shape.column;
+                ndArray.getMatrix()[i][0] = sum / shape.getColumn();
             }
             return ndArray;
         }
@@ -663,8 +663,8 @@ public class NdArray {
      */
     public NdArray sum() {
         float sum = 0f;
-        for (int i = 0; i < shape.row; i++) {
-            for (int j = 0; j < shape.column; j++) {
+        for (int i = 0; i < shape.getRow(); i++) {
+            for (int j = 0; j < shape.getColumn(); j++) {
                 sum += matrix[i][j];
             }
         }
@@ -679,9 +679,9 @@ public class NdArray {
      */
     public NdArray sum(int axis) {
         if (axis == 0) {
-            return sumTo(new Shape(1, shape.column));
+            return sumTo(new Shape(1, shape.getColumn()));
         } else if (axis == 1) {
-            return sumTo(new Shape(shape.row, 1));
+            return sumTo(new Shape(shape.getRow(), 1));
         }
         throw new RuntimeException("not impl!");
     }
@@ -733,11 +733,11 @@ public class NdArray {
      */
     public NdArray argMax(int axis) {
         if (axis == 0) {
-            NdArray ndArray = new NdArray(new Shape(1, this.getShape().column));
-            for (int i = 0; i < shape.column; i++) {
+            NdArray ndArray = new NdArray(new Shape(1, this.getShape().getColumn()));
+            for (int i = 0; i < shape.getColumn(); i++) {
                 float maxValue = Float.MIN_VALUE;
                 int maxIndex = -1;
-                for (int j = 0; j < shape.row; j++) {
+                for (int j = 0; j < shape.getRow(); j++) {
                     if (maxValue < getMatrix()[j][i]) {
                         maxValue = getMatrix()[j][i];
                         maxIndex = j;
@@ -748,10 +748,10 @@ public class NdArray {
             return ndArray;
         } else if (axis == 1) {
             NdArray ndArray = new NdArray(new Shape(this.getShape().getRow(), 1));
-            for (int i = 0; i < shape.row; i++) {
+            for (int i = 0; i < shape.getRow(); i++) {
                 float maxValue = Float.MIN_VALUE;
                 int maxIndex = -1;
-                for (int j = 0; j < shape.column; j++) {
+                for (int j = 0; j < shape.getColumn(); j++) {
                     if (maxValue < getMatrix()[i][j]) {
                         maxValue = getMatrix()[i][j];
                         maxIndex = j;
@@ -803,10 +803,10 @@ public class NdArray {
         }
 
         if (_colSlices == null) {
-            _colSlices = Util.getSeq(shape.column);
+            _colSlices = Util.getSeq(shape.getColumn());
         }
         if (_rowSlices == null) {
-            _rowSlices = Util.getSeq(shape.row);
+            _rowSlices = Util.getSeq(shape.getRow());
         }
 
         NdArray ndArray = new NdArray(new Shape(_rowSlices.length, _colSlices.length));
@@ -966,10 +966,10 @@ public class NdArray {
         }
 
         if (_colSlices == null) {
-            _colSlices = Util.getSeq(shape.column);
+            _colSlices = Util.getSeq(shape.getColumn());
         }
         if (_rowSlices == null) {
-            _rowSlices = Util.getSeq(shape.row);
+            _rowSlices = Util.getSeq(shape.getRow());
         }
         for (int i = 0; i < _rowSlices.length; i++) {
             for (int j = 0; j < _colSlices.length; j++) {
@@ -1018,8 +1018,8 @@ public class NdArray {
     }
 
     public void fillAll(Number number) {
-        for (int i = 0; i < shape.row; i++) {
-            for (int j = 0; j < shape.column; j++)
+        for (int i = 0; i < shape.getRow(); i++) {
+            for (int j = 0; j < shape.getColumn(); j++)
                 matrix[i][j] = number.floatValue();
         }
     }

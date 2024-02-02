@@ -29,7 +29,7 @@ import java.util.List;
 public class SpiralMlpExam {
 
     public static void main(String[] args) {
-        test();
+        test1();
     }
 
     public static void test() {
