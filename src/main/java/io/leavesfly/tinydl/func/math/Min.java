@@ -7,8 +7,6 @@ import io.leavesfly.tinydl.ndarr.NdArray;
  * 最小值
  */
 public class Min extends Max {
-    int axis;
-    boolean keepdims;
 
     public Min(int _axis, boolean _keepdims) {
         super(_axis, _keepdims);
