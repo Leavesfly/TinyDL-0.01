@@ -5,6 +5,12 @@ import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.func.Variable;
 import io.leavesfly.tinydl.mlearning.Model;
 
+/**
+ * 推理器与 训练器Trainer 对应
+ *
+ * @param <I>
+ * @param <O>
+ */
 public class Predictor<I, O> {
 
     private Translator<I, O> translator;

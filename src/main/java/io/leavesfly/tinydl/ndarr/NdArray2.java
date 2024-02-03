@@ -9,9 +9,7 @@ import java.util.Random;
 
 
 /**
- * 支持，1，标量;2，向量;3，矩阵，
- * <p>
- * 支持多维数组的各种计算
+ * 为了支持更高维度的数据
  */
 public class NdArray2 {
     /**
@@ -25,7 +23,7 @@ public class NdArray2 {
     private float[] buffer;
 
     //    # =============================================================================
-    //            # NdArray22的创建函数
+    //            # NdArray2的创建函数
     //    # =============================================================================
     public NdArray2() {
     }
@@ -680,8 +678,7 @@ public class NdArray2 {
         NdArray2 ndArray = new NdArray2(new Shape(_shape.getRow(), _shape.getColumn()));
         for (int i = 0; i < shape.getRow(); i++) {
             for (int j = 0; j < shape.getColumn(); j++) {
-                ndArray.buffer[(i % _shape.getRow()) * _shape.getColumn() + j % _shape.getColumn()] += this.buffer[j
-                        + i * this.shape.getColumn()];
+                ndArray.buffer[(i % _shape.getRow()) * _shape.getColumn() + j % _shape.getColumn()] += this.buffer[j + i * this.shape.getColumn()];
             }
         }
         return ndArray;
@@ -701,8 +698,7 @@ public class NdArray2 {
 
         for (int i = 0; i < _shape.getRow(); i++) {
             for (int j = 0; j < _shape.getColumn(); j++) {
-                ndArray.buffer[i * _shape.getColumn() + j] += this.buffer[i % this.shape.getRow() * this.shape.getColumn()
-                        + j % this.shape.getColumn()];
+                ndArray.buffer[i * _shape.getColumn() + j] += this.buffer[i % this.shape.getRow() * this.shape.getColumn() + j % this.shape.getColumn()];
             }
         }
         return ndArray;
@@ -710,7 +706,7 @@ public class NdArray2 {
 
     /**
      * axis=0表示 按row
-     * *axis=1表示 按col
+     * axis=1表示 按col
      * 返回最大值的索引
      *
      * @return
@@ -796,8 +792,7 @@ public class NdArray2 {
         NdArray2 ndArray = new NdArray2(new Shape(_rowSlices.length, _colSlices.length));
         for (int i = 0; i < _rowSlices.length; i++) {
             for (int j = 0; j < _colSlices.length; j++) {
-                ndArray.buffer[i * ndArray.getShape().getColumn() + j] = buffer[_rowSlices[i] * shape.getColumn()
-                        + _colSlices[j]];
+                ndArray.buffer[i * ndArray.getShape().getColumn() + j] = buffer[_rowSlices[i] * shape.getColumn() + _colSlices[j]];
             }
         }
         return ndArray;
@@ -875,8 +870,7 @@ public class NdArray2 {
         NdArray2 ndArray = new NdArray2(new Shape(endRow - startRow, endCol - startCol));
         for (int i = startRow; i < endRow; i++) {
             for (int j = startCol; j < endCol; j++) {
-                ndArray.buffer[ndArray.shape.getColumn() * (i - startRow) + j - startCol] = this.buffer[
-                        i * this.shape.getColumn() + j];
+                ndArray.buffer[ndArray.shape.getColumn() * (i - startRow) + j - startCol] = this.buffer[i * this.shape.getColumn() + j];
             }
         }
         return ndArray;
@@ -958,8 +952,7 @@ public class NdArray2 {
         }
         for (int i = 0; i < _rowSlices.length; i++) {
             for (int j = 0; j < _colSlices.length; j++) {
-                ndArray.buffer[_rowSlices[i] * ndArray.shape.getColumn() + _colSlices[j]] += other.buffer[
-                        i * other.shape.getColumn() + j];
+                ndArray.buffer[_rowSlices[i] * ndArray.shape.getColumn() + _colSlices[j]] += other.buffer[i * other.shape.getColumn() + j];
             }
         }
         return ndArray;
@@ -975,8 +968,7 @@ public class NdArray2 {
     public void addTo(int i, int j, NdArray2 other) {
         for (int _i = 0; _i < other.getShape().getRow(); _i++) {
             for (int _j = 0; _j < other.getShape().getColumn(); _j++) {
-                buffer[this.getShape().getColumn() * (_i + i) + _j + j] += other.buffer[
-                        other.getShape().getColumn() * _i + _j];
+                buffer[this.getShape().getColumn() * (_i + i) + _j + j] += other.buffer[other.getShape().getColumn() * _i + _j];
             }
         }
     }
