@@ -17,6 +17,6 @@ public class SGD extends Optimizer {
 
     @Override
     public void updateOne(Parameter parameter) {
-        parameter.setValue(parameter.getValue().sub(parameter.getGrad().mulNumber(lr)));
+        parameter.setValue(parameter.getValue().sub(parameter.getGrad().mulNum(lr)));
     }
 }

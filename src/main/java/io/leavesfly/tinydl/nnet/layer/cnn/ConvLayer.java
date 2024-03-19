@@ -19,8 +19,7 @@ public class ConvLayer extends Layer {
     private int filterCount;
 
 
-    public ConvLayer(String _name, int winWidth, int winHeight, int strideX, int strideY, int filterCount,
-                     PaddingType type, Shape _xInputShape, Shape _yOutputShape) {
+    public ConvLayer(String _name, int winWidth, int winHeight, int strideX, int strideY, int filterCount, PaddingType type, Shape _xInputShape, Shape _yOutputShape) {
 
         super(_name, _xInputShape, _yOutputShape);
 
@@ -32,16 +31,19 @@ public class ConvLayer extends Layer {
             this.filterCount = filterCount;
             this.paddingX = 0;
             this.paddingY = 0;
+
         } else {
             this.winWidth = winWidth;
             this.winHeight = winHeight;
             this.strideX = strideX;
             this.strideY = strideY;
             this.filterCount = filterCount;
+
             if ((winWidth - 1) % 2 != 0) {
                 throw new RuntimeException("Bad sizes for convolution!");
             }
             this.paddingX = (winWidth - 1) / 2;
+
             if ((winHeight - 1) % 2 != 0) {
                 throw new RuntimeException("Bad sizes for convolution!");
             }
@@ -56,13 +58,11 @@ public class ConvLayer extends Layer {
 
     }
 
-    public ConvLayer(String name, int winSize, int stride, int filterCount, PaddingType type,
-                     Shape _xInputShape, Shape _yOutputShape) {
+    public ConvLayer(String name, int winSize, int stride, int filterCount, PaddingType type, Shape _xInputShape, Shape _yOutputShape) {
         this(name, winSize, winSize, stride, stride, filterCount, type, _xInputShape, _yOutputShape);
     }
 
-    public ConvLayer(String name, int winSize, int filterCount, PaddingType type, Shape _xInputShape,
-                     Shape _yOutputShape) {
+    public ConvLayer(String name, int winSize, int filterCount, PaddingType type, Shape _xInputShape, Shape _yOutputShape) {
         this(name, winSize, 1, filterCount, type, _xInputShape, _yOutputShape);
     }
 

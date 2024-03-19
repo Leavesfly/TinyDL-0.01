@@ -19,7 +19,7 @@ public class Conv1dLayer extends Layer {
         super(_name, _xInputShape, _yOutputShape);
 
         NdArray initWeight = NdArray.likeRandomN(
-                new Shape(1, kernelCols)).mulNumber(Math.sqrt((float) 1 * kernelCols));
+                new Shape(1, kernelCols)).mulNum(Math.sqrt((float) 1 * kernelCols));
         wParam = new Parameter(initWeight);
         wParam.setName("conv1d");
         addParam(wParam.getName(), wParam);
@@ -67,7 +67,7 @@ public class Conv1dLayer extends Layer {
         for (int i = 0; i < outputRows; i++) {
             for (int j = 0; j < outputCols; j++) {
                 NdArray subInput = input.subNdArray(i, i + kernelRows, j, j + kernelCols);
-                NdArray kernelGradient = subInput.mulNumber(yGrad.getMatrix()[i][j]);
+                NdArray kernelGradient = subInput.mulNum(yGrad.getMatrix()[i][j]);
                 inputGradient.addTo(i, j, kernelGradient);
             }
         }

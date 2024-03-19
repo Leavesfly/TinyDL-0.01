@@ -14,7 +14,7 @@ public class LinearLayer extends Layer {
 
     public LinearLayer(String _name, int hiddenRow, int hiddenCol, boolean needBias) {
         super(_name, new Shape(-1, hiddenRow), new Shape(-1, hiddenCol));
-        NdArray initWeight = NdArray.likeRandomN(new Shape(hiddenRow, hiddenCol)).mulNumber(Math.sqrt((double) 1 / hiddenRow));
+        NdArray initWeight = NdArray.likeRandomN(new Shape(hiddenRow, hiddenCol)).mulNum(Math.sqrt((double) 1 / hiddenRow));
         w = new Parameter(initWeight);
         w.setName("w");
         addParam(w.getName(), w);

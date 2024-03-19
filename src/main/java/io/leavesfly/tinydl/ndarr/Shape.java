@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * 表示矩阵或向量的形状
+ * 表示矩阵或向量等N维数组的形状
  */
 
 public class Shape {
@@ -29,6 +29,28 @@ public class Shape {
 
     public int getColumn() {
         return dimension[1];
+    }
+
+    /**
+     * 是否是矩阵
+     *
+     * @return
+     */
+    public boolean isMatrix() {
+        return dimension.length == 2;
+    }
+
+    /**
+     * 对应形状的N维数组的size
+     *
+     * @return
+     */
+    public int size() {
+        int size = 1;
+        for (int dim : dimension) {
+            size *= dim;
+        }
+        return size;
     }
 
     @Override

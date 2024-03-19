@@ -38,7 +38,7 @@ public class SigmoidCE extends Function {
         NdArray label = inputs[1].getValue();
         int batchSize = predict.getShape().getRow();
 
-        NdArray xGrad = sigmoid.sub(label).mul(yGrad.broadcastTo(label.getShape())).divNumber(batchSize);
+        NdArray xGrad = sigmoid.sub(label).mul(yGrad.broadcastTo(label.getShape())).divNum(batchSize);
 
         return Arrays.asList(xGrad, label.like(1));
     }

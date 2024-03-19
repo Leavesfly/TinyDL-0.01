@@ -42,7 +42,7 @@ public class SimpleRnnlayer extends RnnLayer {
         int inputSize = xInputShape.getColumn();
 
         NdArray initWeight = NdArray.likeRandomN(new Shape(inputSize, hiddeSize))
-                .mulNumber(Math.sqrt((double) 1 / inputSize));
+                .mulNum(Math.sqrt((double) 1 / inputSize));
         x2h = new Parameter(initWeight);
         x2h.setName("x2h");
         addParam(x2h.getName(), x2h);
@@ -53,7 +53,7 @@ public class SimpleRnnlayer extends RnnLayer {
 
 
         initWeight = NdArray.likeRandomN(new Shape(hiddeSize, hiddeSize))
-                .mulNumber(Math.sqrt((double) 1 / hiddeSize));
+                .mulNum(Math.sqrt((double) 1 / hiddeSize));
         h2h = new Parameter(initWeight);
         h2h.setName("h2h");
         addParam(h2h.getName(), h2h);

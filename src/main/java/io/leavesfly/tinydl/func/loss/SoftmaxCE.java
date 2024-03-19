@@ -39,12 +39,12 @@ public class SoftmaxCE extends Function {
         int row = predict.getShape().getRow();
         int column = predict.getShape().getColumn();
 
-        NdArray gy = yGrad.mulNumber(1 / (float) row);
+        NdArray gy = yGrad.mulNum(1 / (float) row);
         NdArray y = predict.softMax();
         NdArray oneHot = NdArray.eye(new Shape(column, column)).getItem(
                 Util.toInt(label.transpose().getMatrix()[0]), null);
 
-        y = y.sub(oneHot).mulNumber(gy.getNumber());
+        y = y.sub(oneHot).mulNum(gy.getNumber());
 
         return Arrays.asList(y, label.like(1));
     }

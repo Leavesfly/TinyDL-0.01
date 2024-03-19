@@ -20,7 +20,7 @@ public class Util {
         NdArray y1 = func.forward(x1);
         NdArray y0 = func.forward(x0);
 
-        return y1.sub(y0).divNumber(eps * 2);
+        return y1.sub(y0).divNum(eps * 2);
     }
 
 

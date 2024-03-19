@@ -9,14 +9,14 @@ import io.leavesfly.tinydl.nnet.Parameter;
 import java.util.List;
 
 /**
- * 全连接层与LinearLayer 基本一样
+ * 全连接层与LinearLayer基本一样
  */
-public class FCLayer extends Layer {
+public class FullConnLayer extends Layer {
     private Parameter wParam;
     private Parameter bParam;
     private boolean needBias;
 
-    public FCLayer(String _name, Shape inputXShape, int hiddenCol, boolean _needBias) {
+    public FullConnLayer(String _name, Shape inputXShape, int hiddenCol, boolean _needBias) {
         super(_name, inputXShape, new Shape(inputXShape.getColumn(), hiddenCol));
         needBias = _needBias;
 
@@ -29,13 +29,12 @@ public class FCLayer extends Layer {
         if (!alreadyInit) {
             NdArray initWeight = NdArray.likeRandomN(
                             new Shape(xInputShape.getRow(), yOutputShape.getColumn()))
-                    .mulNumber(Math.sqrt((double) 1 / xInputShape.getRow()));
+                    .mulNum(Math.sqrt((double) 1 / xInputShape.getRow()));
             wParam = new Parameter(initWeight);
             wParam.setName("w");
             addParam(wParam.getName(), wParam);
 
             if (needBias) {
-
                 bParam = new Parameter(NdArray.zeros(new Shape(1, yOutputShape.getColumn())));
                 bParam.setName("b");
                 addParam(bParam.getName(), bParam);

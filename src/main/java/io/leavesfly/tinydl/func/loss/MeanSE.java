@@ -17,7 +17,7 @@ public class MeanSE extends Function {
         NdArray labelY = inputs[1];
 
         int size = predict.getShape().getRow();
-        return predict.sub(labelY).square().sum().divNumber(size);
+        return predict.sub(labelY).square().sum().divNum(size);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class MeanSE extends Function {
 
         NdArray diff = predict.sub(labelY);
         int len = diff.getShape().getRow();
-        NdArray gx0 = yGrad.broadcastTo(diff.getShape()).mul(diff).mulNumber(2).divNumber(len);
+        NdArray gx0 = yGrad.broadcastTo(diff.getShape()).mul(diff).mulNum(2).divNum(len);
 
         return Arrays.asList(gx0, gx0.neg());
     }

@@ -19,7 +19,7 @@ public class Squ extends Function {
     @Override
     public List<NdArray> backward(NdArray yGrad) {
         NdArray x = inputs[0].getValue();
-        return Collections.singletonList(x.mulNumber(2).mul(yGrad));
+        return Collections.singletonList(x.mulNum(2).mul(yGrad));
     }
 
     @Override

@@ -46,12 +46,12 @@ public class Adam extends Optimizer {
 
         NdArray grad = parameter.getGrad();
 
-        m = m.add(grad.sub(m).mulNumber(1 - beta1));
-        v = v.add(grad.mul(grad).sub(v).mulNumber(1 - beta2));
+        m = m.add(grad.sub(m).mulNum(1 - beta1));
+        v = v.add(grad.mul(grad).sub(v).mulNum(1 - beta2));
         ms.put(key, m);
         vs.put(key, v);
 
-        NdArray delat = m.mulNumber(lr()).div(v.pow(0.5f).add(NdArray.like(v.getShape(), epsilon)));
+        NdArray delat = m.mulNum(lr()).div(v.pow(0.5f).add(NdArray.like(v.getShape(), epsilon)));
         parameter.setValue(parameter.getValue().sub(delat));
 
     }

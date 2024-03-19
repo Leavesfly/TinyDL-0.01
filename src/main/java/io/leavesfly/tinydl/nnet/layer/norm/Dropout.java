@@ -42,7 +42,7 @@ public class Dropout extends Layer {
             mask = NdArray.likeRandom(0, 1, x.getShape()).gt(x.like(ration));
             return x.mul(mask);
         }
-        return x.mulNumber(1.0 - ration);
+        return x.mulNum(1.0 - ration);
     }
 
     @Override
