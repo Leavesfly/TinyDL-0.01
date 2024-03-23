@@ -2,9 +2,7 @@ package io.leavesfly.tinydl.ndarr;
 
 import io.leavesfly.tinydl.utils.Util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 
@@ -45,6 +43,9 @@ public class NdArray {
     }
 
     public NdArray(float[] data, Shape shape) {
+        if (data.length != shape.size()) {
+            throw new RuntimeException("Shape error!");
+        }
         this.shape = shape;
         buffer = data;
     }
@@ -74,11 +75,7 @@ public class NdArray {
      */
     public NdArray(Shape _shape) {
         this.shape = _shape;
-        int size = 1;
-        for (int dim : this.shape.dimension) {
-            size *= dim;
-        }
-        buffer = new float[size];
+        buffer = new float[_shape.size()];
     }
 
     /**
@@ -594,6 +591,43 @@ public class NdArray {
             }
         }
         return ndArray;
+    }
+
+    public NdArray transpose(int... order) {
+        // 验证转置的维度顺序是否包含所有维度
+        if (order.length != shape.dimension.length || Arrays.stream(order).distinct().count() != shape.dimension.length) {
+            throw new IllegalArgumentException("Invalid transpose dimensions order.");
+        }
+
+        // 计算新的维度和乘数
+        int[] newDimensions = new int[shape.dimension.length];
+        for (int i = 0; i < order.length; i++) {
+            newDimensions[i] = shape.dimension[order[i]];
+        }
+        NdArray transposed = new NdArray(new Shape(newDimensions));
+
+        // 为了遍历整个数组，我们需要一个用来追踪当前位置的索引数组
+        int[] indices = new int[shape.dimension.length];
+
+        int totalElements = Arrays.stream(shape.dimension).reduce(1, (a, b) -> a * b);
+        for (int i = 0; i < totalElements; i++) {
+            // 将一维数组索引转换为多维数组索引
+            int index = i;
+            for (int j = shape.dimension.length - 1; j >= 0; j--) {
+                indices[j] = index / shape.multipliers[j];
+                index %= shape.multipliers[j];
+            }
+
+            // 计算转置后的索引
+            int[] transposedIndices = new int[order.length];
+            for (int j = 0; j < order.length; j++) {
+                transposedIndices[j] = indices[order[j]];
+            }
+
+            // 将数据复制到转置后的数组中
+            transposed.set(this.get(indices), transposedIndices);
+        }
+        return transposed;
     }
 
     /**
@@ -1176,37 +1210,84 @@ public class NdArray {
     @Override
     public String toString() {
 
-        List<String> temp = new ArrayList<>();
-        List<String> result = new ArrayList<>();
-        // 将buffer转化为List
-        for (float v : buffer) {
-            result.add(String.valueOf(v));
+//        List<String> temp = new ArrayList<>();
+//        List<String> result = new ArrayList<>();
+//        // 将buffer转化为List
+//        for (float v : buffer) {
+//            result.add(String.valueOf(v));
+//        }
+//
+//        for (int i = shape.dimension.length - 1; i > 0; i--) {
+//
+//            for (int j = 0; j < result.size(); ) {
+//                StringBuilder stringBuilder = new StringBuilder();
+//                stringBuilder.append("[");
+//                for (int k = 0; k < shape.dimension[i]; k++, j++) {
+//                    if (k != 0) {
+//                        stringBuilder.append(",");
+//                    }
+//                    stringBuilder.append(result.get(j));
+//                }
+//                stringBuilder.append("]");
+//                temp.add(stringBuilder.toString());
+//            }
+//
+//            result.clear();
+//            result.addAll(temp);
+//            temp.clear();
+//        }
+        StringBuilder stringBuilder = new StringBuilder();
+        toStringHelper(stringBuilder, 0, new int[shape.dimension.length]);
+        return "NdArray{" + "shape=" + shape + ", \n" + "data=" + stringBuilder + '}';
+    }
+
+    private void toStringHelper(StringBuilder sb, int dimIndex, int[] indices) {
+        if (dimIndex == shape.dimension.length) {
+            // 达到最内层维度，添加数组元素的值
+            sb.append(String.format("%f", get(indices)));
+            return;
         }
 
-        for (int i = shape.dimension.length - 1; i > 0; i--) {
-
-            for (int j = 0; j < result.size(); ) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("[");
-                for (int k = 0; k < shape.dimension[i]; k++, j++) {
-                    if (k != 0) {
-                        stringBuilder.append(",");
-                    }
-                    stringBuilder.append(result.get(j));
+        sb.append("[");
+        for (int i = 0; i < shape.dimension[dimIndex]; i++) {
+            indices[dimIndex] = i;
+            toStringHelper(sb, dimIndex + 1, indices);
+            if (i < shape.dimension[dimIndex] - 1) {
+                sb.append(", ");
+                if (dimIndex == shape.dimension.length - 2) {
+                    // 在倒数第二层维度后添加换行，以更好地显示多维数组结构
+                    sb.append("\n ");
                 }
-                stringBuilder.append("]");
-                temp.add(stringBuilder.toString());
             }
-
-            result.clear();
-            result.addAll(temp);
-            temp.clear();
         }
-        return "NdArray{" + "shape=" + shape + ", buffer=" + result + '}';
+        sb.append("]");
+
+        if (dimIndex == 0) {
+            // 在最外层维度后添加换行
+            sb.append("\n");
+        }
     }
 
     @Override
     public boolean equals(Object obj) {
         return this.toString().equals(obj.toString());
     }
+
+    public void set(float value, int[] _dimension) {
+        if (_dimension.length != shape.dimension.length) {
+            throw new RuntimeException("dimension.length error!");
+        }
+
+        buffer[shape.getIndex(_dimension)] = value;
+    }
+
+    public float get(int[] _dimension) {
+
+        if (_dimension.length != shape.dimension.length) {
+            throw new RuntimeException("dimension.length error!");
+        }
+
+        return buffer[shape.getIndex(_dimension)];
+    }
+
 }

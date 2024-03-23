@@ -86,7 +86,12 @@ public class TestNdArray {
 //        test2();
 //        System.out.println(Arrays.deepToString(new float[][]{{1, 2, 3}, {4, 5, 6}}));
 
-        NdArray ndArray = NdArray.like(new Shape( 4, 3, 2), 1);
-        System.out.println(ndArray);
+        NdArray ndArray = NdArray.like(new Shape(4, 3, 2, 1), 1);
+        System.out.println(ndArray.toString());
+
+//        NdArray ndArray = new NdArray(new float[][]{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+//        System.out.println(ndArray);
+//        System.out.println(ndArray.get(new int[]{0, 0}));//2
+//        System.out.println(ndArray.get(new int[]{2, 1}));//3
     }
 }
