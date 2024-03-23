@@ -1209,33 +1209,6 @@ public class NdArray {
      */
     @Override
     public String toString() {
-
-//        List<String> temp = new ArrayList<>();
-//        List<String> result = new ArrayList<>();
-//        // 将buffer转化为List
-//        for (float v : buffer) {
-//            result.add(String.valueOf(v));
-//        }
-//
-//        for (int i = shape.dimension.length - 1; i > 0; i--) {
-//
-//            for (int j = 0; j < result.size(); ) {
-//                StringBuilder stringBuilder = new StringBuilder();
-//                stringBuilder.append("[");
-//                for (int k = 0; k < shape.dimension[i]; k++, j++) {
-//                    if (k != 0) {
-//                        stringBuilder.append(",");
-//                    }
-//                    stringBuilder.append(result.get(j));
-//                }
-//                stringBuilder.append("]");
-//                temp.add(stringBuilder.toString());
-//            }
-//
-//            result.clear();
-//            result.addAll(temp);
-//            temp.clear();
-//        }
         StringBuilder stringBuilder = new StringBuilder();
         toStringHelper(stringBuilder, 0, new int[shape.dimension.length]);
         return "NdArray{" + "shape=" + shape + ", \n" + "data=" + stringBuilder + '}';
@@ -1277,7 +1250,6 @@ public class NdArray {
         if (_dimension.length != shape.dimension.length) {
             throw new RuntimeException("dimension.length error!");
         }
-
         buffer[shape.getIndex(_dimension)] = value;
     }
 
@@ -1286,7 +1258,6 @@ public class NdArray {
         if (_dimension.length != shape.dimension.length) {
             throw new RuntimeException("dimension.length error!");
         }
-
         return buffer[shape.getIndex(_dimension)];
     }
 

@@ -4,7 +4,7 @@ package io.leavesfly.tinydl.nnet.layer.cnn;
 /**
  * 当处理四维数组时，我们通常处理的是多个样本（例如，一批图像）其中每个样本可能包含多个通道（例如，RGB图像有三个通道）
  */
-public class Im2Col4D {
+public class Im2ColUtil {
 
     /**
      * 对四维输入数组执行 im2col 操作。
