@@ -1,6 +1,7 @@
 package io.leavesfly.tinydl.nnet;
 
 import io.leavesfly.tinydl.func.Variable;
+import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.ndarr.Shape;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * 表示由层组合起来的更大的神经网络的块
  */
-public abstract class Block implements LayerAble {
+public abstract class Block extends LayerAble {
 
     protected String name;
 
@@ -45,7 +46,6 @@ public abstract class Block implements LayerAble {
         layer.init();
         getLayers().add(layer);
     }
-
 
 
     @Override
@@ -109,6 +109,21 @@ public abstract class Block implements LayerAble {
 
     public List<LayerAble> getLayers() {
         return layers;
+    }
+
+    @Override
+    public NdArray forward(NdArray... inputs) {
+        return null;
+    }
+
+    @Override
+    public List<NdArray> backward(NdArray yGrad) {
+        return null;
+    }
+
+    @Override
+    public int requireInputNum() {
+        return -1;
     }
 
 }

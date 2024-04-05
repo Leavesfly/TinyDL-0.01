@@ -1,5 +1,6 @@
 package io.leavesfly.tinydl.nnet;
 
+import io.leavesfly.tinydl.func.Function;
 import io.leavesfly.tinydl.func.Variable;
 import io.leavesfly.tinydl.ndarr.Shape;
 
@@ -8,15 +9,15 @@ import java.util.Map;
 /**
  * 神经网络层的抽象
  */
-public interface LayerAble {
+public abstract class LayerAble extends Function {
 
-    String getName();
+    abstract public String getName();
 
-    Shape getXInputShape();
+    abstract public Shape getXInputShape();
 
-    Shape getYOutputShape();
+    abstract public Shape getYOutputShape();
 
-    void init();
+    abstract public void init();
 
     /**
      * 层内的参数不会通过inputs传递进入
@@ -24,14 +25,16 @@ public interface LayerAble {
      * @param inputs
      * @return
      */
-    Variable forward(Variable... inputs);
+    public Variable forward(Variable... inputs) {
+        return this.call(inputs);
+    }
 
-    Map<String, Parameter> getParams();
+    public abstract Map<String, Parameter> getParams();
 
-    void addParam(String paramName, Parameter value);
+    public abstract void addParam(String paramName, Parameter value);
 
-    Parameter getParamBy(String paramName);
+    public abstract Parameter getParamBy(String paramName);
 
-    void clearGrads();
+    public abstract void clearGrads();
 
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * 表示神经网络中具体的层，对应数学中的一个函数
  */
-public abstract class Layer extends Function implements LayerAble {
+public abstract class Layer extends LayerAble {
 
     protected String name;
 

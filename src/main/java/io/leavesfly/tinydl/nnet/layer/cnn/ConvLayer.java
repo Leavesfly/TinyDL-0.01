@@ -69,11 +69,16 @@ public class ConvLayer extends Layer {
 
     @Override
     public NdArray forward(NdArray... inputs) {
+
+        //实现前向传播
+
         return null;
     }
 
     @Override
     public List<NdArray> backward(NdArray yGrad) {
+
+        //实现后向传播
 
         return null;
     }
