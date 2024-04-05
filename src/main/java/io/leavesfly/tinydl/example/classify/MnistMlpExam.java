@@ -2,6 +2,7 @@ package io.leavesfly.tinydl.example.classify;
 
 import io.leavesfly.tinydl.mlearning.Monitor;
 import io.leavesfly.tinydl.mlearning.Trainer;
+import io.leavesfly.tinydl.mlearning.dataset.DataSet;
 import io.leavesfly.tinydl.mlearning.evaluator.AccuracyEval;
 import io.leavesfly.tinydl.mlearning.evaluator.Evaluator;
 import io.leavesfly.tinydl.nnet.Block;
@@ -37,7 +38,7 @@ public class MnistMlpExam {
         Block block = new MlpBlock("MlpBlock", batchSize, Config.ActiveFunc.Sigmoid, inputSize, hiddenSize1, hiddenSize2, outputSize);
         Model model = new Model("MnistMlpExam", block);
 
-        MnistDataSet mnistDataSet = new MnistDataSet(batchSize);
+        DataSet mnistDataSet = new MnistDataSet(batchSize);
         Evaluator evaluator = new AccuracyEval(new Classify(), model, mnistDataSet);
         Optimizer optimizer = new SGD(model, learRate);
 

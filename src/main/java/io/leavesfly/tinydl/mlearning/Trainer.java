@@ -74,7 +74,9 @@ public class Trainer {
 
                 model.clearGrads();
                 lossSum += lossVariable.getValue().getNumber().floatValue();
+
                 lossVariable.backward();
+
                 optimizer.update();
                 lossVariable.unChainBackward();
 
