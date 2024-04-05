@@ -101,14 +101,4 @@ public class BatchNorm extends Layer {
         return Arrays.asList(dx, dgamma, dbeta);
     }
 
-    @Override
-    public int requireInputNum() {
-        return 3;
-    }
-
-
-    @Override
-    public Variable forward(Variable... inputs) {
-        return this.call(inputs[0], gammaParam, betaParam);
-    }
 }

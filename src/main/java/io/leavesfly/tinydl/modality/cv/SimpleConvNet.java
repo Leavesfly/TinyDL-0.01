@@ -27,44 +27,44 @@ public class SimpleConvNet extends SequentialBlock {
         Layer layer = new ConvLayer("ConvLayer", 5, 32, ConvLayer.PaddingType.SAME, inputXShape, null);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new ReLuLayer("ReLuLayer", inputXShape);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new PoolingLayer("PoolingLayer", 2, 2, inputXShape, null);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new ConvLayer("ConvLayer", 5, 64, ConvLayer.PaddingType.SAME, inputXShape, null);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new ReLuLayer("ReLuLayer", inputXShape);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new PoolingLayer("PoolingLayer", 2, 2, inputXShape, null);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new FlattenLayer("FlattenLayer", inputXShape, null);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new AffineLayer("AffineLayer", inputXShape, 1024, true);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new ReLuLayer("ReLuLayer", inputXShape);
         sequentialBlock.addLayer(layer);
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new Dropout("Dropout", 0.3f, inputXShape);
         sequentialBlock.addLayer(layer);
 
 
-        inputXShape = layer.getYOutputShape();
+        inputXShape = layer.getOutputShape();
         layer = new AffineLayer("AffineLayer", inputXShape, 10, true);
         sequentialBlock.addLayer(layer);
 

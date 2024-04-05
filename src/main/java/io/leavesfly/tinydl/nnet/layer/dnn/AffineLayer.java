@@ -59,8 +59,4 @@ public class AffineLayer extends Layer {
         return null;
     }
 
-    @Override
-    public int requireInputNum() {
-        return 0;
-    }
 }

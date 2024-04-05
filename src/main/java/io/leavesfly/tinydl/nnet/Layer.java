@@ -36,12 +36,12 @@ public abstract class Layer extends LayerAble {
     }
 
     @Override
-    public Shape getXInputShape() {
+    public Shape getInputShape() {
         return xInputShape;
     }
 
     @Override
-    public Shape getYOutputShape() {
+    public Shape getOutputShape() {
         return yOutputShape;
     }
 
@@ -59,6 +59,11 @@ public abstract class Layer extends LayerAble {
 
     public Parameter getParamBy(String paramName) {
         return getParams().get(name + "." + paramName);
+    }
+
+    @Override
+    public int requireInputNum() {
+        return -1;
     }
 
 }

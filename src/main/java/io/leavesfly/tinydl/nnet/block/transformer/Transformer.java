@@ -21,7 +21,7 @@ public class Transformer extends Block {
 
 
     public Transformer(String _name, Encoder encoder, Decoder decoder) {
-        super(_name, encoder.getXInputShape(), decoder.getYOutputShape());
+        super(_name, encoder.getInputShape(), decoder.getOutputShape());
 
         this.encoder = encoder;
         this.decoder = decoder;

@@ -82,12 +82,12 @@ public abstract class Block extends LayerAble {
     }
 
     @Override
-    public Shape getXInputShape() {
+    public Shape getInputShape() {
         return xInputShape;
     }
 
     @Override
-    public Shape getYOutputShape() {
+    public Shape getOutputShape() {
         return yOutputShape;
     }
 

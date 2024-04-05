@@ -13,18 +13,13 @@ public abstract class LayerAble extends Function {
 
     abstract public String getName();
 
-    abstract public Shape getXInputShape();
+    abstract public Shape getInputShape();
 
-    abstract public Shape getYOutputShape();
+    abstract public Shape getOutputShape();
+
 
     abstract public void init();
 
-    /**
-     * 层内的参数不会通过inputs传递进入
-     *
-     * @param inputs
-     * @return
-     */
     public Variable forward(Variable... inputs) {
         return this.call(inputs);
     }

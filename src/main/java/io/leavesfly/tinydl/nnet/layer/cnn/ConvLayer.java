@@ -89,11 +89,6 @@ public class ConvLayer extends Layer {
     }
 
 
-    @Override
-    public Variable forward(Variable... inputs) {
-        return this.call(inputs[0], wParameter);
-    }
-
     public enum PaddingType {
         VALID, SAME;
     }

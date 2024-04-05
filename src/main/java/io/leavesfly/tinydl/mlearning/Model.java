@@ -29,9 +29,9 @@ public class Model implements Serializable {
     }
 
     public void plot() {
-        Shape xInputShape = block.getXInputShape();
+        Shape xInputShape = block.getInputShape();
         if (xInputShape != null) {
-            Shape shape = block.getXInputShape();
+            Shape shape = block.getInputShape();
             tmpPredict = block.forward(new Variable(NdArray.ones(shape)));
         }
         System.out.println(Uml.getDotGraph(tmpPredict));
