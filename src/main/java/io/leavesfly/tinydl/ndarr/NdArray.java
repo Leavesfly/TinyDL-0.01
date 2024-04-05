@@ -595,7 +595,8 @@ public class NdArray {
 
     public NdArray transpose(int... order) {
         // 验证转置的维度顺序是否包含所有维度
-        if (order.length != shape.dimension.length || Arrays.stream(order).distinct().count() != shape.dimension.length) {
+        if (order.length != shape.dimension.length
+                || Arrays.stream(order).distinct().count() != shape.dimension.length) {
             throw new IllegalArgumentException("Invalid transpose dimensions order.");
         }
 
@@ -873,12 +874,17 @@ public class NdArray {
         }
 
         NdArray ndArray = new NdArray(new Shape(shape.getRow(), other.shape.getColumn()));
+
         for (int i = 0; i < shape.getRow(); i++) {
             for (int j = 0; j < other.shape.getColumn(); j++) {
+
                 float sum = 0f;
                 for (int k = 0; k < shape.getColumn(); k++) {
+//                    sum += this.get(i, k) * other.get(k, j);
                     sum += buffer[i * shape.getColumn() + k] * other.buffer[k * other.shape.getColumn() + j];
                 }
+
+//                ndArray.set(sum, i, j);
                 ndArray.buffer[i * other.shape.getColumn() + j] = sum;
             }
         }
@@ -1205,7 +1211,7 @@ public class NdArray {
     }
 
     /**
-     * 表示NdArray的形状
+     * 打印NdArray的形状和数据
      */
     @Override
     public String toString() {
@@ -1246,15 +1252,26 @@ public class NdArray {
         return this.toString().equals(obj.toString());
     }
 
-    public void set(float value, int[] _dimension) {
+    /**
+     * 按维度下标设置某一个值
+     *
+     * @param value
+     * @param _dimension
+     */
+    public void set(float value, int... _dimension) {
         if (_dimension.length != shape.dimension.length) {
             throw new RuntimeException("dimension.length error!");
         }
         buffer[shape.getIndex(_dimension)] = value;
     }
 
-    public float get(int[] _dimension) {
-
+    /**
+     * 按维度下标设置某一个值
+     *
+     * @param _dimension
+     * @return
+     */
+    public float get(int... _dimension) {
         if (_dimension.length != shape.dimension.length) {
             throw new RuntimeException("dimension.length error!");
         }

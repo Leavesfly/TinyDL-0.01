@@ -4,8 +4,12 @@ import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.mlearning.Model;
 import io.leavesfly.tinydl.nnet.Parameter;
 
+import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Momentum 与 AdaGrad 的融合
+ */
 public class Adam extends Optimizer {
     private float learningRate = 0.001f;
     private float beta1 = 0.9f;
@@ -26,6 +30,8 @@ public class Adam extends Optimizer {
 
     public Adam(Model target) {
         super(target);
+        ms = new HashMap<>();
+        vs = new HashMap<>();
     }
 
     public void update() {

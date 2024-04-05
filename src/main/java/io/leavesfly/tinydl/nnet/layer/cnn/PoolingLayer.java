@@ -8,13 +8,13 @@ import io.leavesfly.tinydl.nnet.Layer;
 import java.util.List;
 
 //todo
-public class MaxPoolingLayer extends Layer {
+public class PoolingLayer extends Layer {
     private int winWidth, winHeight;
     private int strideX, strideY;
     private int[][] maxIdx;
 
 
-    public MaxPoolingLayer(String _name, int winSize, int stride, Shape _xInputShape, Shape _yOutputShape) {
+    public PoolingLayer(String _name, int winSize, int stride, Shape _xInputShape, Shape _yOutputShape) {
         super(_name, _xInputShape, _yOutputShape);
         this.winWidth = winSize;
         this.winHeight = winSize;

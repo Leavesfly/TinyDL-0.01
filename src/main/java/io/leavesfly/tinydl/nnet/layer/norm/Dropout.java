@@ -9,6 +9,9 @@ import io.leavesfly.tinydl.nnet.Layer;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 抑制过拟合，采用的随机丢弃一些参数权重的方法
+ */
 public class Dropout extends Layer {
     private float ration;
     private NdArray mask;

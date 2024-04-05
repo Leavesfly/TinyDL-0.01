@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * 批量归一化
  */
-public class BatchNormal extends Layer {
+public class BatchNorm extends Layer {
 
     private Parameter gammaParam;
     private Parameter betaParam;
@@ -30,11 +30,11 @@ public class BatchNormal extends Layer {
 
     private float momentum = 0.9f;
 
-    public BatchNormal(String _name, Shape _xInputShape, Shape _yOutputShape) {
+    public BatchNorm(String _name, Shape _xInputShape, Shape _yOutputShape) {
         super(_name, _xInputShape, _yOutputShape);
     }
 
-    public BatchNormal(String _name, int xInputRow) {
+    public BatchNorm(String _name, int xInputRow) {
         super(_name, new Shape(-1, xInputRow), new Shape(-1, xInputRow));
 
         NdArray gammaNdArray = NdArray.ones(new Shape(1, xInputRow));

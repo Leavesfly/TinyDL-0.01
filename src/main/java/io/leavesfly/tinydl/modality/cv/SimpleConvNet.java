@@ -5,8 +5,8 @@ import io.leavesfly.tinydl.nnet.Layer;
 import io.leavesfly.tinydl.nnet.block.SequentialBlock;
 import io.leavesfly.tinydl.nnet.layer.activate.ReLuLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.ConvLayer;
-import io.leavesfly.tinydl.nnet.layer.cnn.MaxPoolingLayer;
-import io.leavesfly.tinydl.nnet.layer.dnn.FullConnLayer;
+import io.leavesfly.tinydl.nnet.layer.cnn.PoolingLayer;
+import io.leavesfly.tinydl.nnet.layer.dnn.AffineLayer;
 import io.leavesfly.tinydl.nnet.layer.norm.Dropout;
 import io.leavesfly.tinydl.nnet.layer.norm.FlattenLayer;
 
@@ -32,7 +32,7 @@ public class SimpleConvNet extends SequentialBlock {
         sequentialBlock.addLayer(layer);
 
         inputXShape = layer.getYOutputShape();
-        layer = new MaxPoolingLayer("MaxPoolingLayer", 2, 2, inputXShape, null);
+        layer = new PoolingLayer("PoolingLayer", 2, 2, inputXShape, null);
         sequentialBlock.addLayer(layer);
 
         inputXShape = layer.getYOutputShape();
@@ -44,7 +44,7 @@ public class SimpleConvNet extends SequentialBlock {
         sequentialBlock.addLayer(layer);
 
         inputXShape = layer.getYOutputShape();
-        layer = new MaxPoolingLayer("MaxPoolingLayer", 2, 2, inputXShape, null);
+        layer = new PoolingLayer("PoolingLayer", 2, 2, inputXShape, null);
         sequentialBlock.addLayer(layer);
 
         inputXShape = layer.getYOutputShape();
@@ -52,7 +52,7 @@ public class SimpleConvNet extends SequentialBlock {
         sequentialBlock.addLayer(layer);
 
         inputXShape = layer.getYOutputShape();
-        layer = new FullConnLayer("FullConnLayer", inputXShape, 1024, true);
+        layer = new AffineLayer("AffineLayer", inputXShape, 1024, true);
         sequentialBlock.addLayer(layer);
 
         inputXShape = layer.getYOutputShape();
@@ -65,7 +65,7 @@ public class SimpleConvNet extends SequentialBlock {
 
 
         inputXShape = layer.getYOutputShape();
-        layer = new FullConnLayer("FullConnLayer", inputXShape, 10, true);
+        layer = new AffineLayer("AffineLayer", inputXShape, 10, true);
         sequentialBlock.addLayer(layer);
 
         return sequentialBlock;

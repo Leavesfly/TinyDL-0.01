@@ -11,12 +11,12 @@ import java.util.List;
 /**
  * 全连接层与LinearLayer基本一样
  */
-public class FullConnLayer extends Layer {
+public class AffineLayer extends Layer {
     private Parameter wParam;
     private Parameter bParam;
     private boolean needBias;
 
-    public FullConnLayer(String _name, Shape inputXShape, int hiddenCol, boolean _needBias) {
+    public AffineLayer(String _name, Shape inputXShape, int hiddenCol, boolean _needBias) {
         super(_name, inputXShape, new Shape(inputXShape.getColumn(), hiddenCol));
         needBias = _needBias;
 
