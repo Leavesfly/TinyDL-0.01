@@ -81,8 +81,4 @@ public class SimpleRnnlayer extends RnnLayer {
         return null;
     }
 
-    @Override
-    public int requireInputNum() {
-        return 0;
-    }
 }

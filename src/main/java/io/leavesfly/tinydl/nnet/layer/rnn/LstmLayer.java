@@ -157,8 +157,4 @@ public class LstmLayer extends RnnLayer {
         return null;
     }
 
-    @Override
-    public int requireInputNum() {
-        return 0;
-    }
 }
