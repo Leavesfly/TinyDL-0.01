@@ -15,8 +15,8 @@ public class EncoderDecoder extends Block {
 
         this.encoder = encoder;
         this.decoder = decoder;
-        getLayers().add(encoder);
-        getLayers().add(decoder);
+        addLayer(encoder);
+        addLayer(decoder);
     }
 
     @Override

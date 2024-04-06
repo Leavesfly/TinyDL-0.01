@@ -24,15 +24,15 @@ public class MlpBlock extends Block {
 
         for (int i = 1; i < layerSizes.length - 1; i++) {
             Layer layer = new LinearLayer("layer" + i, layerSizes[i - 1], layerSizes[i], true);
-            getLayers().add(layer);
+            addLayer(layer);
             if (!Objects.isNull(activeFunc) && Config.ActiveFunc.ReLU.name().equals(activeFunc.name())) {
-                getLayers().add(new ReLuLayer("ReLU"));
+                addLayer(new ReLuLayer("ReLU"));
             } else {
-                getLayers().add(new SigmoidLayer("Sigmoid"));
+                addLayer(new SigmoidLayer("Sigmoid"));
             }
         }
         Layer layer = new LinearLayer("layer" + (layerSizes.length - 1), layerSizes[(layerSizes.length - 2)], layerSizes[(layerSizes.length - 1)], true);
-        getLayers().add(layer);
+        addLayer(layer);
     }
 
     @Override

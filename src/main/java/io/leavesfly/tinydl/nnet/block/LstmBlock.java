@@ -14,10 +14,10 @@ public class LstmBlock extends Block {
         super(name, new Shape(-1, inputSize), new Shape(-1, outputSize));
 
         lstmLayer = new LstmLayer("lstmLayer", new Shape(-1, inputSize), new Shape(inputSize, hiddenSize));
-        getLayers().add(lstmLayer);
+        addLayer(lstmLayer);
 
         linearLayer = new LinearLayer("linearLayer", hiddenSize, outputSize, true);
-        getLayers().add(linearLayer);
+        addLayer(linearLayer);
     }
 
     public void resetState() {

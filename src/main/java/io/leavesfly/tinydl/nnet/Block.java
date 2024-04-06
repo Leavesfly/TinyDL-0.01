@@ -42,9 +42,9 @@ public abstract class Block extends LayerAble {
         }
     }
 
-    public void addLayer(Layer layer) {
-        layer.init();
-        getLayers().add(layer);
+    public void addLayer(LayerAble layerAble) {
+        layerAble.init();
+        layers.add(layerAble);
     }
 
 
@@ -82,8 +82,9 @@ public abstract class Block extends LayerAble {
     }
 
 
-    public List<LayerAble> getLayers() {
-        return layers;
-    }
+//    public List<LayerAble> getLayers() {
+//        return layers;
+//    }
+
 
 }

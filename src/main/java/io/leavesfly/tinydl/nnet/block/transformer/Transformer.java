@@ -25,8 +25,8 @@ public class Transformer extends Block {
 
         this.encoder = encoder;
         this.decoder = decoder;
-        getLayers().add(encoder);
-        getLayers().add(decoder);
+        addLayer(encoder);
+        addLayer(decoder);
 
     }
 
