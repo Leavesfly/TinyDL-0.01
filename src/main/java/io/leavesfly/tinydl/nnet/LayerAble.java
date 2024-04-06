@@ -13,11 +13,17 @@ import java.util.Map;
  */
 public abstract class LayerAble extends Function {
 
-    abstract public String getName();
 
-    abstract public Shape getInputShape();
+    protected String name;
 
-    abstract public Shape getOutputShape();
+    protected Map<String, Parameter> params;
+
+
+    protected Shape inputShape;
+
+    protected Shape outputShape;
+
+    protected boolean alreadyInit = false;
 
 
     abstract public void init();
@@ -30,13 +36,34 @@ public abstract class LayerAble extends Function {
      */
     public abstract Variable layerForward(Variable... inputs);
 
-    public abstract Map<String, Parameter> getParams();
-
-    public abstract void addParam(String paramName, Parameter value);
-
-    public abstract Parameter getParamBy(String paramName);
 
     public abstract void clearGrads();
+
+
+    public String getName() {
+        return name;
+    }
+
+    public Map<String, Parameter> getParams() {
+        return params;
+    }
+
+    public void addParam(String paramName, Parameter value) {
+        getParams().put(name + "." + paramName, value);
+    }
+
+    public Parameter getParamBy(String paramName) {
+        return getParams().get(name + "." + paramName);
+    }
+
+    public Shape getInputShape() {
+        return inputShape;
+    }
+
+    public Shape getOutputShape() {
+        return outputShape;
+    }
+
 
     @Override
     public int requireInputNum() {

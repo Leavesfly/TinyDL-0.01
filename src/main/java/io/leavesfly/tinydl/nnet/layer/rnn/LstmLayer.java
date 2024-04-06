@@ -147,14 +147,5 @@ public class LstmLayer extends RnnLayer {
         return state;
     }
 
-    @Override
-    public NdArray forward(NdArray... inputs) {
-        return null;
-    }
-
-    @Override
-    public List<NdArray> backward(NdArray yGrad) {
-        return null;
-    }
 
 }
