@@ -6,6 +6,7 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.Layer;
 import io.leavesfly.tinydl.nnet.Parameter;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ConvLayer extends Layer {
@@ -22,6 +23,10 @@ public class ConvLayer extends Layer {
     private int filterWidth;
     private int outHeight;
     private int outWidth;
+
+    private NdArray colInput;
+
+    private NdArray colInputW;
 
     public ConvLayer(String _name, Shape inputShape, int _filterNum, int _filterHeight, int _filterWidth, int _stride, int _pad) {
 
@@ -64,7 +69,6 @@ public class ConvLayer extends Layer {
 
             alreadyInit = true;
         }
-
     }
 
     @Override
@@ -72,7 +76,6 @@ public class ConvLayer extends Layer {
         Variable input = inputs[0];
         return this.call(input, filterParam);
     }
-
 
     @Override
     public NdArray forward(NdArray... inputs) {
@@ -83,13 +86,13 @@ public class ConvLayer extends Layer {
         int num = input.shape.dimension[0];
 
         float[][][][] data = input.get4dArray();
-        float[][] colInput = Im2ColUtil.im2col(data, filterHeight, filterWidth, stride, pad);
-        NdArray colInputNdArray = new NdArray(colInput);
+        float[][] colInput2dArray = Im2ColUtil.im2col(data, filterHeight, filterWidth, stride, pad);
+        colInput = new NdArray(colInput2dArray);
 
         NdArray filterNdArray = filterParam.getValue();
-        NdArray filterParamNdArray = filterNdArray.reshape(new Shape(filterNum, filterNdArray.shape.size() / filterNum));
+        colInputW = filterNdArray.reshape(new Shape(filterNum, filterNdArray.shape.size() / filterNum));
 
-        NdArray out = colInputNdArray.dot(filterParamNdArray);
+        NdArray out = colInput.dot(colInputW);
         out = out.reshape(new Shape(num, outHeight, outWidth, out.shape.size() / (num * outHeight * outWidth)));
         out = out.transpose(0, 3, 1, 2);
 
@@ -103,10 +106,16 @@ public class ConvLayer extends Layer {
         int size = yGrad.shape.size();
         NdArray yGradNdArray = yGrad.transpose(0, 2, 3, 1).reshape(new Shape(size / filterNum, filterNum));
 
-        yGradNdArray = yGradNdArray.sum(0);
 
+        NdArray filterParamGrad = colInput.dot(yGradNdArray);
+        filterParamGrad = filterParamGrad.transpose(1, 0).reshape(
+                new Shape(filterNum, inputShape.dimension[1], filterHeight, filterWidth));
 
-        return null;
+        NdArray inputXGrad = yGradNdArray.dot(colInputW);
+
+        inputXGrad = new NdArray(
+                Col2ImUtil.col2Im(inputXGrad.getMatrix(), inputShape.dimension, filterHeight, filterWidth, stride, pad));
+        return Arrays.asList(inputXGrad, filterParamGrad);
     }
 
 }
