@@ -21,7 +21,7 @@ public class TanhLayer extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         return new Tanh().call(inputs[0]);
     }
 

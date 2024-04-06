@@ -30,11 +30,13 @@ public class Col2ImUtil {
                         int colIndex = (c * outH + h) * outW + w;
                         int nOffset = i * C * outH * outW;
                         float[] kernel = col[nOffset + colIndex];
+
                         // 遍历滤波器的每个元素
                         for (int fh = 0; fh < filterH; fh++) {
                             for (int fw = 0; fw < filterW; fw++) {
                                 int imgH = h * stride + fh - pad;
                                 int imgW = w * stride + fw - pad;
+
                                 // 只在图像有效区域内累加列数据
                                 if (imgH >= 0 && imgH < H && imgW >= 0 && imgW < W) {
                                     img[i][c][imgH][imgW] += kernel[fh * filterW + fw];

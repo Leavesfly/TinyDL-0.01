@@ -13,12 +13,12 @@ public class NdArray {
     /**
      * N维数组的形状
      */
-    protected Shape shape;
+    public Shape shape;
 
     /**
      * 真实存储数据，使用float32
      */
-    private float[] buffer;
+    public float[] buffer;
 
     //    # =============================================================================
     //            # NdArray的创建函数
@@ -32,16 +32,6 @@ public class NdArray {
         buffer[0] = number.floatValue();
     }
 
-    /**
-     * 不指定Shape时默认作为行数为1的矩阵
-     *
-     * @param data
-     */
-    public NdArray(float[] data) {
-        shape = new Shape(1, data.length);
-        buffer = data;
-    }
-
     public NdArray(float[] data, Shape shape) {
         if (data.length != shape.size()) {
             throw new RuntimeException("Shape error!");
@@ -51,6 +41,17 @@ public class NdArray {
     }
 
     /**
+     * 一维数组的初始化
+     *
+     * @param data
+     */
+    public NdArray(float[] data) {
+        shape = new Shape(1, data.length);
+        buffer = data;
+    }
+
+
+    /**
      * 二维数组的初始化
      *
      * @param data
@@ -58,12 +59,56 @@ public class NdArray {
     public NdArray(float[][] data) {
         shape = new Shape(data.length, data[0].length);
 
-        this.buffer = new float[data.length * data[0].length];
+        this.buffer = new float[shape.size()];
         int index = 0;
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[i].length; j++) {
                 this.buffer[index] = data[i][j];
                 index++;
+            }
+        }
+    }
+
+    /**
+     * 三维数组的初始化
+     *
+     * @param data
+     */
+    public NdArray(float[][][] data) {
+        shape = new Shape(data.length, data[0].length, data[0][0].length);
+
+        this.buffer = new float[shape.size()];
+        int index = 0;
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[i].length; j++) {
+                for (int k = 0; k < data[i][j].length; k++) {
+                    this.buffer[index] = data[i][j][k];
+                    index++;
+                }
+
+            }
+        }
+    }
+
+    /**
+     * 四维数组的初始化
+     *
+     * @param data
+     */
+    public NdArray(float[][][][] data) {
+        shape = new Shape(data.length, data[0].length, data[0][0].length, data[0][0][0].length);
+
+        this.buffer = new float[shape.size()];
+        int index = 0;
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[i].length; j++) {
+                for (int k = 0; k < data[i][j].length; k++) {
+                    for (int l = 0; l < data[i][j][k].length; l++) {
+                        this.buffer[index] = data[i][j][k][l];
+                        index++;
+                    }
+                }
+
             }
         }
     }
@@ -595,8 +640,7 @@ public class NdArray {
 
     public NdArray transpose(int... order) {
         // 验证转置的维度顺序是否包含所有维度
-        if (order.length != shape.dimension.length
-                || Arrays.stream(order).distinct().count() != shape.dimension.length) {
+        if (order.length != shape.dimension.length || Arrays.stream(order).distinct().count() != shape.dimension.length) {
             throw new IllegalArgumentException("Invalid transpose dimensions order.");
         }
 
@@ -779,8 +823,7 @@ public class NdArray {
         NdArray ndArray = new NdArray(new Shape(_shape.getRow(), _shape.getColumn()));
         for (int i = 0; i < shape.getRow(); i++) {
             for (int j = 0; j < shape.getColumn(); j++) {
-                ndArray.buffer[(i % _shape.getRow()) * _shape.getColumn() + j % _shape.getColumn()]
-                        += this.buffer[j + i * this.shape.getColumn()];
+                ndArray.buffer[(i % _shape.getRow()) * _shape.getColumn() + j % _shape.getColumn()] += this.buffer[j + i * this.shape.getColumn()];
             }
         }
         return ndArray;
@@ -805,8 +848,7 @@ public class NdArray {
 
         for (int i = 0; i < _shape.getRow(); i++) {
             for (int j = 0; j < _shape.getColumn(); j++) {
-                ndArray.buffer[i * _shape.getColumn() + j]
-                        += this.buffer[i % this.shape.getRow() * this.shape.getColumn() + j % this.shape.getColumn()];
+                ndArray.buffer[i * _shape.getColumn() + j] += this.buffer[i % this.shape.getRow() * this.shape.getColumn() + j % this.shape.getColumn()];
             }
         }
         return ndArray;
@@ -922,8 +964,7 @@ public class NdArray {
         NdArray ndArray = new NdArray(new Shape(_rowSlices.length, _colSlices.length));
         for (int i = 0; i < _rowSlices.length; i++) {
             for (int j = 0; j < _colSlices.length; j++) {
-                ndArray.buffer[i * ndArray.getShape().getColumn() + j]
-                        = buffer[_rowSlices[i] * shape.getColumn() + _colSlices[j]];
+                ndArray.buffer[i * ndArray.getShape().getColumn() + j] = buffer[_rowSlices[i] * shape.getColumn() + _colSlices[j]];
             }
         }
         return ndArray;
@@ -1022,58 +1063,12 @@ public class NdArray {
         NdArray ndArray = new NdArray(new Shape(endRow - startRow, endCol - startCol));
         for (int i = startRow; i < endRow; i++) {
             for (int j = startCol; j < endCol; j++) {
-                ndArray.buffer[ndArray.shape.getColumn() * (i - startRow) + j - startCol]
-                        = this.buffer[i * this.shape.getColumn() + j];
+                ndArray.buffer[ndArray.shape.getColumn() * (i - startRow) + j - startCol] = this.buffer[i * this.shape.getColumn() + j];
             }
         }
         return ndArray;
     }
 
-    /**
-     * 按照指定维度对多个矩阵进行叠加
-     * axis=0 按行
-     * axis=1 按列
-     *
-     * @param ndArrays
-     * @return
-     */
-    public static NdArray merge(int axis, NdArray... ndArrays) {
-
-        NdArray one = ndArrays[0];
-        int[] dimension = Arrays.copyOf(one.getShape().dimension, one.getShape().dimension.length);
-
-        if (axis == 1) {
-            dimension[dimension.length - 1] = dimension[dimension.length - 1] * ndArrays.length;
-            NdArray ndArray = new NdArray(new Shape(dimension));
-
-            int level = one.getShape().size() / one.getShape().dimension[one.getShape().dimension.length - 1];
-            int index = 0;
-            for (int i = 0; i < level; i++) {
-                for (NdArray array : ndArrays) {
-                    int horizontal = array.shape.dimension[array.shape.dimension.length - 1];
-                    for (int j = 0; j < horizontal; j++) {
-                        ndArray.buffer[index] = array.buffer[j + i * horizontal];
-                        index++;
-                    }
-                }
-            }
-            return ndArray;
-
-        } else if (axis == 0) {
-            dimension[0] = dimension[0] * ndArrays.length;
-            NdArray ndArray = new NdArray(new Shape(dimension));
-
-            int index = 0;
-            for (NdArray array : ndArrays) {
-                for (int j = 0; j < array.buffer.length; j++) {
-                    ndArray.buffer[index] = array.buffer[j];
-                    index++;
-                }
-            }
-            return ndArray;
-        }
-        throw new RuntimeException("not impl!");
-    }
 
     //    # =============================================================================
     //            # 5，其他的运算
@@ -1108,8 +1103,7 @@ public class NdArray {
         }
         for (int i = 0; i < rowSlices.length; i++) {
             for (int j = 0; j < colSlices.length; j++) {
-                ndArray.buffer[rowSlices[i] * ndArray.shape.getColumn() + colSlices[j]]
-                        += other.buffer[i * other.shape.getColumn() + j];
+                ndArray.buffer[rowSlices[i] * ndArray.shape.getColumn() + colSlices[j]] += other.buffer[i * other.shape.getColumn() + j];
             }
         }
         return ndArray;
@@ -1130,8 +1124,7 @@ public class NdArray {
 
         for (int _i = 0; _i < other.getShape().getRow(); _i++) {
             for (int _j = 0; _j < other.getShape().getColumn(); _j++) {
-                buffer[this.getShape().getColumn() * (_i + i) + _j + j]
-                        += other.buffer[other.getShape().getColumn() * _i + _j];
+                buffer[this.getShape().getColumn() * (_i + i) + _j + j] += other.buffer[other.getShape().getColumn() * _i + _j];
             }
         }
         return this;
@@ -1207,6 +1200,50 @@ public class NdArray {
             return matrix;
         } else {
             throw new IllegalArgumentException("不支持维度大于2");
+        }
+    }
+
+    /**
+     * 转化为三维数组返回
+     */
+    public float[][][] get3dArray() {
+        if (shape.dimension.length == 3) {
+            float[][][] result = new float[shape.dimension[0]][shape.dimension[1]][shape.dimension[2]];
+            int index = 0;
+            for (int i = 0; i < shape.dimension[0]; i++) {
+                for (int j = 0; j < shape.dimension[1]; j++) {
+                    for (int k = 0; k < shape.dimension[2]; k++) {
+                        result[i][j][k] = buffer[index];
+                        index++;
+                    }
+                }
+            }
+            return result;
+        } else {
+            throw new IllegalArgumentException("not support!");
+        }
+    }
+
+    /**
+     * 转化为四维数组返回
+     */
+    public float[][][][] get4dArray() {
+        if (shape.dimension.length == 4) {
+            float[][][][] result = new float[shape.dimension[0]][shape.dimension[1]][shape.dimension[2]][shape.dimension[3]];
+            int index = 0;
+            for (int i = 0; i < shape.dimension[0]; i++) {
+                for (int j = 0; j < shape.dimension[1]; j++) {
+                    for (int k = 0; k < shape.dimension[2]; k++) {
+                        for (int l = 0; k < shape.dimension[3]; l++) {
+                            result[i][j][k][l] = buffer[index];
+                            index++;
+                        }
+                    }
+                }
+            }
+            return result;
+        } else {
+            throw new IllegalArgumentException("not support!");
         }
     }
 

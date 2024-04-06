@@ -1,6 +1,7 @@
 package io.leavesfly.tinydl.test;
 
 import io.leavesfly.tinydl.ndarr.NdArray;
+import io.leavesfly.tinydl.ndarr.NdArrayUtil;
 import io.leavesfly.tinydl.ndarr.Shape;
 import org.junit.Assert;
 import org.junit.Test;
@@ -86,11 +87,11 @@ public class TestNdArray2 {
         expected = new NdArray(new float[]{5, 6, 12, 14, 17, 19}, new Shape(3, 2));
         Assert.assertEquals(x3.toString(), expected.toString());
 
-        NdArray merged = NdArray.merge(0, x0, x1);
+        NdArray merged = NdArrayUtil.merge(0, x0, x1);
         expected = new NdArray(new float[]{1, 2, 5, 6, 3, 4, 7, 8}, new Shape(2, 4));
         Assert.assertEquals(merged.toString(), expected.toString());
 
-        merged = NdArray.merge(1, x0, x1);
+        merged = NdArrayUtil.merge(1, x0, x1);
         expected = new NdArray(new float[]{1, 2, 3, 4, 5, 6, 7, 8}, new Shape(4, 2));
         Assert.assertEquals(merged.toString(), expected.toString());
     }

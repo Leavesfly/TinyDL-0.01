@@ -31,9 +31,9 @@ public class SimpleRnnBlock extends Block {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
 
-        Variable state = rnnLayer.forward(inputs);
-        return linearLayer.forward(state);
+        Variable state = rnnLayer.layerForward(inputs);
+        return linearLayer.layerForward(state);
     }
 }

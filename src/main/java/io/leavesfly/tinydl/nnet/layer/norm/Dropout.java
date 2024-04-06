@@ -33,7 +33,7 @@ public class Dropout extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
 
         return this.call(inputs[0]);
     }

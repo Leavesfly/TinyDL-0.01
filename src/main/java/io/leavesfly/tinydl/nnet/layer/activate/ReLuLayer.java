@@ -28,7 +28,7 @@ public class ReLuLayer extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         return new ReLu().call(inputs[0]);
     }
 

@@ -25,7 +25,7 @@ public class FlattenLayer extends Layer {
 
     @Override
     public List<NdArray> backward(NdArray yGrad) {
-        return Collections.singletonList(yGrad.reshape(xInputShape));
+        return Collections.singletonList(yGrad.reshape(inputShape));
     }
 
     @Override
@@ -37,14 +37,14 @@ public class FlattenLayer extends Layer {
     public void init() {
 
         int outputSize = 1;
-        for (int i = 0; i < xInputShape.dimension.length; i++) {
-            outputSize *= xInputShape.dimension[i];
+        for (int i = 0; i < inputShape.dimension.length; i++) {
+            outputSize *= inputShape.dimension[i];
         }
-        yOutputShape = new Shape(1, outputSize);
+        outputShape = new Shape(1, outputSize);
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         return this.call(inputs[0]);
     }
 }

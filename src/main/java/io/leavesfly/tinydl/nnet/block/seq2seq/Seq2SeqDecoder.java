@@ -23,11 +23,11 @@ public class Seq2SeqDecoder extends Decoder {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable input = inputs[0];
-        Variable y = embedding.forward(input);
-        y = lstMlayer.forward(y);
-        y = linearLayer.forward(y);
+        Variable y = embedding.layerForward(input);
+        y = lstMlayer.layerForward(y);
+        y = linearLayer.layerForward(y);
         return y;
     }
 

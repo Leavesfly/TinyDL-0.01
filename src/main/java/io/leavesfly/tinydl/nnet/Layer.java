@@ -1,9 +1,11 @@
 package io.leavesfly.tinydl.nnet;
 
 import io.leavesfly.tinydl.func.Function;
+import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.ndarr.Shape;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,18 +17,23 @@ public abstract class Layer extends LayerAble {
 
     protected Map<String, Parameter> params;
 
-    protected Shape xInputShape;
+    protected Shape inputShape;
 
-    protected Shape yOutputShape;
+    protected Shape outputShape;
 
     protected boolean alreadyInit = false;
 
-
-    public Layer(String _name, Shape _xInputShape, Shape _yOutputShape) {
+    public Layer(String _name, Shape _inputShape) {
         name = _name;
         this.params = new HashMap<>();
-        xInputShape = _xInputShape;
-        yOutputShape = _yOutputShape;
+        inputShape = _inputShape;
+    }
+
+    public Layer(String _name, Shape _inputShape, Shape _outputShape) {
+        name = _name;
+        this.params = new HashMap<>();
+        inputShape = _inputShape;
+        outputShape = _outputShape;
     }
 
     public void clearGrads() {
@@ -37,12 +44,12 @@ public abstract class Layer extends LayerAble {
 
     @Override
     public Shape getInputShape() {
-        return xInputShape;
+        return inputShape;
     }
 
     @Override
     public Shape getOutputShape() {
-        return yOutputShape;
+        return outputShape;
     }
 
     public String getName() {
@@ -59,11 +66,6 @@ public abstract class Layer extends LayerAble {
 
     public Parameter getParamBy(String paramName) {
         return getParams().get(name + "." + paramName);
-    }
-
-    @Override
-    public int requireInputNum() {
-        return -1;
     }
 
 }

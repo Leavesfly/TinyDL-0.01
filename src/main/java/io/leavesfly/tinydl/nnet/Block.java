@@ -49,11 +49,11 @@ public abstract class Block extends LayerAble {
 
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable x = inputs[0];
-        Variable y = layers.get(0).forward(x);
+        Variable y = layers.get(0).layerForward(x);
         for (int i = 1; i < layers.size(); i++) {
-            y = layers.get(i).forward(y);
+            y = layers.get(i).layerForward(y);
         }
         return y;
     }
@@ -109,21 +109,6 @@ public abstract class Block extends LayerAble {
 
     public List<LayerAble> getLayers() {
         return layers;
-    }
-
-    @Override
-    public NdArray forward(NdArray... inputs) {
-        return null;
-    }
-
-    @Override
-    public List<NdArray> backward(NdArray yGrad) {
-        return null;
-    }
-
-    @Override
-    public int requireInputNum() {
-        return -1;
     }
 
 }

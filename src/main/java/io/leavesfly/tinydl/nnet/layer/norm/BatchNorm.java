@@ -55,6 +55,11 @@ public class BatchNorm extends Layer {
     }
 
     @Override
+    public Variable layerForward(Variable... inputs) {
+        return call(inputs[0], gammaParam, betaParam);
+    }
+
+    @Override
     public NdArray forward(NdArray... inputs) {
         NdArray input = inputs[0];
         if (Objects.isNull(runningMean)) {

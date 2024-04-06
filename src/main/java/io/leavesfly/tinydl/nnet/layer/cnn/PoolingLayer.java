@@ -34,10 +34,6 @@ public class PoolingLayer extends Layer {
         return null;
     }
 
-    @Override
-    public int requireInputNum() {
-        return 1;
-    }
 
     @Override
     public void init() {
@@ -45,7 +41,9 @@ public class PoolingLayer extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
-        return this.call(inputs[0]);
+    public Variable layerForward(Variable... inputs) {
+
+        return null;
     }
+
 }

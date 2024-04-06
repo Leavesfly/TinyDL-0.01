@@ -30,8 +30,8 @@ public class LstmBlock extends Block {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
-        Variable state = lstmLayer.forward(inputs);
-        return linearLayer.forward(state);
+    public Variable layerForward(Variable... inputs) {
+        Variable state = lstmLayer.layerForward(inputs);
+        return linearLayer.layerForward(state);
     }
 }

@@ -32,6 +32,7 @@ public class Im2ColUtil {
                 for (int w = 0; w < outWidth; w++) {
                     float[] column = new float[channels * filterH * filterW];
                     for (int c = 0; c < channels; c++) {
+
                         for (int fh = 0; fh < filterH; fh++) {
                             for (int fw = 0; fw < filterW; fw++) {
                                 int imRow = h * stride + fh - pad;
@@ -44,6 +45,7 @@ public class Im2ColUtil {
                                 }
                             }
                         }
+
                     }
                     int outputRow = (n * outHeight + h) * outWidth + w;
                     output[outputRow] = column;

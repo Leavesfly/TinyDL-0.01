@@ -32,7 +32,7 @@ public class LinearLayer extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         return inputs[0].linear(w, b);
     }
 

@@ -26,7 +26,7 @@ public class Embedding extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable input = inputs[0];
         int[] slices = Util.toInt(input.transpose().getValue().getMatrix()[0]);
         return wIn.getItem(slices, null);

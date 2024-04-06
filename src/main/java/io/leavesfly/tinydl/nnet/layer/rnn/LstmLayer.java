@@ -109,7 +109,7 @@ public class LstmLayer extends RnnLayer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
 
         Variable x = inputs[0];
 
