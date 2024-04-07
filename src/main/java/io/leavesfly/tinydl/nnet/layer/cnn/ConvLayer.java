@@ -28,6 +28,15 @@ public class ConvLayer extends Layer {
 
     private NdArray colInputW;
 
+    /**
+     * @param _name
+     * @param inputShape
+     * @param _filterNum
+     * @param _filterHeight
+     * @param _filterWidth
+     * @param _stride
+     * @param _pad
+     */
     public ConvLayer(String _name, Shape inputShape, int _filterNum, int _filterHeight, int _filterWidth, int _stride, int _pad) {
 
         super(_name, inputShape);
@@ -108,13 +117,13 @@ public class ConvLayer extends Layer {
 
 
         NdArray filterParamGrad = colInput.dot(yGradNdArray);
-        filterParamGrad = filterParamGrad.transpose(1, 0).reshape(
-                new Shape(filterNum, inputShape.dimension[1], filterHeight, filterWidth));
+        filterParamGrad = filterParamGrad.transpose(1, 0).reshape(new Shape(filterNum, inputShape.dimension[1], filterHeight, filterWidth));
 
         NdArray inputXGrad = yGradNdArray.dot(colInputW);
 
-        inputXGrad = new NdArray(
-                Col2ImUtil.col2Im(inputXGrad.getMatrix(), inputShape.dimension, filterHeight, filterWidth, stride, pad));
+        float[][][][] data = Col2ImUtil.col2im(inputXGrad.getMatrix(), inputShape.dimension, filterHeight, filterWidth, stride, pad);
+
+        inputXGrad = new NdArray(data);
         return Arrays.asList(inputXGrad, filterParamGrad);
     }
 

@@ -17,79 +17,52 @@ public class Im2ColUtil {
      * @return 展开后的二维数组。
      */
     public static float[][] im2col(float[][][][] input, int filterH, int filterW, int stride, int pad) {
-        int numSamples = input.length;
-        int channels = input[0].length;
-        int height = input[0][0].length;
-        int width = input[0][0][0].length;
+        int numSamples = input.length; // 样本数量（batch size）
+        int channels = input[0].length; // 颜色通道数量
+        int height = input[0][0].length; // 输入图像的高度
+        int width = input[0][0][0].length; // 输入图像的宽度
 
+        // 计算输出的高度和宽度
         int outHeight = (height + 2 * pad - filterH) / stride + 1;
         int outWidth = (width + 2 * pad - filterW) / stride + 1;
 
+        // 初始化输出矩阵
         float[][] output = new float[numSamples * outHeight * outWidth][channels * filterH * filterW];
 
+        // 对于每个样本
         for (int n = 0; n < numSamples; n++) {
+            // 对于输出矩阵的每个位置
             for (int h = 0; h < outHeight; h++) {
                 for (int w = 0; w < outWidth; w++) {
-                    float[] column = new float[channels * filterH * filterW];
-                    for (int c = 0; c < channels; c++) {
 
+                    // 单列的索引（避免在内部循环中重复计算）
+                    int outputRow = (n * outHeight + h) * outWidth + w;
+
+                    // 对于每个颜色通道
+                    for (int c = 0; c < channels; c++) {
+                        // 对于卷积核的每个位置
                         for (int fh = 0; fh < filterH; fh++) {
                             for (int fw = 0; fw < filterW; fw++) {
+
+                                // 计算在输入图像中对应的行列
                                 int imRow = h * stride + fh - pad;
                                 int imCol = w * stride + fw - pad;
                                 int colIndex = (c * filterH + fh) * filterW + fw;
+
+                                // 判断是否在输入图像的边界之内，否则填充0
                                 if (imRow >= 0 && imRow < height && imCol >= 0 && imCol < width) {
-                                    column[colIndex] = input[n][c][imRow][imCol];
+                                    output[outputRow][colIndex] = input[n][c][imRow][imCol];
                                 } else {
-                                    column[colIndex] = 0; // Apply padding
+                                    output[outputRow][colIndex] = 0; // Apply padding
                                 }
                             }
                         }
-
                     }
-                    int outputRow = (n * outHeight + h) * outWidth + w;
-                    output[outputRow] = column;
                 }
             }
         }
-
         return output;
     }
 
-    public static void main(String[] args) {
-        int numSamples = 2;
-        int channels = 2;
-        int height = 4;
-        int width = 4;
-
-        // Initialize a sample 4D input array
-        float[][][][] input = new float[numSamples][channels][height][width];
-        for (int n = 0; n < numSamples; n++) {
-            for (int c = 0; c < channels; c++) {
-                for (int h = 0; h < height; h++) {
-                    for (int w = 0; w < width; w++) {
-                        input[n][c][h][w] = h * width + w + 1;
-                    }
-                }
-            }
-        }
-
-        // Parameters for the im2col operation
-        int filterH = 2;
-        int filterW = 2;
-        int stride = 1;
-        int pad = 0;
-
-        // Execute im2col operation
-        float[][] result = im2col(input, filterH, filterW, stride, pad);
-
-        // Print the result
-        for (float[] row : result) {
-            for (float val : row) {
-                System.out.printf("%4.0f", val);
-            }
-            System.out.println();
-        }
-    }
 }
 
