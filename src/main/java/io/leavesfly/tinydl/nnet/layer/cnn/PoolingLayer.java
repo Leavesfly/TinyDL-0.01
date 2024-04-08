@@ -4,11 +4,14 @@ import io.leavesfly.tinydl.func.Variable;
 import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.Layer;
-import io.leavesfly.tinydl.nnet.Parameter;
+import io.leavesfly.tinydl.utils.Util;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * 池化层
+ */
 public class PoolingLayer extends Layer {
 
 
@@ -25,6 +28,8 @@ public class PoolingLayer extends Layer {
     private NdArray colInput;
 
     private NdArray argMax;
+
+    private NdArray input;
 
 
     public PoolingLayer(String _name, Shape inputShape, int _poolHeight, int _poolWidth, int _stride, int _pad) {
@@ -70,7 +75,7 @@ public class PoolingLayer extends Layer {
     public NdArray forward(NdArray... inputs) {
 
         //实现前向传播
-        NdArray input = inputs[0];
+        input = inputs[0];
         int num = input.shape.dimension[0];
         int channel = input.shape.dimension[1];
 
@@ -90,18 +95,27 @@ public class PoolingLayer extends Layer {
     public List<NdArray> backward(NdArray yGrad) {
 
         //实现后向传播
-        int size = yGrad.shape.size();
-        NdArray yGradNdArray = yGrad.transpose(0, 2, 3, 1);
+        yGrad = yGrad.transpose(0, 2, 3, 1);
+
         int poolSize = poolHeight * poolWidth;
 
+        int size = yGrad.shape.size();
         NdArray dMax = NdArray.zeros(new Shape(size, poolSize));
 
-        //todo
+        // dmax[np.arange(self.arg_max.size), self.arg_max.flatten()] = dout.flatten()
+        NdArray flatten = yGrad.flatten();
+        int[] colSlices = Util.toInt(flatten.buffer);
 
+        dMax.setItem(Util.getSeq(argMax.shape.size()), colSlices, flatten.buffer);
 
-        NdArray inputXGrad = null;
+        dMax = dMax.reshape(new Shape(yGrad.shape.dimension[0], yGrad.shape.dimension[1], yGrad.shape.dimension[2]
+                , yGrad.shape.dimension[3], poolSize));
 
-        return Arrays.asList(inputXGrad);
+        int dMaxSize = dMax.shape.dimension[0] * dMax.shape.dimension[1] * dMax.shape.dimension[2];
+        NdArray dCol = dMax.reshape(new Shape(dMaxSize, dMax.shape.size() / dMaxSize));
+
+        float[][][][] data = Col2ImUtil.col2im(dCol.getMatrix(), input.shape.dimension, poolHeight, poolWidth, stride, pad);
+        NdArray inputXGrad = new NdArray(data);
+        return Collections.singletonList(inputXGrad);
     }
-
 }

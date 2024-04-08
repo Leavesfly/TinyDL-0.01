@@ -947,6 +947,10 @@ public class NdArray {
         }
 
         if (_rowSlices != null && _colSlices != null) {
+            if (_rowSlices.length != _colSlices.length) {
+                throw new RuntimeException("_rowSlices.length != _colSlices.length !");
+            }
+
             NdArray ndArray = new NdArray(new Shape(1, _colSlices.length));
             for (int i = 0; i < _colSlices.length; i++) {
                 ndArray.buffer[i] = buffer[_rowSlices[i] * shape.getColumn() + _colSlices[i]];
@@ -964,10 +968,38 @@ public class NdArray {
         NdArray ndArray = new NdArray(new Shape(_rowSlices.length, _colSlices.length));
         for (int i = 0; i < _rowSlices.length; i++) {
             for (int j = 0; j < _colSlices.length; j++) {
-                ndArray.buffer[i * ndArray.getShape().getColumn() + j] = buffer[_rowSlices[i] * shape.getColumn() + _colSlices[j]];
+                ndArray.buffer[i * ndArray.getShape().getColumn() + j]
+                        = buffer[_rowSlices[i] * shape.getColumn() + _colSlices[j]];
             }
         }
         return ndArray;
+    }
+
+    /**
+     * 设置矩阵的一部分
+     *
+     * @param _rowSlices
+     * @param _colSlices
+     * @return
+     */
+    public NdArray setItem(int[] _rowSlices, int[] _colSlices, float[] data) {
+
+        if (!shape.isMatrix()) {
+            throw new RuntimeException("not matrix !");
+        }
+
+        if (_rowSlices != null && _colSlices != null) {
+            if (_rowSlices.length != _colSlices.length) {
+                throw new RuntimeException("_rowSlices.length != _colSlices.length !");
+            }
+
+            for (int i = 0; i < _colSlices.length; i++) {
+                buffer[_rowSlices[i] * shape.getColumn() + _colSlices[i]] = data[i];
+            }
+            return this;
+        }
+
+        throw new RuntimeException("not impl !");
     }
 
     /**

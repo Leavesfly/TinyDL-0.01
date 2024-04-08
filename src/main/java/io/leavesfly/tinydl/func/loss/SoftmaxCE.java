@@ -25,8 +25,12 @@ public class SoftmaxCE extends Function {
         max = max.add(predict.sub(max2PredictShape).exp().sumTo(new Shape(row, 1)).log());
 
         int[] colSlices = Util.toInt(labelY.transpose().getMatrix()[0]);
-        float sum = predict.sub(max.broadcastTo(predict.getShape())).getItem(
-                Util.getSeq(row), colSlices).sum().getNumber().floatValue();
+
+        predict = predict.sub(max.broadcastTo(predict.getShape()));
+
+        predict = predict.getItem(Util.getSeq(row), colSlices);
+
+        float sum = predict.sum().getNumber().floatValue();
         return new NdArray(-sum / (float) row);
     }
 

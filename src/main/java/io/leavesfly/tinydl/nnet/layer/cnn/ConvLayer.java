@@ -115,15 +115,14 @@ public class ConvLayer extends Layer {
         int size = yGrad.shape.size();
         NdArray yGradNdArray = yGrad.transpose(0, 2, 3, 1).reshape(new Shape(size / filterNum, filterNum));
 
-
         NdArray filterParamGrad = colInput.dot(yGradNdArray);
         filterParamGrad = filterParamGrad.transpose(1, 0).reshape(new Shape(filterNum, inputShape.dimension[1], filterHeight, filterWidth));
 
         NdArray inputXGrad = yGradNdArray.dot(colInputW);
 
         float[][][][] data = Col2ImUtil.col2im(inputXGrad.getMatrix(), inputShape.dimension, filterHeight, filterWidth, stride, pad);
-
         inputXGrad = new NdArray(data);
+
         return Arrays.asList(inputXGrad, filterParamGrad);
     }
 
