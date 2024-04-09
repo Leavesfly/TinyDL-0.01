@@ -22,7 +22,7 @@ public class SoftMaxLayer extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         return new SoftMax().call(inputs[0]);
     }
 

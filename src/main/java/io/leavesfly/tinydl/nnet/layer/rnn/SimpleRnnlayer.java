@@ -39,10 +39,10 @@ public class SimpleRnnlayer extends RnnLayer {
     @Override
     public void init() {
 
-        int inputSize = xInputShape.getColumn();
+        int inputSize = inputShape.getColumn();
 
         NdArray initWeight = NdArray.likeRandomN(new Shape(inputSize, hiddeSize))
-                .mulNumber(Math.sqrt((double) 1 / inputSize));
+                .mulNum(Math.sqrt((double) 1 / inputSize));
         x2h = new Parameter(initWeight);
         x2h.setName("x2h");
         addParam(x2h.getName(), x2h);
@@ -53,7 +53,7 @@ public class SimpleRnnlayer extends RnnLayer {
 
 
         initWeight = NdArray.likeRandomN(new Shape(hiddeSize, hiddeSize))
-                .mulNumber(Math.sqrt((double) 1 / hiddeSize));
+                .mulNum(Math.sqrt((double) 1 / hiddeSize));
         h2h = new Parameter(initWeight);
         h2h.setName("h2h");
         addParam(h2h.getName(), h2h);
@@ -61,7 +61,7 @@ public class SimpleRnnlayer extends RnnLayer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable x = inputs[0];
         if (Objects.isNull(state)) {
             state = x.linear(x2h, b).tanh();
@@ -81,8 +81,4 @@ public class SimpleRnnlayer extends RnnLayer {
         return null;
     }
 
-    @Override
-    public int requireInputNum() {
-        return 0;
-    }
 }

@@ -21,7 +21,7 @@ public class Model implements Serializable {
 
     private Block block;
 
-    public Variable tmpPredict;
+    public transient Variable tmpPredict;
 
     public Model(String _name, Block _block) {
         name = _name;
@@ -29,18 +29,17 @@ public class Model implements Serializable {
     }
 
     public void plot() {
-        Shape xInputShape = block.getXInputShape();
+        Shape xInputShape = block.getInputShape();
         if (xInputShape != null) {
-            Shape shape = block.getXInputShape();
-            tmpPredict = block.forward(new Variable(NdArray.ones(shape)));
+            Shape shape = block.getInputShape();
+            tmpPredict = block.layerForward(new Variable(NdArray.ones(shape)));
         }
         System.out.println(Uml.getDotGraph(tmpPredict));
     }
 
     public void save(File modelFile) {
 
-        try (FileOutputStream fileOut = new FileOutputStream(modelFile);
-             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+        try (FileOutputStream fileOut = new FileOutputStream(modelFile); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             out.writeObject(this);
         } catch (Exception e) {
             throw new RuntimeException("Model save error!");
@@ -48,8 +47,7 @@ public class Model implements Serializable {
     }
 
     public static Model load(File modelFile) {
-        try (FileInputStream fileIn = new FileInputStream(modelFile);
-             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+        try (FileInputStream fileIn = new FileInputStream(modelFile); ObjectInputStream in = new ObjectInputStream(fileIn)) {
             return (Model) in.readObject();
         } catch (Exception e) {
             throw new RuntimeException("model load error!");
@@ -62,7 +60,7 @@ public class Model implements Serializable {
 
     public Variable forward(Variable... inputs) {
 
-        return block.forward(inputs);
+        return block.layerForward(inputs);
     }
 
     public void clearGrads() {

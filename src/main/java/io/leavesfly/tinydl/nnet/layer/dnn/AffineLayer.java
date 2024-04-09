@@ -6,20 +6,19 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.Layer;
 import io.leavesfly.tinydl.nnet.Parameter;
 
-import java.util.List;
 
 /**
- * 全连接层与LinearLayer 基本一样
+ * 全连接层与LinearLayer基本一样
  */
-public class FCLayer extends Layer {
+public class AffineLayer extends Layer {
     private Parameter wParam;
     private Parameter bParam;
     private boolean needBias;
 
-    public FCLayer(String _name, Shape inputXShape, int hiddenCol, boolean _needBias) {
-        super(_name, inputXShape, new Shape(inputXShape.getColumn(), hiddenCol));
+    public AffineLayer(String _name, Shape _inputShape, int hiddenCol, boolean _needBias) {
+        super(_name, _inputShape, new Shape(_inputShape.getColumn(), hiddenCol));
         needBias = _needBias;
-
+        //初始化
         init();
     }
 
@@ -28,15 +27,15 @@ public class FCLayer extends Layer {
 
         if (!alreadyInit) {
             NdArray initWeight = NdArray.likeRandomN(
-                            new Shape(xInputShape.getRow(), yOutputShape.getColumn()))
-                    .mulNumber(Math.sqrt((double) 1 / xInputShape.getRow()));
+                            new Shape(inputShape.getRow(), outputShape.getColumn()))
+                    .mulNum(Math.sqrt((double) 1 / inputShape.getRow()));
+
             wParam = new Parameter(initWeight);
             wParam.setName("w");
             addParam(wParam.getName(), wParam);
 
             if (needBias) {
-
-                bParam = new Parameter(NdArray.zeros(new Shape(1, yOutputShape.getColumn())));
+                bParam = new Parameter(NdArray.zeros(new Shape(1, outputShape.getColumn())));
                 bParam.setName("b");
                 addParam(bParam.getName(), bParam);
             }
@@ -45,23 +44,9 @@ public class FCLayer extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable x = inputs[0];
         return x.linear(wParam, bParam);
     }
 
-    @Override
-    public NdArray forward(NdArray... inputs) {
-        return null;
-    }
-
-    @Override
-    public List<NdArray> backward(NdArray yGrad) {
-        return null;
-    }
-
-    @Override
-    public int requireInputNum() {
-        return 0;
-    }
 }

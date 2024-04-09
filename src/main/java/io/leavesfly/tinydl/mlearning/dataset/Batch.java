@@ -2,6 +2,7 @@ package io.leavesfly.tinydl.mlearning.dataset;
 
 import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.func.Variable;
+import io.leavesfly.tinydl.ndarr.NdArrayUtil;
 
 /**
  * 一批数据
@@ -38,11 +39,11 @@ public class Batch {
     }
 
     public Variable toVariableX() {
-        return new Variable(NdArray.merge(0, x));
+        return new Variable(NdArrayUtil.merge(0, x));
     }
 
     public Variable toVariableY() {
-        return new Variable(NdArray.merge(0, y));
+        return new Variable(NdArrayUtil.merge(0, y));
     }
 
     public Pair<NdArray, NdArray> next() {

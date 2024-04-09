@@ -14,7 +14,7 @@ public class Embedding extends Layer {
 
     public Embedding(String _name, int vocabSize, int hidden_size) {
         super(_name, null, null);
-        NdArray initWeight = NdArray.likeRandomN(new Shape(vocabSize, hidden_size)).mulNumber(0.01f);
+        NdArray initWeight = NdArray.likeRandomN(new Shape(vocabSize, hidden_size)).mulNum(0.01f);
         wIn = new Parameter(initWeight);
         wIn.setName("wIn");
         addParam(wIn.getName(), wIn);
@@ -26,7 +26,7 @@ public class Embedding extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable input = inputs[0];
         int[] slices = Util.toInt(input.transpose().getValue().getMatrix()[0]);
         return wIn.getItem(slices, null);

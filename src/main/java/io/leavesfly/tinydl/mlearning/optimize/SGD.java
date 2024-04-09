@@ -4,7 +4,7 @@ import io.leavesfly.tinydl.mlearning.Model;
 import io.leavesfly.tinydl.nnet.Parameter;
 
 /**
- * 随机梯度
+ * 随机梯度下降
  */
 public class SGD extends Optimizer {
 
@@ -17,6 +17,6 @@ public class SGD extends Optimizer {
 
     @Override
     public void updateOne(Parameter parameter) {
-        parameter.setValue(parameter.getValue().sub(parameter.getGrad().mulNumber(lr)));
+        parameter.setValue(parameter.getValue().sub(parameter.getGrad().mulNum(lr)));
     }
 }

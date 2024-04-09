@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * 批量归一化
  */
-public class BatchNormal extends Layer {
+public class BatchNorm extends Layer {
 
     private Parameter gammaParam;
     private Parameter betaParam;
@@ -30,11 +30,11 @@ public class BatchNormal extends Layer {
 
     private float momentum = 0.9f;
 
-    public BatchNormal(String _name, Shape _xInputShape, Shape _yOutputShape) {
+    public BatchNorm(String _name, Shape _xInputShape, Shape _yOutputShape) {
         super(_name, _xInputShape, _yOutputShape);
     }
 
-    public BatchNormal(String _name, int xInputRow) {
+    public BatchNorm(String _name, int xInputRow) {
         super(_name, new Shape(-1, xInputRow), new Shape(-1, xInputRow));
 
         NdArray gammaNdArray = NdArray.ones(new Shape(1, xInputRow));
@@ -52,6 +52,11 @@ public class BatchNormal extends Layer {
     @Override
     public void init() {
 
+    }
+
+    @Override
+    public Variable layerForward(Variable... inputs) {
+        return call(inputs[0], gammaParam, betaParam);
     }
 
     @Override
@@ -75,8 +80,8 @@ public class BatchNormal extends Layer {
             this.xn = xn;
             this.std = std;
 
-            this.runningMean = runningMean.mulNumber(momentum).add(mu.mulNumber(1f - momentum));
-            this.runningVar = runningVar.mulNumber(momentum).add(var.mulNumber(1f - momentum));
+            this.runningMean = runningMean.mulNum(momentum).add(mu.mulNum(1f - momentum));
+            this.runningVar = runningVar.mulNum(momentum).add(var.mulNum(1f - momentum));
         } else {
             NdArray xc = input.sub(runningMean.broadcastTo(input.getShape()));
             xn = xc.div(runningVar.add(NdArray.like(runningVar.getShape(), 10e-7)).sqrt().broadcastTo(xc.getShape()));
@@ -93,22 +98,12 @@ public class BatchNormal extends Layer {
         NdArray dxn = gammaParam.getValue().broadcastTo(xn.getShape()).mul(yGrad);
         NdArray dxc = dxn.div(std.broadcastTo(dxn.getShape()));
         NdArray dstd = dxc.mul(xc).div(std.sqrt().broadcastTo(xc.getShape())).sum(0).neg();
-        NdArray dvar = dstd.mulNumber(0.5f).div(std.broadcastTo(dstd.getShape()));
-        dxc = dxc.add(xc.mul(dvar).mulNumber(2.0 / batch_size));
+        NdArray dvar = dstd.mulNum(0.5f).div(std.broadcastTo(dstd.getShape()));
+        dxc = dxc.add(xc.mul(dvar).mulNum(2.0 / batch_size));
         NdArray dmu = dxc.sum(0);
-        NdArray dx = dxc.sub(dmu.divNumber(batch_size));
+        NdArray dx = dxc.sub(dmu.divNum(batch_size));
 
         return Arrays.asList(dx, dgamma, dbeta);
     }
 
-    @Override
-    public int requireInputNum() {
-        return 3;
-    }
-
-
-    @Override
-    public Variable forward(Variable... inputs) {
-        return this.call(inputs[0], gammaParam, betaParam);
-    }
 }

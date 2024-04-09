@@ -6,21 +6,34 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * 表示矩阵或向量的形状
+ * 表示矩阵或向量等N维数组的形状
  */
 
 public class Shape {
 
     public int[] dimension;
 
+    public int[] multipliers;
+
     public Shape(int row, int column) {
-        dimension = new int[2];
-        dimension[0] = row;
-        dimension[1] = column;
+        int[] _dimension = new int[2];
+        _dimension[0] = row;
+        _dimension[1] = column;
+        init(_dimension);
     }
 
     public Shape(int... _dimension) {
-        dimension = _dimension;
+        init(_dimension);
+    }
+
+    private void init(int... _dimension) {
+        dimension = _dimension.clone();
+        multipliers = new int[_dimension.length];
+        int accumulator = 1;
+        for (int i = _dimension.length - 1; i >= 0; i--) {
+            multipliers[i] = accumulator;
+            accumulator *= _dimension[i];
+        }
     }
 
     public int getRow() {
@@ -30,6 +43,37 @@ public class Shape {
     public int getColumn() {
         return dimension[1];
     }
+
+    /**
+     * 是否是矩阵
+     *
+     * @return
+     */
+    public boolean isMatrix() {
+        return dimension.length == 2;
+    }
+
+    /**
+     * 对应形状的N维数组的size
+     *
+     * @return
+     */
+    public int size() {
+        int size = 1;
+        for (int dim : dimension) {
+            size *= dim;
+        }
+        return size;
+    }
+
+    public int getIndex(int... indices) {
+        int index = 0;
+        for (int i = 0; i < indices.length; i++) {
+            index += indices[i] * multipliers[i];
+        }
+        return index;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -52,6 +96,6 @@ public class Shape {
             stringBuilder.append(i).append(",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        return "Shape[" + stringBuilder + ']';
+        return "[" + stringBuilder + ']';
     }
 }

@@ -6,47 +6,60 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.Layer;
 import io.leavesfly.tinydl.nnet.Parameter;
 
+import java.util.Arrays;
 import java.util.List;
 
-//todo 待完善
 public class ConvLayer extends Layer {
 
-    private Parameter wParameter;
+    private Parameter filterParam;
 
-    private int winWidth, winHeight;
-    private int strideX, strideY;
-    private int paddingX, paddingY;
-    private int filterCount;
+    //@param stride  步长。
+    //@param pad     填充。
+    private int stride = 1;
+    private int pad = 0;
 
+    private int filterNum;
+    private int filterHeight;
+    private int filterWidth;
+    private int outHeight;
+    private int outWidth;
 
-    public ConvLayer(String _name, int winWidth, int winHeight, int strideX, int strideY, int filterCount,
-                     PaddingType type, Shape _xInputShape, Shape _yOutputShape) {
+    private NdArray colInput;
 
-        super(_name, _xInputShape, _yOutputShape);
+    private NdArray colInputW;
 
-        if (type == PaddingType.VALID) {
-            this.winWidth = winWidth;
-            this.winHeight = winHeight;
-            this.strideX = strideX;
-            this.strideY = strideY;
-            this.filterCount = filterCount;
-            this.paddingX = 0;
-            this.paddingY = 0;
-        } else {
-            this.winWidth = winWidth;
-            this.winHeight = winHeight;
-            this.strideX = strideX;
-            this.strideY = strideY;
-            this.filterCount = filterCount;
-            if ((winWidth - 1) % 2 != 0) {
-                throw new RuntimeException("Bad sizes for convolution!");
-            }
-            this.paddingX = (winWidth - 1) / 2;
-            if ((winHeight - 1) % 2 != 0) {
-                throw new RuntimeException("Bad sizes for convolution!");
-            }
-            this.paddingY = (winHeight - 1) / 2;
+    /**
+     * @param _name
+     * @param inputShape
+     * @param _filterNum
+     * @param _filterHeight
+     * @param _filterWidth
+     * @param _stride
+     * @param _pad
+     */
+    public ConvLayer(String _name, Shape inputShape, int _filterNum, int _filterHeight, int _filterWidth, int _stride, int _pad) {
+
+        super(_name, inputShape);
+
+        if (inputShape.dimension.length != 4) {
+            throw new RuntimeException("ConvLayer inputShape error!");
         }
+
+        filterNum = _filterNum;
+        filterHeight = _filterHeight;
+        filterWidth = _filterWidth;
+        stride = _stride;
+        pad = _pad;
+
+        int num = inputShape.dimension[0];
+//        int channel = inputShape.dimension[1];
+        int inHeight = inputShape.dimension[2];
+        int inWidth = inputShape.dimension[3];
+
+        outHeight = (inHeight + 2 * pad - filterHeight) / stride + 1;
+        outWidth = (inWidth + 2 * pad - filterWidth) / stride + 1;
+
+        outputShape = new Shape(num, filterNum, outHeight, outWidth);
 
         init();
     }
@@ -54,42 +67,63 @@ public class ConvLayer extends Layer {
     @Override
     public void init() {
 
+        if (!alreadyInit) {
+            //初始化wParam
+            int channel = inputShape.dimension[1];
+            Shape wParamShape = new Shape(filterNum, channel, filterHeight, filterWidth);
+
+            filterParam = new Parameter(NdArray.likeRandomN(wParamShape));
+            filterParam.setName("filterParam");
+            addParam(filterParam.getName(), filterParam);
+
+            alreadyInit = true;
+        }
     }
 
-    public ConvLayer(String name, int winSize, int stride, int filterCount, PaddingType type,
-                     Shape _xInputShape, Shape _yOutputShape) {
-        this(name, winSize, winSize, stride, stride, filterCount, type, _xInputShape, _yOutputShape);
+    @Override
+    public Variable layerForward(Variable... inputs) {
+        Variable input = inputs[0];
+        return this.call(input, filterParam);
     }
-
-    public ConvLayer(String name, int winSize, int filterCount, PaddingType type, Shape _xInputShape,
-                     Shape _yOutputShape) {
-        this(name, winSize, 1, filterCount, type, _xInputShape, _yOutputShape);
-    }
-
 
     @Override
     public NdArray forward(NdArray... inputs) {
-        return null;
+
+        //实现前向传播
+
+        NdArray input = inputs[0];
+        int num = input.shape.dimension[0];
+
+        float[][][][] data = input.get4dArray();
+        float[][] colInput2dArray = Im2ColUtil.im2col(data, filterHeight, filterWidth, stride, pad);
+        colInput = new NdArray(colInput2dArray);
+
+        NdArray filterNdArray = filterParam.getValue();
+        colInputW = filterNdArray.reshape(new Shape(filterNum, filterNdArray.shape.size() / filterNum));
+
+        NdArray out = colInput.dot(colInputW);
+        out = out.reshape(new Shape(num, outHeight, outWidth, out.shape.size() / (num * outHeight * outWidth)));
+        out = out.transpose(0, 3, 1, 2);
+
+        return out;
     }
 
     @Override
     public List<NdArray> backward(NdArray yGrad) {
 
-        return null;
+        //实现后向传播
+        int size = yGrad.shape.size();
+        NdArray yGradNdArray = yGrad.transpose(0, 2, 3, 1).reshape(new Shape(size / filterNum, filterNum));
+
+        NdArray filterParamGrad = colInput.dot(yGradNdArray);
+        filterParamGrad = filterParamGrad.transpose(1, 0).reshape(new Shape(filterNum, inputShape.dimension[1], filterHeight, filterWidth));
+
+        NdArray inputXGrad = yGradNdArray.dot(colInputW);
+
+        float[][][][] data = Col2ImUtil.col2im(inputXGrad.getMatrix(), inputShape.dimension, filterHeight, filterWidth, stride, pad);
+        inputXGrad = new NdArray(data);
+
+        return Arrays.asList(inputXGrad, filterParamGrad);
     }
 
-    @Override
-    public int requireInputNum() {
-        return 0;
-    }
-
-
-    @Override
-    public Variable forward(Variable... inputs) {
-        return this.call(inputs[0], wParameter);
-    }
-
-    public enum PaddingType {
-        VALID, SAME;
-    }
 }

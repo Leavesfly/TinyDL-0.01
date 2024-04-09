@@ -22,11 +22,14 @@ public class Uml {
     private static void getDotNode(Variable variableNode, StringBuilder dotGraph) {
 
         if (!Objects.isNull(variableNode)) {
+
             String dotNode = getDotVar(variableNode);
             dotGraph.append(dotNode);
 
             Function functionNode = variableNode.getCreator();
+
             if (!Objects.isNull(functionNode)) {
+
                 dotGraph.append(getDotFunc(functionNode));
 
                 Variable[] inputs = functionNode.getInputs();

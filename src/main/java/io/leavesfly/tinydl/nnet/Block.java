@@ -1,6 +1,7 @@
 package io.leavesfly.tinydl.nnet;
 
 import io.leavesfly.tinydl.func.Variable;
+import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.ndarr.Shape;
 
 import java.util.ArrayList;
@@ -11,25 +12,25 @@ import java.util.Map;
 /**
  * 表示由层组合起来的更大的神经网络的块
  */
-public abstract class Block implements LayerAble {
-
-    protected String name;
-
-    protected Map<String, Parameter> params;
-
-    protected Shape xInputShape;
-
-    protected Shape yOutputShape;
+public abstract class Block extends LayerAble {
 
     protected List<LayerAble> layers;
 
-    public Block(String _name, Shape _xInputShape, Shape _yOutputShape) {
+    public Block(String _name, Shape _inputShape) {
         name = _name;
         this.params = new HashMap<>();
         layers = new ArrayList<>();
-        xInputShape = _xInputShape;
-        yOutputShape = _yOutputShape;
+        inputShape = _inputShape;
     }
+
+    public Block(String _name, Shape _inputShape, Shape _outputShape) {
+        name = _name;
+        this.params = new HashMap<>();
+        layers = new ArrayList<>();
+        inputShape = _inputShape;
+        outputShape = _outputShape;
+    }
+
 
     @Override
     public void clearGrads() {
@@ -41,19 +42,18 @@ public abstract class Block implements LayerAble {
         }
     }
 
-    public void addLayer(Layer layer) {
-        layer.init();
-        getLayers().add(layer);
+    public void addLayer(LayerAble layerAble) {
+        layerAble.init();
+        layers.add(layerAble);
     }
 
 
-
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable x = inputs[0];
-        Variable y = layers.get(0).forward(x);
+        Variable y = layers.get(0).layerForward(x);
         for (int i = 1; i < layers.size(); i++) {
-            y = layers.get(i).forward(y);
+            y = layers.get(i).layerForward(y);
         }
         return y;
     }
@@ -81,34 +81,10 @@ public abstract class Block implements LayerAble {
         }
     }
 
-    @Override
-    public Shape getXInputShape() {
-        return xInputShape;
-    }
 
-    @Override
-    public Shape getYOutputShape() {
-        return yOutputShape;
-    }
+//    public List<LayerAble> getLayers() {
+//        return layers;
+//    }
 
-    public String getName() {
-        return name;
-    }
-
-    public Map<String, Parameter> getParams() {
-        return params;
-    }
-
-    public void addParam(String paramName, Parameter value) {
-        getParams().put(name + "." + paramName, value);
-    }
-
-    public Parameter getParamBy(String paramName) {
-        return getParams().get(name + "." + paramName);
-    }
-
-    public List<LayerAble> getLayers() {
-        return layers;
-    }
 
 }

@@ -11,6 +11,6 @@ public class Classify {
 
         NdArray argMax = predictNdArray.argMax(1);
         NdArray sames = argMax.eq(labelNdArray);
-        return sames.sum().divNumber((float) size).getNumber().floatValue();
+        return sames.sum().divNum((float) size).getNumber().floatValue();
     }
 }

@@ -18,10 +18,10 @@ public class SimpleRnnBlock extends Block {
 
         rnnLayer = new SimpleRnnlayer("rnn", new Shape(-1, inputSize), new Shape(-1, hiddenSize));
 
-        getLayers().add(rnnLayer);
+        addLayer(rnnLayer);
 
         linearLayer = new LinearLayer("line", hiddenSize, outputSize, true);
-        getLayers().add(linearLayer);
+        addLayer(linearLayer);
 
     }
 
@@ -31,9 +31,9 @@ public class SimpleRnnBlock extends Block {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
 
-        Variable state = rnnLayer.forward(inputs);
-        return linearLayer.forward(state);
+        Variable state = rnnLayer.layerForward(inputs);
+        return linearLayer.layerForward(state);
     }
 }

@@ -22,11 +22,11 @@ public class Seq2SeqEncoder extends Encoder {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable input = inputs[0];
-        Variable y = embedding.forward(input);
-        y = lstMlayer.forward(y);
-        y = dropout.forward(y);
+        Variable y = embedding.layerForward(input);
+        y = lstMlayer.layerForward(y);
+        y = dropout.layerForward(y);
         return y;
     }
 }

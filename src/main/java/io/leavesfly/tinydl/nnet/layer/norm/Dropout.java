@@ -9,6 +9,9 @@ import io.leavesfly.tinydl.nnet.Layer;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 抑制过拟合，采用的随机丢弃一些参数权重的方法
+ */
 public class Dropout extends Layer {
     private float ration;
     private NdArray mask;
@@ -30,7 +33,7 @@ public class Dropout extends Layer {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
 
         return this.call(inputs[0]);
     }
@@ -42,7 +45,7 @@ public class Dropout extends Layer {
             mask = NdArray.likeRandom(0, 1, x.getShape()).gt(x.like(ration));
             return x.mul(mask);
         }
-        return x.mulNumber(1.0 - ration);
+        return x.mulNum(1.0 - ration);
     }
 
     @Override

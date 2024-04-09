@@ -21,12 +21,12 @@ public class Transformer extends Block {
 
 
     public Transformer(String _name, Encoder encoder, Decoder decoder) {
-        super(_name, encoder.getXInputShape(), decoder.getYOutputShape());
+        super(_name, encoder.getInputShape(), decoder.getOutputShape());
 
         this.encoder = encoder;
         this.decoder = decoder;
-        getLayers().add(encoder);
-        getLayers().add(decoder);
+        addLayer(encoder);
+        addLayer(decoder);
 
     }
 
@@ -36,12 +36,12 @@ public class Transformer extends Block {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
+    public Variable layerForward(Variable... inputs) {
         Variable encoderInput = inputs[0];
         Variable decoderInput = inputs[1];
 
-        Variable state = encoder.forward(encoderInput);
+        Variable state = encoder.layerForward(encoderInput);
         decoder.initState(state.getValue());
-        return decoder.forward(decoderInput, state);
+        return decoder.layerForward(decoderInput, state);
     }
 }

@@ -2,6 +2,7 @@ package io.leavesfly.tinydl.func.loss;
 
 import io.leavesfly.tinydl.func.Function;
 import io.leavesfly.tinydl.ndarr.NdArray;
+import io.leavesfly.tinydl.ndarr.NdArrayUtil;
 import io.leavesfly.tinydl.utils.Util;
 
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public class SigmoidCE extends Function {
         }
         NdArray other = sigmoid.like(1f).sub(sigmoid);
 
-        float loss = crossEntropyError(NdArray.merge(1, other, sigmoid), labelY);
+        float loss = crossEntropyError(NdArrayUtil.merge(1, other, sigmoid), labelY);
         return new NdArray(loss);
     }
 
@@ -38,7 +39,7 @@ public class SigmoidCE extends Function {
         NdArray label = inputs[1].getValue();
         int batchSize = predict.getShape().getRow();
 
-        NdArray xGrad = sigmoid.sub(label).mul(yGrad.broadcastTo(label.getShape())).divNumber(batchSize);
+        NdArray xGrad = sigmoid.sub(label).mul(yGrad.broadcastTo(label.getShape())).divNum(batchSize);
 
         return Arrays.asList(xGrad, label.like(1));
     }

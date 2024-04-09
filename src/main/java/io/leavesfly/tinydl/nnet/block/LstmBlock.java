@@ -14,10 +14,10 @@ public class LstmBlock extends Block {
         super(name, new Shape(-1, inputSize), new Shape(-1, outputSize));
 
         lstmLayer = new LstmLayer("lstmLayer", new Shape(-1, inputSize), new Shape(inputSize, hiddenSize));
-        getLayers().add(lstmLayer);
+        addLayer(lstmLayer);
 
         linearLayer = new LinearLayer("linearLayer", hiddenSize, outputSize, true);
-        getLayers().add(linearLayer);
+        addLayer(linearLayer);
     }
 
     public void resetState() {
@@ -30,8 +30,8 @@ public class LstmBlock extends Block {
     }
 
     @Override
-    public Variable forward(Variable... inputs) {
-        Variable state = lstmLayer.forward(inputs);
-        return linearLayer.forward(state);
+    public Variable layerForward(Variable... inputs) {
+        Variable state = lstmLayer.layerForward(inputs);
+        return linearLayer.layerForward(state);
     }
 }

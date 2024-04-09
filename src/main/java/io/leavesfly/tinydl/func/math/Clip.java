@@ -26,7 +26,7 @@ public class Clip extends Function {
     @Override
     public List<NdArray> backward(NdArray yGrad) {
         NdArray x = inputs[0].getValue();
-        if (x.isLarger(NdArray.like(x.getShape(), min)) && !x.isLarger(NdArray.like(x.getShape(), max))) {
+        if (x.isLar(NdArray.like(x.getShape(), min)) && !x.isLar(NdArray.like(x.getShape(), max))) {
             return Collections.singletonList(yGrad);
         }
         return Collections.singletonList(yGrad.neg());
