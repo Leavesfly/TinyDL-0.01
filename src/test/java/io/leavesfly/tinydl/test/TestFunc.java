@@ -5,10 +5,6 @@ import io.leavesfly.tinydl.func.Variable;
 import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.utils.Uml;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class TestFunc {
     public static void main(String[] args) {
         test3();

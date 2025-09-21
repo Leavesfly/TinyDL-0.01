@@ -7,7 +7,6 @@ import io.leavesfly.tinydl.nnet.Parameter;
 import io.leavesfly.tinydl.nnet.RnnLayer;
 import io.leavesfly.tinydl.nnet.layer.activate.SigmoidLayer;
 
-import java.util.List;
 import java.util.Objects;
 
 /**

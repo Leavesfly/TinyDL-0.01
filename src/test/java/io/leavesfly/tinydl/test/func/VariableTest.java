@@ -1,5 +1,6 @@
-package io.leavesfly.tinydl.func;
+package io.leavesfly.tinydl.test.func;
 
+import io.leavesfly.tinydl.func.Variable;
 import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.utils.Config;

@@ -1,14 +1,7 @@
 package io.leavesfly.tinydl.modality.cv;
 
 import io.leavesfly.tinydl.ndarr.Shape;
-import io.leavesfly.tinydl.nnet.Layer;
 import io.leavesfly.tinydl.nnet.block.SequentialBlock;
-import io.leavesfly.tinydl.nnet.layer.activate.ReLuLayer;
-import io.leavesfly.tinydl.nnet.layer.cnn.ConvLayer;
-import io.leavesfly.tinydl.nnet.layer.cnn.PoolingLayer;
-import io.leavesfly.tinydl.nnet.layer.dnn.AffineLayer;
-import io.leavesfly.tinydl.nnet.layer.norm.Dropout;
-import io.leavesfly.tinydl.nnet.layer.norm.FlattenLayer;
 
 /**
  * todo 深度的卷积网络 待完善

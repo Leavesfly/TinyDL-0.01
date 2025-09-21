@@ -161,23 +161,22 @@ graph TB
 理解TinyDL的核心——自动微分机制：
 
 ```java
-import io.leavesfly.tinydl.func.Variable;
-import io.leavesfly.tinydl.ndarr.NdArray;
+
 
 // 创建变量（支持梯度计算）
-Variable x = new Variable(new NdArray(2.0f)).setName("x");
-Variable y = new Variable(new NdArray(3.0f)).setName("y");
+Variable x=new Variable(new NdArray(2.0f)).setName("x");
+        Variable y=new Variable(new NdArray(3.0f)).setName("y");
 
 // 构建计算表达式 z = (x + y) * x = (2 + 3) * 2 = 10
-Variable z = x.add(y).mul(x);
+        Variable z=x.add(y).mul(x);
 
 // 自动微分：计算 dz/dx 和 dz/dy
-z.backward();
+        z.backward();
 
 // 查看梯度结果
-System.out.println("z的值: " + z.getValue().getNumber()); // 输出: 10.0
-System.out.println("x的梯度 dz/dx: " + x.getGrad().getNumber()); // 输出: 5.0 (y + x)
-System.out.println("y的梯度 dz/dy: " + y.getGrad().getNumber()); // 输出: 2.0 (x)
+        System.out.println("z的值: "+z.getValue().getNumber()); // 输出: 10.0
+        System.out.println("x的梯度 dz/dx: "+x.getGrad().getNumber()); // 输出: 5.0 (y + x)
+        System.out.println("y的梯度 dz/dy: "+y.getGrad().getNumber()); // 输出: 2.0 (x)
 ```
 
 #### 2. 神经网络构建
@@ -185,29 +184,27 @@ System.out.println("y的梯度 dz/dy: " + y.getGrad().getNumber()); // 输出: 2
 使用Block构建多层感知机：
 
 ```java
-import io.leavesfly.tinydl.nnet.block.MlpBlock;
-import io.leavesfly.tinydl.mlearning.Model;
-import io.leavesfly.tinydl.ndarr.Shape;
+
 
 // 网络参数设置
-int batchSize = 32;
-int inputSize = 2;   // 输入维度
-int hiddenSize = 10; // 隐藏层大小
-int outputSize = 3;  // 输出类别数
+int batchSize=32;
+        int inputSize=2;   // 输入维度
+        int hiddenSize=10; // 隐藏层大小
+        int outputSize=3;  // 输出类别数
 
 // 创建多层感知机：input -> hidden -> output
-MlpBlock mlpBlock = new MlpBlock("MLP", batchSize, null, 
-                                inputSize, hiddenSize, outputSize);
-Model model = new Model("ClassificationModel", mlpBlock);
+        MlpBlock mlpBlock=new MlpBlock("MLP",batchSize,null,
+        inputSize,hiddenSize,outputSize);
+        Model model=new Model("ClassificationModel",mlpBlock);
 
 // 创建随机输入数据
-Variable input = new Variable(
-    NdArray.likeRandom(-1, 1, new Shape(batchSize, inputSize))
-);
+        Variable input=new Variable(
+        NdArray.likeRandom(-1,1,new Shape(batchSize,inputSize))
+        );
 
 // 前向传播
-Variable output = model.forward(input);
-System.out.println("输出形状: " + output.getValue().getShape()); // [32, 3]
+        Variable output=model.forward(input);
+        System.out.println("输出形状: "+output.getValue().getShape()); // [32, 3]
 ```
 
 #### 3. 完整训练流程

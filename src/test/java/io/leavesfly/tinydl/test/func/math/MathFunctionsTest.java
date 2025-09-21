@@ -1,6 +1,7 @@
-package io.leavesfly.tinydl.func.math;
+package io.leavesfly.tinydl.test.func.math;
 
 import io.leavesfly.tinydl.func.Variable;
+import io.leavesfly.tinydl.func.math.*;
 import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.utils.Config;
 import org.junit.Test;

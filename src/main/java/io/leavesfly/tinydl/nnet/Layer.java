@@ -4,8 +4,6 @@ import io.leavesfly.tinydl.ndarr.Shape;
 
 import java.util.HashMap;
 
-import java.util.Map;
-
 /**
  * 表示神经网络中具体的层，对应数学中的一个函数
  */

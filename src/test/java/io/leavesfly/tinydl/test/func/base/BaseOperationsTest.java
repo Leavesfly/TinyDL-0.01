@@ -1,8 +1,8 @@
-package io.leavesfly.tinydl.func.base;
+package io.leavesfly.tinydl.test.func.base;
 
 import io.leavesfly.tinydl.func.Variable;
+import io.leavesfly.tinydl.func.base.*;
 import io.leavesfly.tinydl.ndarr.NdArray;
-import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.utils.Config;
 import org.junit.Test;
 import org.junit.Before;

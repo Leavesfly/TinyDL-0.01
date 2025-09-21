@@ -1,7 +1,6 @@
 package io.leavesfly.tinydl.nnet;
 
 import io.leavesfly.tinydl.func.Variable;
-import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.ndarr.Shape;
 
 import java.util.ArrayList;

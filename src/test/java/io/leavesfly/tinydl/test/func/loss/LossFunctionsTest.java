@@ -1,6 +1,9 @@
-package io.leavesfly.tinydl.func.loss;
+package io.leavesfly.tinydl.test.func.loss;
 
 import io.leavesfly.tinydl.func.Variable;
+import io.leavesfly.tinydl.func.loss.MeanSE;
+import io.leavesfly.tinydl.func.loss.SigmoidCE;
+import io.leavesfly.tinydl.func.loss.SoftmaxCE;
 import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.utils.Config;
 import org.junit.Test;

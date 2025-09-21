@@ -1,5 +1,6 @@
-package io.leavesfly.tinydl.ndarr;
+package io.leavesfly.tinydl.test.ndarr;
 
+import io.leavesfly.tinydl.ndarr.Shape;
 import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
