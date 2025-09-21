@@ -69,16 +69,28 @@ public class FeedForward extends Layer {
     public Variable layerForward(Variable... inputs) {
         Variable input = inputs[0];
         
+        // 获取输入形状
+        NdArray inputData = input.getValue();
+        int batchSize = inputData.shape.dimension[0];
+        int seqLen = inputData.shape.dimension[1];
+        
+        // 将三维输入重塑为二维以进行矩阵乘法
+        NdArray inputReshaped = inputData.reshape(new Shape(batchSize * seqLen, dModel));
+        Variable reshapedInput = new Variable(inputReshaped);
+        
         // 第一个线性变换
-        Variable hidden = firstLinear.layerForward(input);
+        Variable hidden = firstLinear.layerForward(reshapedInput);
         
         // ReLU激活
         Variable activated = activation.layerForward(hidden);
         
         // 第二个线性变换
-        Variable output = secondLinear.layerForward(activated);
+        Variable output2D = secondLinear.layerForward(activated);
         
-        return output;
+        // 重塑回三维
+        NdArray output3D = output2D.getValue().reshape(new Shape(batchSize, seqLen, dModel));
+        
+        return new Variable(output3D);
     }
     
     @Override

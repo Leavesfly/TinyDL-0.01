@@ -26,6 +26,8 @@ public class Adam extends Optimizer {
         beta1 = _beta1;
         beta2 = _beta2;
         epsilon = _epsilon;
+        ms = new HashMap<>();
+        vs = new HashMap<>();
     }
 
     public Adam(Model target) {
