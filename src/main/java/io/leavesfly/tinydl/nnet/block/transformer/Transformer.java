@@ -1,19 +1,42 @@
 package io.leavesfly.tinydl.nnet.block.transformer;
 
 import io.leavesfly.tinydl.func.Variable;
+import io.leavesfly.tinydl.ndarr.NdArray;
+import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.Block;
 import io.leavesfly.tinydl.nnet.block.seq2seq.Decoder;
 import io.leavesfly.tinydl.nnet.block.seq2seq.Encoder;
 
 
 /**
- * https://aistudio.baidu.com/aistudio/projectdetail/3034732?channelType=0&channel=0
- * <p>
- * 1,Transformer 网络架构 包括 seq2seq的结构
- * 2，encode层包括了 attention层 残差层 正则层以及线性层
- * 3，decode层包括了 attention层 残差层 正则层以及线性层
- * 4，输入输出层需要 embedding
- * //todo
+ * Transformer模型完整实现
+ * 
+ * 这是完整的Transformer架构实现，包含编码器-解码器结构。
+ * 基于论文 "Attention Is All You Need" (Vaswani et al., 2017)
+ * 
+ * 主要特性：
+ * 1. 完整的编码器-解码器架构
+ * 2. 多头自注意力机制
+ * 3. 位置编码
+ * 4. 残差连接和层归一化
+ * 5. 前馈神经网络
+ * 
+ * 使用方法：
+ * ```java
+ * // 创建编码器和解码器
+ * TransformerEncoder encoder = new TransformerEncoder("encoder", 512, 8, 6, 2048, 5000, 0.1);
+ * TransformerDecoder decoder = new TransformerDecoder("decoder", 512, 8, 6, 2048, 5000, 0.1);
+ * 
+ * // 创建完整的Transformer模型
+ * Transformer transformer = new Transformer("transformer", encoder, decoder);
+ * 
+ * // 前向传播
+ * Variable output = transformer.layerForward(encoderInput, decoderInput);
+ * ```
+ * 
+ * 参考链接：
+ * - https://aistudio.baidu.com/aistudio/projectdetail/3034732?channelType=0&channel=0
+ * - https://arxiv.org/abs/1706.03762
  */
 public class Transformer extends Block {
     private Encoder encoder;
@@ -29,6 +52,37 @@ public class Transformer extends Block {
         addLayer(decoder);
 
     }
+    
+    /**
+     * 便捷构造函数：创建标准的Transformer模型
+     * 
+     * @param name 模型名称
+     * @param dModel 模型维度
+     * @param numHeads 注意力头数
+     * @param numLayers 编码器和解码器层数
+     * @param dFF 前馈网络隐藏维度
+     * @param maxSeqLength 最大序列长度
+     * @param dropoutRate dropout比率
+     */
+    public Transformer(String name, int dModel, int numHeads, int numLayers, 
+                      int dFF, int maxSeqLength, double dropoutRate) {
+        this(name, 
+             new TransformerEncoder(name + "_encoder", dModel, numHeads, numLayers, dFF, maxSeqLength, dropoutRate),
+             new TransformerDecoder(name + "_decoder", dModel, numHeads, numLayers, dFF, maxSeqLength, dropoutRate));
+    }
+    
+    /**
+     * 使用默认参数的便捷构造函数
+     * 
+     * @param name 模型名称
+     * @param dModel 模型维度
+     * @param numHeads 注意力头数
+     * @param numLayers 层数
+     * @param maxSeqLength 最大序列长度
+     */
+    public Transformer(String name, int dModel, int numHeads, int numLayers, int maxSeqLength) {
+        this(name, dModel, numHeads, numLayers, dModel * 4, maxSeqLength, 0.1);
+    }
 
     @Override
     public void init() {
@@ -37,11 +91,78 @@ public class Transformer extends Block {
 
     @Override
     public Variable layerForward(Variable... inputs) {
+        if (inputs.length < 2) {
+            throw new IllegalArgumentException("Transformer requires at least 2 inputs: encoder input and decoder input");
+        }
+        
         Variable encoderInput = inputs[0];
         Variable decoderInput = inputs[1];
 
-        Variable state = encoder.layerForward(encoderInput);
-        decoder.initState(state.getValue());
-        return decoder.layerForward(decoderInput, state);
+        // 验证输入维度是否匹配
+        NdArray encInputData = encoderInput.getValue();
+        NdArray decInputData = decoderInput.getValue();
+        
+        if (encInputData.shape.dimension[2] != decInputData.shape.dimension[2]) {
+            throw new IllegalArgumentException("Encoder and decoder inputs must have the same feature dimension");
+        }
+
+        // 编码器前向传播
+        Variable encoderOutput = encoder.layerForward(encoderInput);
+        
+        // 初始化解码器状态
+        decoder.initState(encoderOutput.getValue());
+        
+        // 解码器前向传播
+        return decoder.layerForward(decoderInput, encoderOutput);
+    }
+    
+    /**
+     * 获取编码器
+     * 
+     * @return 编码器实例
+     */
+    public Encoder getEncoder() {
+        return encoder;
+    }
+    
+    /**
+     * 获取解码器
+     * 
+     * @return 解码器实例
+     */
+    public Decoder getDecoder() {
+        return decoder;
+    }
+    
+    /**
+     * 仅编码（不需要解码器输入）
+     * 
+     * @param encoderInput 编码器输入
+     * @return 编码器输出
+     */
+    public Variable encodeOnly(Variable encoderInput) {
+        return encoder.layerForward(encoderInput);
+    }
+    
+    /**
+     * 仅解码（需要预先设置编码器输出）
+     * 
+     * @param decoderInput 解码器输入
+     * @param encoderOutput 编码器输出
+     * @return 解码器输出
+     */
+    public Variable decodeOnly(Variable decoderInput, Variable encoderOutput) {
+        decoder.initState(encoderOutput.getValue());
+        return decoder.layerForward(decoderInput, encoderOutput);
+    }
+    
+    /**
+     * 重置模型状态
+     */
+    public void resetModelState() {
+        super.resetState();
+        if (decoder instanceof TransformerDecoder) {
+            ((TransformerDecoder) decoder).resetState();
+        }
     }
 }
