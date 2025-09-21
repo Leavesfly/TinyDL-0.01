@@ -9,13 +9,16 @@ import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.func.math.*;
 import io.leavesfly.tinydl.func.matrix.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * 数学中的变量的抽象
  */
-public class Variable {
+public class Variable implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
     /**
      * 变量的名称
      */
@@ -33,8 +36,9 @@ public class Variable {
 
     /**
      * 记录是什么函数生成的当前Variable
+     * 序列化时不保存，避免循环引用
      */
-    private Function creator;
+    private transient Function creator;
 
     /**
      * 是否需要计算当前变量的梯度

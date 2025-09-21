@@ -2,6 +2,7 @@ package io.leavesfly.tinydl.ndarr;
 
 import io.leavesfly.tinydl.utils.Util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -9,7 +10,9 @@ import java.util.Random;
 /**
  * 支持更高维度的数据:1，标量;2，向量;3，矩阵;等N维度
  */
-public class NdArray {
+public class NdArray implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
     /**
      * N维数组的形状
      */
