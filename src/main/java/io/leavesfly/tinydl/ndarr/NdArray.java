@@ -669,8 +669,12 @@ public class NdArray implements Serializable {
     private void convertToMultiIndex(int linearIndex, int[] indices) {
         int remaining = linearIndex;
         for (int i = shape.dimension.length - 1; i >= 0; i--) {
-            indices[i] = remaining / shape.multipliers[i];
-            remaining %= shape.multipliers[i];
+            if (shape.multipliers[i] == 0) {
+                indices[i] = 0;
+            } else {
+                indices[i] = remaining / shape.multipliers[i];
+                remaining %= shape.multipliers[i];
+            }
         }
     }
 
@@ -1256,7 +1260,7 @@ public class NdArray implements Serializable {
             for (int i = 0; i < shape.dimension[0]; i++) {
                 for (int j = 0; j < shape.dimension[1]; j++) {
                     for (int k = 0; k < shape.dimension[2]; k++) {
-                        for (int l = 0; k < shape.dimension[3]; l++) {
+                        for (int l = 0; l < shape.dimension[3]; l++) {
                             result[i][j][k][l] = buffer[index];
                             index++;
                         }

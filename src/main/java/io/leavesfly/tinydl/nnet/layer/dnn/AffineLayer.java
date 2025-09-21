@@ -16,7 +16,7 @@ public class AffineLayer extends Layer {
     private boolean needBias;
 
     public AffineLayer(String _name, Shape _inputShape, int hiddenCol, boolean _needBias) {
-        super(_name, _inputShape, new Shape(_inputShape.getColumn(), hiddenCol));
+        super(_name, _inputShape, new Shape(_inputShape.getRow(), hiddenCol));
         needBias = _needBias;
         //初始化
         init();
@@ -27,8 +27,8 @@ public class AffineLayer extends Layer {
 
         if (!alreadyInit) {
             NdArray initWeight = NdArray.likeRandomN(
-                            new Shape(inputShape.getRow(), outputShape.getColumn()))
-                    .mulNum(Math.sqrt((double) 1 / inputShape.getRow()));
+                            new Shape(inputShape.getColumn(), outputShape.getColumn()))
+                    .mulNum(Math.sqrt((double) 1 / inputShape.getColumn()));
 
             wParam = new Parameter(initWeight);
             wParam.setName("w");

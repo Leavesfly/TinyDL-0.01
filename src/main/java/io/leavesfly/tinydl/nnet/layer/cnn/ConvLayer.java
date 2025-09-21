@@ -101,11 +101,22 @@ public class ConvLayer extends Layer {
         NdArray filterNdArray = filterParam.getValue();
         colInputW = filterNdArray.reshape(new Shape(filterNum, filterNdArray.shape.size() / filterNum));
 
-        NdArray out = colInput.dot(colInputW);
+        NdArray out = colInput.dot(colInputW.transpose());
         out = out.reshape(new Shape(num, outHeight, outWidth, out.shape.size() / (num * outHeight * outWidth)));
-        out = out.transpose(0, 3, 1, 2);
-
-        return out;
+        // 使用简单的维度交换而不是多维转置
+        // 从 (N, H, W, C) 转为 (N, C, H, W)
+        NdArray result = new NdArray(new Shape(num, filterNum, outHeight, outWidth));
+        for (int n = 0; n < num; n++) {
+            for (int c = 0; c < filterNum; c++) {
+                for (int h = 0; h < outHeight; h++) {
+                    for (int w = 0; w < outWidth; w++) {
+                        float value = out.get(n, h, w, c);
+                        result.set(value, n, c, h, w);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override

@@ -87,8 +87,21 @@ public class PoolingLayer extends Layer {
 
         argMax = colInput.argMax(1);
         NdArray out = colInput.max(1);
-        out = out.reshape(new Shape(num, outHeight, outWidth, channel)).transpose(0, 3, 1, 2);
-        return out;
+        out = out.reshape(new Shape(num, outHeight, outWidth, channel));
+        
+        // 手动转置维度从 (N, H, W, C) 到 (N, C, H, W)
+        NdArray result = new NdArray(new Shape(num, channel, outHeight, outWidth));
+        for (int n = 0; n < num; n++) {
+            for (int c = 0; c < channel; c++) {
+                for (int h = 0; h < outHeight; h++) {
+                    for (int w = 0; w < outWidth; w++) {
+                        float value = out.get(n, h, w, c);
+                        result.set(value, n, c, h, w);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override

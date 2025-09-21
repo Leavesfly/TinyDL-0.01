@@ -19,8 +19,12 @@ public class FlattenLayer extends Layer {
 
     @Override
     public NdArray forward(NdArray... inputs) {
-
-        return inputs[0].flatten();
+        // 动态计算输出形状，保持batch维度
+        NdArray input = inputs[0];
+        int batchSize = input.shape.dimension[0];
+        int flattenedSize = input.shape.size() / batchSize;
+        Shape dynamicOutputShape = new Shape(batchSize, flattenedSize);
+        return input.reshape(dynamicOutputShape);
     }
 
     @Override
@@ -35,16 +39,25 @@ public class FlattenLayer extends Layer {
 
     @Override
     public void init() {
-
+        // 计算除了batch维度以外的所有维度的乘积
         int outputSize = 1;
-        for (int i = 0; i < inputShape.dimension.length; i++) {
+        for (int i = 1; i < inputShape.dimension.length; i++) {
             outputSize *= inputShape.dimension[i];
         }
-        outputShape = new Shape(1, outputSize);
+        // 输出形状：保持batch维度，其他维度展平
+        outputShape = new Shape(inputShape.dimension[0], outputSize);
     }
 
     @Override
     public Variable layerForward(Variable... inputs) {
         return this.call(inputs[0]);
+    }
+    
+    @Override
+    public Shape getOutputShape() {
+        if (outputShape == null && inputShape != null) {
+            init();
+        }
+        return outputShape;
     }
 }
