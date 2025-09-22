@@ -46,6 +46,7 @@ TinyDL 是一个用 **Java** 实现的轻量级深度学习框架，旨在为深
 - **训练监控**：实时显示损失和准确率变化
 - **结果可视化**：基于 JFreeChart 的图表绘制
 - **模型结构图**：UML 工具可视化网络架构
+- **训练日志**：支持训练过程日志记录和分析
 
 ### 🎯 丰富应用示例
 - **分类任务**：螺旋数据分类、手写数字识别
@@ -239,6 +240,12 @@ trainer.init(dataSet, model, lossFunc, optimizer);
 
 // 开始训练
 trainer.train(true); // true表示显示训练过程
+
+// 使用带日志功能的Monitor
+Monitor monitorWithLog = new Monitor("training_log.txt");
+Trainer trainerWithLog = new Trainer(maxEpoch, monitorWithLog, null);
+trainerWithLog.init(dataSet, model, lossFunc, optimizer);
+trainerWithLog.train(true);
 ```
 
 ## 📚 API 文档
@@ -266,6 +273,21 @@ trainer.train(true); // true表示显示训练过程
 - `ConvLayer`: 卷积层
 - `LstmLayer`: LSTM层
 - `MlpBlock`: 多层感知机块
+
+#### Monitor
+训练监控器，用于收集和可视化训练过程信息：
+- `collectInfo()`: 收集训练损失
+- `collectAccuracy()`: 收集训练准确率
+- `printTrainInfo()`: 打印训练信息
+- `plot()`: 绘制训练过程图表
+- `saveLogToFile()`: 保存训练日志到文件
+
+#### Batch
+数据批次类，用于封装一批训练或测试数据：
+- `toVariableX()`, `toVariableY()`: 将数据转换为Variable对象（带缓存优化）
+- `next()`: 获取下一对数据
+- `hasNext()`: 检查是否还有更多数据
+- `resetIndex()`: 重置遍历索引
 
 ## 🎯 示例项目
 

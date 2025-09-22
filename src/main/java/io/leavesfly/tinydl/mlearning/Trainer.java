@@ -155,6 +155,7 @@ public class Trainer {
 
             List<Batch> batches = trainDataSet.getBatches();
             float lossSum = 0f;
+            float accSum = 0f;
 
             for (Batch batch : batches) {
                 Variable variableX = batch.toVariableX().setName("x").setRequireGrad(false);
@@ -175,6 +176,7 @@ public class Trainer {
                 model.tmpPredict = predictY;
             }
             monitor.collectInfo(lossSum / batches.size());
+            monitor.endEpoch();
             monitor.printTrainInfo();
         }
         monitor.plot();
@@ -215,6 +217,7 @@ public class Trainer {
             }
             
             long epochEndTime = System.currentTimeMillis();
+            monitor.endEpoch();
             System.out.println(String.format("Epoch %d 完成，耗时: %d ms", 
                                             epoch, epochEndTime - epochStartTime));
         }
@@ -299,6 +302,7 @@ public class Trainer {
         if (successfulBatches > 0) {
             monitor.collectInfo(totalLoss / successfulBatches);
         }
+        monitor.endEpoch();
         monitor.printTrainInfo();
     }
     

@@ -5,7 +5,7 @@ import io.leavesfly.tinydl.ndarr.NdArray;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
  * 抽象的数学函数基类
@@ -43,27 +43,31 @@ public abstract class Function {
      * @throws RuntimeException 当输入变量数量不符合要求时抛出异常
      */
     public Variable call(Variable... _inputs) {
-
+        // 输入验证
         if (_inputs.length != requireInputNum() && requireInputNum() > 0) {
-            throw new RuntimeException("Function call inputs Variable requireInputNum error!");
+            throw new RuntimeException("Function call inputs Variable requireInputNum error! Expected: " 
+                + requireInputNum() + ", Actual: " + _inputs.length);
         }
 
-        List<NdArray> ndArrayList = Arrays.stream(_inputs).map(Variable::getValue).collect(Collectors.toList());
-        NdArray[] ndArrayInputs = ndArrayList.toArray(new NdArray[_inputs.length]);
+        // 提取NdArray值
+        NdArray[] ndArrayInputs = Arrays.stream(_inputs)
+            .filter(Objects::nonNull)
+            .map(Variable::getValue)
+            .toArray(NdArray[]::new);
 
-        //执行函数
+        // 执行前向传播
         NdArray ndArrayOutput = forward(ndArrayInputs);
+        
+        // 创建输出变量
         Variable _output = new Variable(ndArrayOutput);
 
-        /**
-         * 优化，只有需要向后传播的才会构建计算图
-         * 如果没有构建计算图，plot也不能绘制
-         */
+        // 只在训练模式下构建计算图
         if (Config.train) {
             this.inputs = _inputs;
-            output = _output;
-            output.setCreator(this);
+            this.output = _output;
+            _output.setCreator(this);
         }
+        
         return _output;
     }
 
@@ -89,19 +93,41 @@ public abstract class Function {
      */
     public abstract List<NdArray> backward(NdArray yGrad);
 
+    /**
+     * 获取函数的输入变量数组
+     * 
+     * @return 输入变量数组
+     */
     public Variable[] getInputs() {
         return inputs;
     }
 
+    /**
+     * 设置函数的输入变量数组
+     * 
+     * @param inputs 输入变量数组
+     */
     public void setInputs(Variable[] inputs) {
         this.inputs = inputs;
     }
 
-
+    /**
+     * 获取函数的输出变量
+     * 
+     * @return 输出变量
+     */
     public Variable getOutput() {
         return output;
     }
 
+    /**
+     * 设置函数的输出变量
+     * 
+     * @param output 输出变量
+     */
+    public void setOutput(Variable output) {
+        this.output = output;
+    }
 
     /**
      * 获取函数所需的输入参数个数
@@ -112,4 +138,14 @@ public abstract class Function {
      * @return 函数所需的输入参数个数
      */
     public abstract int requireInputNum();
+    
+    /**
+     * 清理函数资源，断开计算图连接
+     * 
+     * 用于RNN中切断计算图，防止梯度回传过长导致的梯度消失或爆炸问题。
+     */
+    public void unChain() {
+        this.inputs = null;
+        this.output = null;
+    }
 }

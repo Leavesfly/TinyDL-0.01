@@ -39,8 +39,8 @@ public abstract class ArrayDataset extends DataSet {
         List<Batch> batches = new ArrayList<>();
         for (int i = 0; i < ndArrayXs.length; i++) {
             for (int j = 0; j < ndArrayXs[0].length; j++) {
-                ndArrayXs[i][j] = xs[i * j + j];
-                ndArrayYs[i][j] = ys[i * j + j];
+                ndArrayXs[i][j] = xs[i * batchSize + j];
+                ndArrayYs[i][j] = ys[i * batchSize + j];
             }
         }
         for (int i = 0; i < size / batchSize; i++) {

@@ -18,6 +18,10 @@ public class Batch {
     private NdArray[] y;
 
     private int index = 0;
+    
+    // 缓存Variable实例以避免频繁创建对象
+    private Variable cachedVariableX = null;
+    private Variable cachedVariableY = null;
 
     /**
      * 构造函数
@@ -43,6 +47,8 @@ public class Batch {
      */
     public void setX(NdArray[] x) {
         this.x = x;
+        // 清除缓存
+        this.cachedVariableX = null;
     }
 
     /**
@@ -59,6 +65,8 @@ public class Batch {
      */
     public void setY(NdArray[] y) {
         this.y = y;
+        // 清除缓存
+        this.cachedVariableY = null;
     }
 
     /**
@@ -71,18 +79,26 @@ public class Batch {
 
     /**
      * 将输入数据转换为Variable对象
+     * 为了提高性能，该方法会缓存Variable实例
      * @return 输入数据的Variable表示
      */
     public Variable toVariableX() {
-        return new Variable(NdArrayUtil.merge(0, x));
+        if (cachedVariableX == null) {
+            cachedVariableX = new Variable(NdArrayUtil.merge(0, x));
+        }
+        return cachedVariableX;
     }
 
     /**
      * 将标签数据转换为Variable对象
+     * 为了提高性能，该方法会缓存Variable实例
      * @return 标签数据的Variable表示
      */
     public Variable toVariableY() {
-        return new Variable(NdArrayUtil.merge(0, y));
+        if (cachedVariableY == null) {
+            cachedVariableY = new Variable(NdArrayUtil.merge(0, y));
+        }
+        return cachedVariableY;
     }
 
     /**
@@ -96,6 +112,29 @@ public class Batch {
         Pair<NdArray, NdArray> pair = new Pair<NdArray, NdArray>(x[index], y[index]);
         index++;
         return pair;
+    }
+    
+    /**
+     * 检查是否还有更多数据
+     * @return 如果还有数据返回true，否则返回false
+     */
+    public boolean hasNext() {
+        return index < getSize();
+    }
+    
+    /**
+     * 重置遍历索引
+     */
+    public void resetIndex() {
+        index = 0;
+    }
+    
+    /**
+     * 获取当前遍历索引
+     * @return 当前索引
+     */
+    public int getCurrentIndex() {
+        return index;
     }
 
     /**

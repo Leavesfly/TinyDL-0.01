@@ -12,6 +12,7 @@ import io.leavesfly.tinydl.func.matrix.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Stack;
 
 /**
  * 数学中的变量的抽象表示
@@ -23,6 +24,7 @@ import java.util.Objects;
 public class Variable implements Serializable {
     
     private static final long serialVersionUID = 1L;
+    
     /**
      * 变量的名称
      * 用于标识变量，便于调试和可视化
@@ -99,7 +101,16 @@ public class Variable implements Serializable {
     }
 
     /**
-     * 变量的反向传播
+     * 获取变量是否需要计算梯度
+     * 
+     * @return 是否需要计算梯度
+     */
+    public boolean isRequireGrad() {
+        return requireGrad;
+    }
+
+    /**
+     * 变量的反向传播（递归实现）
      * 
      * 根据正向传播时构建的计算图，从当前变量开始反向传播计算每个变量的梯度。
      * 如果变量不需要计算梯度，则直接返回。
@@ -115,7 +126,7 @@ public class Variable implements Serializable {
         if (Objects.isNull(grad)) {
             setGrad(NdArray.ones(this.getValue().getShape()));
         }
-        // todo 当前采用的是递归调用，为了效率可用堆栈循环
+        // 当前采用的是递归调用，为了效率可用堆栈循环
         Function _creator = creator;
         if (!Objects.isNull(_creator)) {
             Variable[] _inputs = _creator.getInputs();
@@ -125,13 +136,72 @@ public class Variable implements Serializable {
             }
             int index = 0;
             for (Variable input : _inputs) {
-                input.setGrad(grads.get(index));
+                // 累加梯度而不是直接设置，支持梯度复用
+                if (input.getGrad() != null) {
+                    input.setGrad(input.getGrad().add(grads.get(index)));
+                } else {
+                    input.setGrad(grads.get(index));
+                }
                 input.backward();
                 index++;
             }
         }
     }
 
+    /**
+     * 变量的反向传播（迭代实现）
+     * 
+     * 使用栈来实现迭代的反向传播，避免递归调用可能导致的栈溢出问题。
+     * 特别适用于深层网络或RNN等场景。
+     */
+    public void backwardIterative() {
+        if (!requireGrad) {
+            this.grad = null;
+            return;
+        }
+        
+        // 初始化梯度为1
+        if (Objects.isNull(grad)) {
+            setGrad(NdArray.ones(this.getValue().getShape()));
+        }
+        
+        // 使用栈来模拟递归过程
+        Stack<Variable> stack = new Stack<>();
+        stack.push(this);
+        
+        while (!stack.isEmpty()) {
+            Variable currentVar = stack.pop();
+            
+            Function currentCreator = currentVar.getCreator();
+            if (Objects.isNull(currentCreator)) {
+                continue;
+            }
+            
+            Variable[] inputs = currentCreator.getInputs();
+            List<NdArray> grads = currentCreator.backward(currentVar.getGrad());
+            
+            if (inputs.length != grads.size()) {
+                throw new RuntimeException("Variable backward grads size error!");
+            }
+            
+            for (int i = 0; i < inputs.length; i++) {
+                Variable input = inputs[i];
+                NdArray grad = grads.get(i);
+                
+                // 累加梯度而不是直接设置，支持梯度复用
+                if (input.getGrad() != null) {
+                    input.setGrad(input.getGrad().add(grad));
+                } else {
+                    input.setGrad(grad);
+                }
+                
+                // 如果输入变量有创建者函数，将其加入栈中继续处理
+                if (input.getCreator() != null) {
+                    stack.push(input);
+                }
+            }
+        }
+    }
 
     /**
      * 切断计算图
@@ -172,7 +242,6 @@ public class Variable implements Serializable {
         this.value = value;
     }
 
-
     public NdArray getGrad() {
         return grad;
     }
@@ -208,7 +277,6 @@ public class Variable implements Serializable {
         return this;
     }
 
-
     //    # =============================================================================
 //            # 1，四则运算
 //    # =============================================================================
@@ -221,12 +289,6 @@ public class Variable implements Serializable {
      * @param other 参与运算的另一个变量
      * @return 加法运算结果的新变量
      */
-
-
-    //    # =============================================================================
-//            # 1，四则运算
-//    # =============================================================================
-
     public Variable add(Variable other) {
         Function function = new Add();
         return function.call(this, other);
@@ -282,7 +344,6 @@ public class Variable implements Serializable {
         Function function = new Neg();
         return function.call(this);
     }
-
 
     //    # =============================================================================
 //            # 2，基本数学函数
@@ -374,6 +435,18 @@ public class Variable implements Serializable {
     }
 
     /**
+     * Sigmoid运算
+     * 
+     * 对变量执行Sigmoid运算，将值映射到(0,1)区间
+     * 
+     * @return Sigmoid运算结果的新变量
+     */
+    public Variable sigmoid() {
+        Function function = new Sigmoid();
+        return function.call(this);
+    }
+
+    /**
      * SoftMax运算
      * 
      * 对变量执行SoftMax运算，常用于多分类问题的输出层
@@ -382,6 +455,18 @@ public class Variable implements Serializable {
      */
     public Variable softMax() {
         Function function = new SoftMax();
+        return function.call(this);
+    }
+
+    /**
+     * ReLU运算
+     * 
+     * 对变量执行ReLU运算，将负值置为0
+     * 
+     * @return ReLU运算结果的新变量
+     */
+    public Variable relu() {
+        Function function = new ReLu();
         return function.call(this);
     }
 
@@ -427,11 +512,9 @@ public class Variable implements Serializable {
         return function.call(this);
     }
 
-
     //    # =============================================================================
 //            # 3，张量的变形操作
 //    # =============================================================================
-
 
     /**
      * 广播操作
