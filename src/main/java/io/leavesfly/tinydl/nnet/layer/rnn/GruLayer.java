@@ -43,6 +43,10 @@ public class GruLayer extends Layer {
     private Variable rGate;     // 重置门
     private Variable hCandidate; // 候选状态
     private Variable resetState; // 重置后的状态
+    
+    // 前向传播中的中间变量
+    private Variable x_z, h_z, x_r, h_r, x_h, h_h;
+    private Variable oneMinusZ;
 
     public GruLayer(String _name, Shape _xInputShape, Shape _yOutputShape) {
         super(_name, _xInputShape, _yOutputShape);
@@ -118,43 +122,43 @@ public class GruLayer extends Layer {
         if (Objects.isNull(state)) {
             // 第一次前向传播
             // 计算更新门
-            Variable x_z = x.linear(w_z, b_z);
+            x_z = x.linear(w_z, b_z);
             zGate = new SigmoidLayer("").call(x_z);
 
             // 计算重置门
-            Variable x_r = x.linear(w_r, b_r);
+            x_r = x.linear(w_r, b_r);
             rGate = new SigmoidLayer("").call(x_r);
 
             // 计算候选状态
-            Variable x_h = x.linear(w_h, b_h);
+            x_h = x.linear(w_h, b_h);
             hCandidate = x_h.tanh();
 
             // 计算当前状态
-            Variable oneMinusZ = new Variable(NdArray.ones(zGate.getValue().getShape())).sub(zGate);
+            oneMinusZ = new Variable(NdArray.ones(zGate.getValue().getShape())).sub(zGate);
             state = oneMinusZ.mul(hCandidate);
             stateValue = state.getValue();
         } else {
             // 后续前向传播
             // 计算更新门
-            Variable x_z = x.linear(w_z, b_z);
-            Variable h_z = state.linear(u_z, null);
+            x_z = x.linear(w_z, b_z);
+            h_z = state.linear(u_z, null);
             zGate = new SigmoidLayer("").call(x_z.add(h_z));
 
             // 计算重置门
-            Variable x_r = x.linear(w_r, b_r);
-            Variable h_r = state.linear(u_r, null);
+            x_r = x.linear(w_r, b_r);
+            h_r = state.linear(u_r, null);
             rGate = new SigmoidLayer("").call(x_r.add(h_r));
 
             // 重置前一状态
             resetState = rGate.mul(state);
 
             // 计算候选状态
-            Variable x_h = x.linear(w_h, b_h);
-            Variable h_h = resetState.linear(u_h, null);
+            x_h = x.linear(w_h, b_h);
+            h_h = resetState.linear(u_h, null);
             hCandidate = x_h.add(h_h).tanh();
 
             // 计算当前状态
-            Variable oneMinusZ = new Variable(NdArray.ones(zGate.getValue().getShape())).sub(zGate);
+            oneMinusZ = new Variable(NdArray.ones(zGate.getValue().getShape())).sub(zGate);
             state = zGate.mul(state).add(oneMinusZ.mul(hCandidate));
             stateValue = state.getValue();
         }
@@ -213,9 +217,104 @@ public class GruLayer extends Layer {
 
     @Override
     public List<NdArray> backward(NdArray yGrad) {
-        // TODO: 实现GRU的反向传播
-        // 由于GRU的反向传播较为复杂，这里暂时返回null
-        // 在实际应用中需要根据GRU的数学公式实现完整的反向传播
-        return null;
+        // GRU反向传播实现
+        // 根据GRU的数学公式计算梯度
+        
+        // 保存当前状态的梯度
+        NdArray dhNext = yGrad;
+        
+        // 计算更新门的梯度
+        NdArray dz = dhNext.mul(stateValue.sub(hCandidate.getValue()));
+        // 应用sigmoid导数
+        dz = dz.mul(zGate.getValue()).mul(NdArray.ones(zGate.getValue().getShape()).sub(zGate.getValue()));
+        
+        // 计算候选状态的梯度
+        NdArray dhCandidate = dhNext.mul(oneMinusZ.getValue());
+        // 应用tanh导数
+        dhCandidate = dhCandidate.mul(NdArray.ones(hCandidate.getValue().getShape()).sub(hCandidate.getValue().square()));
+        
+        // 计算重置门的梯度
+        NdArray dr = null;
+        if (resetState != null) {
+            dr = dhCandidate.dot(u_h.getValue().transpose()).mul(state.getValue());
+            // 应用sigmoid导数
+            dr = dr.mul(rGate.getValue()).mul(NdArray.ones(rGate.getValue().getShape()).sub(rGate.getValue()));
+        } else {
+            dr = NdArray.zeros(rGate.getValue().getShape());
+        }
+        
+        // 计算输入x的梯度
+        NdArray dx = null;
+        NdArray dhPrev = null;
+        
+        // 计算参数梯度
+        NdArray dw_z = null, du_z = null, db_z = null;
+        NdArray dw_r = null, du_r = null, db_r = null;
+        NdArray dw_h = null, du_h = null, db_h = null;
+        
+        if (resetState != null) {
+            // 后续时间步的反向传播
+            
+            // 输入到更新门的梯度
+            dw_z = inputs[0].getValue().transpose().dot(dz);
+            du_z = state.getValue().transpose().dot(dz);
+            db_z = dz.sumTo(b_z.getValue().getShape());
+            
+            // 输入到重置门的梯度
+            dw_r = inputs[0].getValue().transpose().dot(dr);
+            du_r = state.getValue().transpose().dot(dr);
+            db_r = dr.sumTo(b_r.getValue().getShape());
+            
+            // 输入到候选状态的梯度
+            dw_h = inputs[0].getValue().transpose().dot(dhCandidate);
+            du_h = resetState.getValue().transpose().dot(dhCandidate);
+            db_h = dhCandidate.sumTo(b_h.getValue().getShape());
+            
+            // 输入梯度
+            dx = dz.dot(w_z.getValue().transpose())
+                .add(dr.dot(w_r.getValue().transpose()))
+                .add(dhCandidate.dot(w_h.getValue().transpose()));
+            
+            // 前一状态的梯度
+            dhPrev = dz.dot(u_z.getValue().transpose())
+                .add(dr.dot(u_r.getValue().transpose()))
+                .add(dhCandidate.dot(u_h.getValue().transpose()).mul(rGate.getValue()));
+            
+            // 加上通过更新门传递的梯度
+            dhPrev = dhPrev.add(dhNext.mul(zGate.getValue()));
+        } else {
+            // 第一个时间步的反向传播
+            
+            // 输入到更新门的梯度
+            dw_z = inputs[0].getValue().transpose().dot(dz);
+            db_z = dz.sumTo(b_z.getValue().getShape());
+            du_z = null; // 第一个时间步没有前一状态
+            
+            // 输入到重置门的梯度
+            dw_r = inputs[0].getValue().transpose().dot(dr);
+            db_r = dr.sumTo(b_r.getValue().getShape());
+            du_r = null; // 第一个时间步没有前一状态
+            
+            // 输入到候选状态的梯度
+            dw_h = inputs[0].getValue().transpose().dot(dhCandidate);
+            db_h = dhCandidate.sumTo(b_h.getValue().getShape());
+            du_h = null; // 第一个时间步没有前一状态
+            
+            // 输入梯度
+            dx = dz.dot(w_z.getValue().transpose())
+                .add(dr.dot(w_r.getValue().transpose()))
+                .add(dhCandidate.dot(w_h.getValue().transpose()));
+            
+            // 前一状态的梯度
+            dhPrev = null; // 第一个时间步没有前一状态
+        }
+        
+        // 返回梯度列表，顺序需要与参数顺序一致
+        if (dhPrev != null) {
+            return Arrays.asList(dx, dw_z, du_z, db_z, dw_r, du_r, db_r, dw_h, du_h, db_h);
+        } else {
+            // 第一个时间步的情况
+            return Arrays.asList(dx, dw_z, db_z, dw_r, db_r, dw_h, db_h);
+        }
     }
 }
