@@ -13,52 +13,187 @@ import java.util.Objects;
 
 /**
  * 门控循环单元层(GRU)
- * GRU是LSTM的简化版本，包含更新门和重置门
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * GRU是LSTM的简化版本，包含更新门和重置门，能够有效处理序列数据中的长期依赖问题。
+ * GRU通过两个门控机制来控制信息的流动：
+ * 1. 更新门 (Update Gate) - 控制前一状态信息的保留程度
+ * 2. 重置门 (Reset Gate) - 控制前一状态信息对当前候选状态的影响
+ * 
+ * GRU 公式:
+ * z_t = σ(W_z * x_t + U_z * h_{t-1} + b_z)   // 更新门
+ * r_t = σ(W_r * x_t + U_r * h_{t-1} + b_r)   // 重置门
+ * ũ_t = tanh(W_h * x_t + U_h * (r_t ⊙ h_{t-1}) + b_h) // 候选状态
+ * h_t = (1 - z_t) ⊙ ũ_t + z_t ⊙ h_{t-1}     // 当前隐藏状态
+ * 
+ * 其中:
+ * - z_t 是更新门输出
+ * - r_t 是重置门输出
+ * - ũ_t 是候选状态
+ * - h_t 是当前隐藏状态
+ * - σ 是sigmoid激活函数
+ * - ⊙ 表示逐元素乘法
  */
 public class GruLayer extends Layer {
 
+    /**
+     * 当前时间步的隐藏状态
+     */
     private Variable state;
+    
+    /**
+     * 当前时间步的隐藏状态值（NdArray形式）
+     */
     private NdArray stateValue;
 
     // GRU的参数
     // 更新门参数
-    private Parameter w_z;  // 输入到更新门的权重
-    private Parameter u_z;  // 隐藏状态到更新门的权重
-    private Parameter b_z;  // 更新门的偏置
+    /**
+     * 输入到更新门的权重矩阵
+     * 形状: (input_size, hidden_size)
+     */
+    private Parameter w_z;  
+    
+    /**
+     * 隐藏状态到更新门的权重矩阵
+     * 形状: (hidden_size, hidden_size)
+     */
+    private Parameter u_z;  
+    
+    /**
+     * 更新门的偏置项
+     * 形状: (1, hidden_size)
+     */
+    private Parameter b_z;  
 
     // 重置门参数
-    private Parameter w_r;  // 输入到重置门的权重
-    private Parameter u_r;  // 隐藏状态到重置门的权重
-    private Parameter b_r;  // 重置门的偏置
+    /**
+     * 输入到重置门的权重矩阵
+     * 形状: (input_size, hidden_size)
+     */
+    private Parameter w_r;  
+    
+    /**
+     * 隐藏状态到重置门的权重矩阵
+     * 形状: (hidden_size, hidden_size)
+     */
+    private Parameter u_r;  
+    
+    /**
+     * 重置门的偏置项
+     * 形状: (1, hidden_size)
+     */
+    private Parameter b_r;  
 
     // 候选状态参数
-    private Parameter w_h;  // 输入到候选状态的权重
-    private Parameter u_h;  // 隐藏状态到候选状态的权重
-    private Parameter b_h;  // 候选状态的偏置
+    /**
+     * 输入到候选状态的权重矩阵
+     * 形状: (input_size, hidden_size)
+     */
+    private Parameter w_h;  
+    
+    /**
+     * 隐藏状态到候选状态的权重矩阵
+     * 形状: (hidden_size, hidden_size)
+     */
+    private Parameter u_h;  
+    
+    /**
+     * 候选状态的偏置项
+     * 形状: (1, hidden_size)
+     */
+    private Parameter b_h;  
 
+    /**
+     * 隐藏层大小
+     */
     private int hiddenSize;
 
     // 用于反向传播的缓存变量
-    private Variable zGate;     // 更新门
-    private Variable rGate;     // 重置门
-    private Variable hCandidate; // 候选状态
-    private Variable resetState; // 重置后的状态
+    /**
+     * 更新门变量
+     */
+    private Variable zGate;     
+    
+    /**
+     * 重置门变量
+     */
+    private Variable rGate;     
+    
+    /**
+     * 候选状态变量
+     */
+    private Variable hCandidate; 
+    
+    /**
+     * 重置后的状态变量
+     */
+    private Variable resetState; 
     
     // 前向传播中的中间变量
-    private Variable x_z, h_z, x_r, h_r, x_h, h_h;
+    /**
+     * 输入到更新门的线性变换结果
+     */
+    private Variable x_z;
+    
+    /**
+     * 隐藏状态到更新门的线性变换结果
+     */
+    private Variable h_z;
+    
+    /**
+     * 输入到重置门的线性变换结果
+     */
+    private Variable x_r;
+    
+    /**
+     * 隐藏状态到重置门的线性变换结果
+     */
+    private Variable h_r;
+    
+    /**
+     * 输入到候选状态的线性变换结果
+     */
+    private Variable x_h;
+    
+    /**
+     * 隐藏状态到候选状态的线性变换结果
+     */
+    private Variable h_h;
+    
+    /**
+     * (1 - 更新门)的值，用于计算当前状态
+     */
     private Variable oneMinusZ;
 
+    /**
+     * 构造一个GRU层实例
+     * 
+     * @param _name 层名称
+     * @param _xInputShape 输入形状 (batch_size, input_size)
+     * @param _yOutputShape 输出形状 (batch_size, hidden_size)
+     */
     public GruLayer(String _name, Shape _xInputShape, Shape _yOutputShape) {
         super(_name, _xInputShape, _yOutputShape);
         hiddenSize = _yOutputShape.getColumn();
         init();
     }
 
+    /**
+     * 重置GRU层的内部状态
+     * 在处理新序列之前应调用此方法
+     */
     public void resetState() {
         state = null;
         stateValue = null;
     }
 
+    /**
+     * 初始化GRU层的参数
+     * 包括更新门、重置门和候选状态的权重矩阵及偏置项
+     */
     @Override
     public void init() {
         int inputSize = inputShape.getColumn();

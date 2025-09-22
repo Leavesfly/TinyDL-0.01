@@ -16,14 +16,31 @@ import io.leavesfly.tinydl.mlearning.optimize.SGD;
 import java.util.List;
 
 /**
- * 用递归网络来拟合序列数据
+ * RNN拟合余弦曲线示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示如何使用递归神经网络(RNN)拟合序列数据（余弦曲线）。
+ * RNN是一种处理序列数据的神经网络，具有记忆能力，能够捕捉时间序列中的依赖关系。
  */
 public class RnnCosExam {
+    
+    /**
+     * 主函数，执行RNN训练
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
 
         test0();
     }
 
+    /**
+     * RNN训练测试函数
+     * 
+     * 使用SimpleRNN模型训练拟合余弦曲线数据
+     */
     public static void test0() {
         //==1，定义超参数
         int maxEpoch = 100;

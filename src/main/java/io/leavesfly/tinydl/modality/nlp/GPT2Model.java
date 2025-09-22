@@ -15,7 +15,11 @@ import java.util.List;
 /**
  * GPT-2 小规模语言模型实现
  * 
- * GPT-2是一个基于Transformer解码器的自回归语言模型，特点：
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * GPT2Model类实现了GPT-2语言模型，基于Transformer解码器的自回归语言模型。
+ * 特点：
  * 1. 仅使用解码器架构
  * 2. 使用掩码多头自注意力防止未来信息泄露
  * 3. Pre-LayerNorm结构
@@ -29,20 +33,60 @@ import java.util.List;
  */
 public class GPT2Model extends Block {
     
-    // 模型组件
-    private GPT2TokenEmbedding tokenEmbedding;    // Token嵌入层
-    private List<GPT2Block> transformerBlocks;    // Transformer块列表
-    private LayerNorm finalLayerNorm;             // 最终层归一化
-    private GPT2OutputHead outputHead;            // 输出头
+    /**
+     * Token嵌入层
+     */
+    private GPT2TokenEmbedding tokenEmbedding;
     
-    // 模型参数
-    private int vocabSize;      // 词汇表大小
-    private int dModel;         // 模型维度
-    private int numLayers;      // Transformer层数
-    private int numHeads;       // 注意力头数
-    private int dFF;            // 前馈网络隐藏维度
-    private int maxSeqLength;   // 最大序列长度
-    private double dropoutRate; // Dropout比率
+    /**
+     * Transformer块列表
+     */
+    private List<GPT2Block> transformerBlocks;
+    
+    /**
+     * 最终层归一化
+     */
+    private LayerNorm finalLayerNorm;
+    
+    /**
+     * 输出头
+     */
+    private GPT2OutputHead outputHead;
+    
+    /**
+     * 词汇表大小
+     */
+    private int vocabSize;
+    
+    /**
+     * 模型维度
+     */
+    private int dModel;
+    
+    /**
+     * Transformer层数
+     */
+    private int numLayers;
+    
+    /**
+     * 注意力头数
+     */
+    private int numHeads;
+    
+    /**
+     * 前馈网络隐藏维度
+     */
+    private int dFF;
+    
+    /**
+     * 最大序列长度
+     */
+    private int maxSeqLength;
+    
+    /**
+     * Dropout比率
+     */
+    private double dropoutRate;
     
     /**
      * 构造GPT-2模型
@@ -78,6 +122,10 @@ public class GPT2Model extends Block {
     /**
      * 创建小规模GPT-2模型的构造函数
      * 默认参数适用于实验和学习
+     * 
+     * @param name 模型名称
+     * @param vocabSize 词汇表大小
+     * @return GPT-2模型实例
      */
     public static GPT2Model createSmallModel(String name, int vocabSize) {
         return new GPT2Model(
@@ -95,6 +143,10 @@ public class GPT2Model extends Block {
     /**
      * 创建微型GPT-2模型的构造函数
      * 用于快速实验和调试
+     * 
+     * @param name 模型名称
+     * @param vocabSize 词汇表大小
+     * @return GPT-2模型实例
      */
     public static GPT2Model createTinyModel(String name, int vocabSize) {
         return new GPT2Model(
@@ -109,6 +161,9 @@ public class GPT2Model extends Block {
         );
     }
     
+    /**
+     * 初始化方法
+     */
     @Override
     public void init() {
         if (!alreadyInit) {
@@ -157,6 +212,12 @@ public class GPT2Model extends Block {
         }
     }
     
+    /**
+     * 前向传播
+     * 
+     * @param inputs 输入变量数组
+     * @return 前向传播结果
+     */
     @Override
     public Variable layerForward(Variable... inputs) {
         Variable tokenIds = inputs[0];  // shape: (batch_size, seq_len)
@@ -193,6 +254,7 @@ public class GPT2Model extends Block {
     
     /**
      * 生成文本的前向传播（用于推理）
+     * 
      * @param tokenIds 输入token序列
      * @return 下一个token的概率分布
      */
@@ -202,6 +264,7 @@ public class GPT2Model extends Block {
     
     /**
      * 预测下一个token
+     * 
      * @param tokenIds 输入token序列
      * @return 最可能的下一个token ID
      */
@@ -231,6 +294,8 @@ public class GPT2Model extends Block {
     
     /**
      * 计算模型的总参数量
+     * 
+     * @return 模型总参数量
      */
     public long getParameterCount() {
         long totalParams = 0;
@@ -279,15 +344,80 @@ public class GPT2Model extends Block {
     }
     
     // Getters
+    /**
+     * 获取Token嵌入层
+     * 
+     * @return Token嵌入层
+     */
     public GPT2TokenEmbedding getTokenEmbedding() { return tokenEmbedding; }
+    
+    /**
+     * 获取Transformer块列表
+     * 
+     * @return Transformer块列表
+     */
     public List<GPT2Block> getTransformerBlocks() { return transformerBlocks; }
+    
+    /**
+     * 获取最终层归一化
+     * 
+     * @return 最终层归一化
+     */
     public LayerNorm getFinalLayerNorm() { return finalLayerNorm; }
+    
+    /**
+     * 获取输出头
+     * 
+     * @return 输出头
+     */
     public GPT2OutputHead getOutputHead() { return outputHead; }
+    
+    /**
+     * 获取词汇表大小
+     * 
+     * @return 词汇表大小
+     */
     public int getVocabSize() { return vocabSize; }
+    
+    /**
+     * 获取模型维度
+     * 
+     * @return 模型维度
+     */
     public int getDModel() { return dModel; }
+    
+    /**
+     * 获取Transformer层数
+     * 
+     * @return Transformer层数
+     */
     public int getNumLayers() { return numLayers; }
+    
+    /**
+     * 获取注意力头数
+     * 
+     * @return 注意力头数
+     */
     public int getNumHeads() { return numHeads; }
+    
+    /**
+     * 获取前馈网络隐藏维度
+     * 
+     * @return 前馈网络隐藏维度
+     */
     public int getDFF() { return dFF; }
+    
+    /**
+     * 获取最大序列长度
+     * 
+     * @return 最大序列长度
+     */
     public int getMaxSeqLength() { return maxSeqLength; }
+    
+    /**
+     * 获取Dropout比率
+     * 
+     * @return Dropout比率
+     */
     public double getDropoutRate() { return dropoutRate; }
 }

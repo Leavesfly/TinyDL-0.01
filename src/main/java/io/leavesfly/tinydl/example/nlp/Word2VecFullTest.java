@@ -9,10 +9,25 @@ import java.util.List;
 
 /**
  * Word2Vec完整功能测试
- * 测试数据集类和模型的集成使用
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 测试Word2Vec数据集类和模型的集成使用，包括：
+ * 1. Word2VecDataSet的功能测试
+ * 2. 中文语料库测试
+ * 3. 负采样功能测试
+ * 4. 词向量相似度测试
+ * 
+ * 该示例展示了Word2Vec模型的完整使用流程和各种功能特性。
  */
 public class Word2VecFullTest {
     
+    /**
+     * 主函数，执行所有测试用例
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== Word2Vec 完整功能测试 ===\n");
         
@@ -24,10 +39,15 @@ public class Word2VecFullTest {
         
         // 测试3：负采样功能测试
         testNegativeSampling();
+        
+        // 测试4：词向量相似度测试
+        testWordSimilarity();
     }
     
     /**
      * 测试Word2VecDataSet的功能
+     * 
+     * 验证数据集类是否能正确准备和处理训练数据
      */
     public static void testWord2VecDataSet() {
         System.out.println("=== 测试Word2VecDataSet ===");
@@ -61,6 +81,8 @@ public class Word2VecFullTest {
     
     /**
      * 测试中文语料库
+     * 
+     * 验证模型是否能正确处理中文语料并生成词向量
      */
     public static void testChineseCorpus() {
         System.out.println("=== 中文语料库测试 ===");
@@ -107,6 +129,8 @@ public class Word2VecFullTest {
     
     /**
      * 测试负采样功能
+     * 
+     * 验证负采样技术是否能正确生成负样本并用于训练
      */
     public static void testNegativeSampling() {
         System.out.println("=== 负采样功能测试 ===");
@@ -170,6 +194,8 @@ public class Word2VecFullTest {
     
     /**
      * 词向量相似度测试
+     * 
+     * 验证训练好的词向量是否能正确计算词与词之间的相似度
      */
     public static void testWordSimilarity() {
         System.out.println("=== 词向量相似度测试 ===");

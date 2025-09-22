@@ -18,10 +18,27 @@ import io.leavesfly.tinydl.mlearning.optimize.Optimizer;
 import io.leavesfly.tinydl.mlearning.optimize.SGD;
 
 /**
- * 手写数字的识别
+ * 手写数字识别示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 使用MLP神经网络对MNIST手写数字数据集进行分类训练的示例。
+ * 展示了完整的深度学习训练流程：
+ * 1. 定义超参数
+ * 2. 定义模型结构
+ * 3. 准备数据集
+ * 4. 配置训练器
+ * 5. 执行模型训练
+ * 6. 评估模型性能
  */
 public class MnistMlpExam {
 
+    /**
+     * 主函数，执行MNIST手写数字识别训练
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         //===1,定义超参数===
         int maxEpoch = 50;

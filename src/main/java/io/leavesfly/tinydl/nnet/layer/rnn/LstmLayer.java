@@ -12,6 +12,9 @@ import java.util.Objects;
 /**
  * 长短期记忆网络层 (LSTM Layer)
  * 
+ * @author leavesfly
+ * @version 0.01
+ * 
  * LSTM是一种特殊的循环神经网络，能够学习长期依赖信息，有效缓解梯度消失问题。
  * LSTM通过三个门控机制来控制信息的流动：
  * 1. 遗忘门 (Forget Gate) - 控制从细胞状态中丢弃什么信息

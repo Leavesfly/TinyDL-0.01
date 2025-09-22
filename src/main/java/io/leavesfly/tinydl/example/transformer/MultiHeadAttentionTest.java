@@ -6,9 +6,21 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.layer.transformer.MultiHeadAttention;
 
 /**
- * 测试多头注意力层
+ * 多头注意力层测试示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示如何使用多头注意力层，这是Transformer架构的核心组件。
+ * 多头注意力机制允许模型在不同表示子空间中并行关注信息的不同方面。
  */
 public class MultiHeadAttentionTest {
+    
+    /**
+     * 主函数，执行多头注意力层测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== 测试多头注意力层 ===");
         

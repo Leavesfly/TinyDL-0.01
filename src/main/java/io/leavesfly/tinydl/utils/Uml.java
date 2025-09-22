@@ -6,12 +6,25 @@ import io.leavesfly.tinydl.func.Variable;
 import java.util.Objects;
 
 /**
- * UML绘图，绘制计算图
+ * UML绘图工具类，用于绘制计算图
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * Uml类提供了将计算图转换为PlantUML格式的功能，
+ * 可以可视化展示变量和函数之间的依赖关系。
  */
 public class Uml {
 
     /**
      * 在线验证：http://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000
+     */
+
+    /**
+     * 获取变量节点的DOT图表示
+     * 
+     * @param variableNode 变量节点
+     * @return DOT格式的图表示字符串
      */
     public static String getDotGraph(Variable variableNode) {
         StringBuilder dotGraph = new StringBuilder();
@@ -19,6 +32,12 @@ public class Uml {
         return "@startuml\ndigraph g {\n" + "rankdir=LR;\n" + dotGraph + "}\n@enduml";
     }
 
+    /**
+     * 递归获取变量节点的DOT表示
+     * 
+     * @param variableNode 变量节点
+     * @param dotGraph DOT图字符串构建器
+     */
     private static void getDotNode(Variable variableNode, StringBuilder dotGraph) {
 
         if (!Objects.isNull(variableNode)) {
@@ -42,6 +61,12 @@ public class Uml {
         }
     }
 
+    /**
+     * 获取变量节点的DOT表示
+     * 
+     * @param node 变量节点
+     * @return DOT格式的节点表示字符串
+     */
     private static String getDotVar(Variable node) {
         String dotVar = "%s [label=\"%s\", color=orange, style=filled]\n";
 
@@ -57,6 +82,12 @@ public class Uml {
         return String.format(dotVar, node.hashCode(), label);
     }
 
+    /**
+     * 获取函数节点的DOT表示
+     * 
+     * @param node 函数节点
+     * @return DOT格式的函数节点表示字符串
+     */
     private static String getDotFunc(Function node) {
         StringBuilder dotFunc = new StringBuilder("%s [label=\"%s\", color=lightblue, style=filled, shape=box]\n");
         String docEdge = " %s -> %s\n";

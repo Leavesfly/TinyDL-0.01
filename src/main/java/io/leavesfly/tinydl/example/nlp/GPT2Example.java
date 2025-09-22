@@ -19,6 +19,9 @@ import java.util.List;
 /**
  * GPT-2语言模型训练和生成示例
  * 
+ * @author leavesfly
+ * @version 0.01
+ * 
  * 本示例展示了如何：
  * 1. 创建和配置GPT-2模型
  * 2. 准备训练数据
@@ -27,6 +30,11 @@ import java.util.List;
  */
 public class GPT2Example {
     
+    /**
+     * 主函数，执行GPT-2语言模型示例
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== GPT-2 Language Model Example ===");
         
@@ -57,6 +65,8 @@ public class GPT2Example {
     
     /**
      * 创建分词器并构建词汇表
+     * 
+     * @return 创建的分词器实例
      */
     private static SimpleTokenizer createTokenizer() {
         System.out.println("\n--- Creating Tokenizer ---");
@@ -75,6 +85,8 @@ public class GPT2Example {
     
     /**
      * 获取用于构建词汇表的文本
+     * 
+     * @return 用于构建词汇表的文本列表
      */
     private static List<String> getVocabularyTexts() {
         List<String> texts = new ArrayList<>();
@@ -106,6 +118,9 @@ public class GPT2Example {
     
     /**
      * 创建训练数据集
+     * 
+     * @param tokenizer 分词器实例
+     * @return 创建的训练数据集
      */
     private static GPT2TextDataset createTrainingDataset(SimpleTokenizer tokenizer) {
         System.out.println("\n--- Creating Training Dataset ---");
@@ -129,6 +144,9 @@ public class GPT2Example {
     
     /**
      * 训练模型
+     * 
+     * @param gpt2Model GPT-2模型实例
+     * @param dataset 训练数据集
      */
     private static void trainModel(GPT2Model gpt2Model, GPT2TextDataset dataset) {
         System.out.println("\n--- Training GPT-2 Model ---");
@@ -205,6 +223,9 @@ public class GPT2Example {
     
     /**
      * 生成文本
+     * 
+     * @param gpt2Model GPT-2模型实例
+     * @param tokenizer 分词器实例
      */
     private static void generateText(GPT2Model gpt2Model, SimpleTokenizer tokenizer) {
         System.out.println("\n--- Text Generation ---");
@@ -231,6 +252,12 @@ public class GPT2Example {
     
     /**
      * 从提示生成文本
+     * 
+     * @param gpt2Model GPT-2模型实例
+     * @param tokenizer 分词器实例
+     * @param prompt 提示文本
+     * @param maxNewTokens 最大新生成token数
+     * @return 生成的文本
      */
     private static String generateFromPrompt(GPT2Model gpt2Model, SimpleTokenizer tokenizer, 
                                            String prompt, int maxNewTokens) {

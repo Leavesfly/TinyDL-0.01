@@ -21,17 +21,39 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
- * 绘图函数
+ * 绘图工具类
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * Plot类提供了数据可视化功能，基于JFreeChart库实现。
+ * 支持绘制散点图和折线图，用于展示训练数据和模型结果。
  */
 public class Plot {
 
+    /**
+     * X轴坐标轴
+     */
     private final NumberAxis xAxis = new NumberAxis("X");
+    
+    /**
+     * Y轴坐标轴
+     */
     private final NumberAxis yAxis = new NumberAxis("Y");
 
+    /**
+     * XY图绘制区域
+     */
     private XYPlot plot;
 
+    /**
+     * 颜色索引，用于为不同的数据系列分配不同颜色
+     */
     private int index = 0;
 
+    /**
+     * 颜色映射表，将索引映射到具体颜色
+     */
     private Map<Integer, Color> ColorMap = new HashMap<Integer, Color>() {
         {
             put(0, Color.RED);
@@ -44,6 +66,12 @@ public class Plot {
         }
     };
 
+    /**
+     * 绘制散点图
+     * 
+     * @param x X坐标数组
+     * @param y Y坐标数组
+     */
     public void scatter(float[] x, float[] y) {
 
         XYDataset dataset = createDataset(x, y, "scatter");
@@ -60,6 +88,12 @@ public class Plot {
     }
 
 
+    /**
+     * 绘制数据集中的散点图
+     * 
+     * @param _dataset 数据集对象
+     * @param types 要绘制的数据类型数组
+     */
     public void scatter(ArrayDataset _dataset, int[] types) {
         if (plot == null) {
             plot = new XYPlot();
@@ -78,6 +112,13 @@ public class Plot {
         }
     }
 
+    /**
+     * 绘制折线图
+     * 
+     * @param x X坐标数组
+     * @param y Y坐标数组
+     * @param name 数据系列名称
+     */
     public void line(float[] x, float[] y, String name) {
 
         XYDataset dataset = createDataset(x, y, name);
@@ -93,6 +134,9 @@ public class Plot {
         }
     }
 
+    /**
+     * 显示图表
+     */
     public void show() {
         plot.setOrientation(PlotOrientation.VERTICAL);
         // 创建图表对象
@@ -112,6 +156,11 @@ public class Plot {
         frame.setVisible(true);
     }
 
+    /**
+     * 将窗口居中显示
+     * 
+     * @param jFrame 要居中的窗口
+     */
     public static void center(JFrame jFrame) {
 
         // 1、获取窗体的宽和高
@@ -138,6 +187,14 @@ public class Plot {
     }
 
 
+    /**
+     * 创建数据集（用于数据集对象）
+     * 
+     * @param name 数据系列名称
+     * @param dataset 数据集对象
+     * @param type 数据类型
+     * @return XY数据集
+     */
     private static XYDataset createDataset(String name, ArrayDataset dataset, int type) {
         int size = dataset.getSize();
         XYSeries scatterSeries = new XYSeries(name);
@@ -151,6 +208,14 @@ public class Plot {
         return xySeriesCollection;
     }
 
+    /**
+     * 创建数据集（用于坐标数组）
+     * 
+     * @param x X坐标数组
+     * @param y Y坐标数组
+     * @param name 数据系列名称
+     * @return XY数据集
+     */
     private static XYDataset createDataset(float[] x, float[] y, String name) {
         XYSeries scatterSeries = new XYSeries(name);
         for (int i = 0; i < x.length; i++) {
@@ -161,10 +226,18 @@ public class Plot {
         return dataset;
     }
 
+    /**
+     * 主函数，用于测试绘图功能
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         test1();
     }
 
+    /**
+     * 测试函数1，演示如何使用Plot类绘制螺旋数据集
+     */
     public static void test1() {
         Plot plot = new Plot();
         int[] types = new int[]{0, 1, 2};
@@ -176,4 +249,3 @@ public class Plot {
     }
 
 }
-

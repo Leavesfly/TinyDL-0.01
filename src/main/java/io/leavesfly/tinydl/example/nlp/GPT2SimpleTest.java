@@ -10,16 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GPT-2模型简单测试
+ * GPT-2模型简单测试示例
  * 
- * 测试模型的基本功能：
- * 1. 模型创建和初始化
- * 2. 前向传播
- * 3. 分词器功能
- * 4. 基本的文本生成
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示了GPT-2模型的基本功能测试，包括：
+ * 1. 分词器功能测试
+ * 2. 模型创建和初始化测试
+ * 3. 前向传播测试
+ * 4. 基本文本生成测试
+ * 
+ * GPT-2是一种基于Transformer的自回归语言模型，能够生成连贯的文本。
  */
 public class GPT2SimpleTest {
     
+    /**
+     * 主函数，执行所有测试用例
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== GPT-2 Simple Test ===");
         
@@ -33,6 +43,9 @@ public class GPT2SimpleTest {
             // 测试前向传播
             testForwardPass();
             
+            // 测试基础文本生成
+            testBasicGeneration();
+            
             System.out.println("\nAll tests completed successfully!");
             
         } catch (Exception e) {
@@ -43,6 +56,8 @@ public class GPT2SimpleTest {
     
     /**
      * 测试分词器功能
+     * 
+     * 验证分词器的编码和解码功能是否正常工作
      */
     private static void testTokenizer() {
         System.out.println("\n--- Testing Tokenizer ---");
@@ -73,6 +88,8 @@ public class GPT2SimpleTest {
     
     /**
      * 测试模型创建
+     * 
+     * 验证GPT-2模型是否能正确创建和初始化
      */
     private static void testModelCreation() {
         System.out.println("\n--- Testing Model Creation ---");
@@ -94,6 +111,8 @@ public class GPT2SimpleTest {
     
     /**
      * 测试前向传播
+     * 
+     * 验证模型的前向传播功能是否正常工作，输出是否合理
      */
     private static void testForwardPass() {
         System.out.println("\n--- Testing Forward Pass ---");
@@ -162,6 +181,8 @@ public class GPT2SimpleTest {
     
     /**
      * 测试文本生成（基础版本）
+     * 
+     * 验证模型是否能根据给定的提示文本预测下一个token
      */
     private static void testBasicGeneration() {
         System.out.println("\n--- Testing Basic Generation ---");

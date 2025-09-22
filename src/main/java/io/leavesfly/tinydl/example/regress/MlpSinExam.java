@@ -17,10 +17,21 @@ import io.leavesfly.tinydl.utils.Plot;
 import java.util.List;
 
 /**
- * 带有噪声的sin曲线数据的拟合
+ * MLP拟合正弦曲线示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示如何使用多层感知机(MLP)神经网络拟合带有噪声的正弦曲线数据。
+ * MLP是一种前馈神经网络，能够学习非线性函数映射，适用于回归和分类任务。
  */
 public class MlpSinExam {
 
+    /**
+     * 主函数，执行MLP训练和可视化
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
 
         //====== 1,生成数据====

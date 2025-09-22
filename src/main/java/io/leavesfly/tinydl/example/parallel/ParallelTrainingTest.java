@@ -12,10 +12,19 @@ import io.leavesfly.tinydl.utils.Config;
 /**
  * 并行训练测试示例
  * 
- * 该示例演示如何使用新的并行训练功能
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示如何使用TinyDL的并行训练功能来加速模型训练过程。
+ * 并行训练通过多线程技术同时处理多个批次的数据，从而提高训练效率。
  */
 public class ParallelTrainingTest {
     
+    /**
+     * 主函数，执行并行训练测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== TinyDL 并行训练测试 ===");
         
@@ -49,6 +58,9 @@ public class ParallelTrainingTest {
     
     /**
      * 创建MLP模型
+     * 
+     * @param name 模型名称
+     * @return 创建的MLP模型
      */
     private static Model createModel(String name) {
         MlpBlock mlpBlock = new MlpBlock(name, 32, Config.ActiveFunc.ReLU, 2, 16, 16, 3);
@@ -58,6 +70,13 @@ public class ParallelTrainingTest {
     
     /**
      * 测试并行训练
+     * 
+     * @param dataSet 训练数据集
+     * @param model 模型
+     * @param loss 损失函数
+     * @param optimizer 优化器
+     * @param maxEpoch 最大训练轮数
+     * @param threadCount 并行线程数
      */
     private static void testParallelTraining(SpiralDateSet dataSet, Model model, 
                                            SoftmaxCrossEntropy loss, Adam optimizer, 

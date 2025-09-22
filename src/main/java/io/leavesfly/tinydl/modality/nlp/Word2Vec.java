@@ -16,38 +16,104 @@ import java.util.*;
 
 /**
  * Word2Vec词向量模型实现
- * 支持Skip-gram和CBOW两种训练模式
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * Word2Vec类实现了词向量模型，支持Skip-gram和CBOW两种训练模式。
  * Skip-gram: 根据中心词预测上下文词
  * CBOW: 根据上下文词预测中心词
  */
 public class Word2Vec extends Block {
     
+    /**
+     * 训练模式枚举
+     */
     public enum TrainingMode {
-        SKIP_GRAM,  // Skip-gram模式
-        CBOW        // CBOW模式
+        /**
+         * Skip-gram模式
+         */
+        SKIP_GRAM,
+        
+        /**
+         * CBOW模式
+         */
+        CBOW
     }
     
-    private final int vocabSize;      // 词汇表大小
-    private final int embedSize;      // 词向量维度
-    private final TrainingMode mode;  // 训练模式
-    private final int windowSize;     // 窗口大小
-    private final boolean useNegativeSampling; // 是否使用负采样
-    private final int negativeSamples; // 负样本数量
+    /**
+     * 词汇表大小
+     */
+    private final int vocabSize;
     
-    // 网络组件
-    private Embedding inputEmbedding;   // 输入词嵌入层
-    private Embedding outputEmbedding;  // 输出词嵌入层 (用于negative sampling)
-    private LinearLayer outputLayer;   // 输出线性层
-    private SoftMaxLayer softmaxLayer; // Softmax层
+    /**
+     * 词向量维度
+     */
+    private final int embedSize;
     
-    // 词汇相关
+    /**
+     * 训练模式
+     */
+    private final TrainingMode mode;
+    
+    /**
+     * 窗口大小
+     */
+    private final int windowSize;
+    
+    /**
+     * 是否使用负采样
+     */
+    private final boolean useNegativeSampling;
+    
+    /**
+     * 负样本数量
+     */
+    private final int negativeSamples;
+    
+    /**
+     * 输入词嵌入层
+     */
+    private Embedding inputEmbedding;
+    
+    /**
+     * 输出词嵌入层 (用于negative sampling)
+     */
+    private Embedding outputEmbedding;
+    
+    /**
+     * 输出线性层
+     */
+    private LinearLayer outputLayer;
+    
+    /**
+     * Softmax层
+     */
+    private SoftMaxLayer softmaxLayer;
+    
+    /**
+     * 词到索引的映射
+     */
     private Map<String, Integer> word2idx;
+    
+    /**
+     * 索引到词的映射
+     */
     private Map<Integer, String> idx2word;
-    private float[] wordFreq;  // 词频统计，用于负采样
+    
+    /**
+     * 词频统计，用于负采样
+     */
+    private float[] wordFreq;
+    
+    /**
+     * 随机数生成器
+     */
     private Random random;
     
     /**
      * 构造函数
+     * 
      * @param name 模型名称
      * @param vocabSize 词汇表大小
      * @param embedSize 词向量维度
@@ -78,6 +144,10 @@ public class Word2Vec extends Block {
     
     /**
      * 简化构造函数，使用默认参数
+     * 
+     * @param name 模型名称
+     * @param vocabSize 词汇表大小
+     * @param embedSize 词向量维度
      */
     public Word2Vec(String name, int vocabSize, int embedSize) {
         this(name, vocabSize, embedSize, TrainingMode.SKIP_GRAM, 2, true, 5);
@@ -104,6 +174,9 @@ public class Word2Vec extends Block {
         }
     }
     
+    /**
+     * 初始化方法
+     */
     @Override
     public void init() {
         // 初始化所有层
@@ -114,6 +187,7 @@ public class Word2Vec extends Block {
     
     /**
      * 构建词汇表
+     * 
      * @param corpus 语料库 (词的列表)
      */
     public void buildVocab(List<String> corpus) {
@@ -146,6 +220,7 @@ public class Word2Vec extends Block {
     
     /**
      * 生成训练样本
+     * 
      * @param corpus 语料库
      * @return 训练样本列表
      */
@@ -182,6 +257,9 @@ public class Word2Vec extends Block {
     
     /**
      * 前向传播
+     * 
+     * @param inputs 输入变量数组
+     * @return 前向传播结果
      */
     @Override
     public Variable layerForward(Variable... inputs) {
@@ -196,6 +274,9 @@ public class Word2Vec extends Block {
     
     /**
      * Skip-gram前向传播
+     * 
+     * @param input 输入变量
+     * @return 前向传播结果
      */
     private Variable forwardSkipGram(Variable input) {
         // 输入是中心词索引
@@ -213,6 +294,9 @@ public class Word2Vec extends Block {
     
     /**
      * CBOW前向传播
+     * 
+     * @param input 输入变量
+     * @return 前向传播结果
      */
     private Variable forwardCBOW(Variable input) {
         // 输入是上下文词索引的平均
@@ -231,6 +315,11 @@ public class Word2Vec extends Block {
     
     /**
      * 负采样损失计算
+     * 
+     * @param centerEmbedding 中心词嵌入
+     * @param targetWord 目标词
+     * @param negativeWords 负样本词列表
+     * @return 损失值
      */
     public Variable negativeSamplingLoss(Variable centerEmbedding, int targetWord, List<Integer> negativeWords) {
         // 正样本损失
@@ -252,6 +341,10 @@ public class Word2Vec extends Block {
     
     /**
      * 负采样
+     * 
+     * @param targetWord 目标词
+     * @param numSamples 采样数量
+     * @return 负样本词列表
      */
     public List<Integer> negativeSampling(int targetWord, int numSamples) {
         List<Integer> negatives = new ArrayList<>();
@@ -294,6 +387,9 @@ public class Word2Vec extends Block {
     
     /**
      * 获取词向量
+     * 
+     * @param word 词
+     * @return 词向量
      */
     public NdArray getWordVector(String word) {
         Integer idx = word2idx.get(word);
@@ -308,6 +404,10 @@ public class Word2Vec extends Block {
     
     /**
      * 获取最相似的词
+     * 
+     * @param word 词
+     * @param topK 返回最相似词的数量
+     * @return 最相似的词列表
      */
     public List<String> mostSimilar(String word, int topK) {
         NdArray targetVector = getWordVector(word);
@@ -334,6 +434,10 @@ public class Word2Vec extends Block {
     
     /**
      * 计算余弦相似度
+     * 
+     * @param vec1 向量1
+     * @param vec2 向量2
+     * @return 余弦相似度
      */
     private float cosineSimilarity(NdArray vec1, NdArray vec2) {
         float dot = 0f, norm1 = 0f, norm2 = 0f;
@@ -351,19 +455,61 @@ public class Word2Vec extends Block {
     }
     
     // Getter方法
+    /**
+     * 获取词汇表大小
+     * 
+     * @return 词汇表大小
+     */
     public int getVocabSize() { return vocabSize; }
+    
+    /**
+     * 获取词向量维度
+     * 
+     * @return 词向量维度
+     */
     public int getEmbedSize() { return embedSize; }
+    
+    /**
+     * 获取训练模式
+     * 
+     * @return 训练模式
+     */
     public TrainingMode getMode() { return mode; }
+    
+    /**
+     * 获取词到索引的映射
+     * 
+     * @return 词到索引的映射
+     */
     public Map<String, Integer> getWord2idx() { return word2idx; }
+    
+    /**
+     * 获取索引到词的映射
+     * 
+     * @return 索引到词的映射
+     */
     public Map<Integer, String> getIdx2word() { return idx2word; }
     
     /**
      * 训练样本类
      */
     public static class TrainingSample {
+        /**
+         * 输入词索引
+         */
         public final int input;
+        
+        /**
+         * 目标词索引
+         */
         public final int target;
         
+        /**
+         * 构造函数
+         * 
+         * @param input 输入词索引
+         * @param target 目标词索引
+         */
         public TrainingSample(int input, int target) {
             this.input = input;
             this.target = target;
@@ -374,9 +520,22 @@ public class Word2Vec extends Block {
      * 词相似度类
      */
     private static class WordSimilarity {
+        /**
+         * 词
+         */
         public final String word;
+        
+        /**
+         * 相似度
+         */
         public final float similarity;
         
+        /**
+         * 构造函数
+         * 
+         * @param word 词
+         * @param similarity 相似度
+         */
         public WordSimilarity(String word, float similarity) {
             this.word = word;
             this.similarity = similarity;

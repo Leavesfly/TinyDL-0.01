@@ -24,14 +24,32 @@ import io.leavesfly.tinydl.utils.Plot;
 import java.util.List;
 
 /**
- * 螺旋数据分类
+ * 螺旋数据分类示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 使用MLP神经网络对螺旋数据集进行分类训练的示例。
+ * 螺旋数据集是一个经典的非线性可分数据集，用于测试神经网络的非线性拟合能力。
+ * 该示例展示了两种训练方式：
+ * 1. 使用Trainer类的高级训练方式
+ * 2. 手动实现训练循环的低级训练方式
+ * 同时演示了训练过程中的损失和准确率监控，以及训练结果的可视化。
  */
 public class SpiralMlpExam {
 
+    /**
+     * 主函数，执行螺旋数据分类训练
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         test1();
     }
 
+    /**
+     * 使用Trainer类的高级训练方式
+     */
     public static void test() {
 
         int maxEpoch = 300;
@@ -62,6 +80,10 @@ public class SpiralMlpExam {
     }
 
 
+    /**
+     * 手动实现训练循环的低级训练方式
+     * 包含损失和准确率监控，以及训练结果可视化
+     */
     public static void test1() {
         //==定义超参数
         int maxEpoch = 300;

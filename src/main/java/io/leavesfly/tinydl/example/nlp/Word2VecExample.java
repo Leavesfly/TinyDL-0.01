@@ -12,10 +12,25 @@ import java.util.*;
 
 /**
  * Word2Vec训练示例
- * 演示如何使用Word2Vec模型进行词向量训练
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 演示如何使用Word2Vec模型进行词向量训练，包括：
+ * 1. Skip-gram模式训练
+ * 2. CBOW模式训练
+ * 3. 负采样训练
+ * 
+ * Word2Vec是Google开发的一种用于生成词向量的神经网络模型，
+ * 它能够将词汇映射到连续向量空间中，使得语义相似的词在向量空间中距离较近。
  */
 public class Word2VecExample {
     
+    /**
+     * 主函数，执行Skip-gram和CBOW模式训练示例
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         // 示例1：Skip-gram模式训练
         System.out.println("=== Skip-gram 模式训练 ===");
@@ -28,6 +43,8 @@ public class Word2VecExample {
     
     /**
      * Skip-gram模式训练示例
+     * 
+     * Skip-gram模型通过中心词预测上下文词，适用于词汇量大且语料丰富的场景
      */
     public static void trainSkipGram() {
         // 准备简单的语料库
@@ -101,6 +118,8 @@ public class Word2VecExample {
     
     /**
      * CBOW模式训练示例
+     * 
+     * CBOW模型通过上下文词预测中心词，适用于小数据集和罕见词的训练
      */
     public static void trainCBOW() {
         // 准备简单的语料库
@@ -172,6 +191,8 @@ public class Word2VecExample {
     
     /**
      * 准备示例语料库
+     * 
+     * @return 包含分词后语料的列表
      */
     private static List<String> prepareCorpus() {
         List<String> corpus = new ArrayList<>();
@@ -205,6 +226,8 @@ public class Word2VecExample {
     
     /**
      * 测试词向量效果
+     * 
+     * @param word2vec 训练好的Word2Vec模型
      */
     private static void testWordVectors(Word2Vec word2vec) {
         System.out.println("\n=== 词向量测试 ===");
@@ -247,6 +270,8 @@ public class Word2VecExample {
     
     /**
      * 负采样训练示例
+     * 
+     * 演示如何使用负采样技术来加速Word2Vec训练
      */
     public static void trainWithNegativeSampling() {
         System.out.println("\n=== 负采样训练示例 ===");

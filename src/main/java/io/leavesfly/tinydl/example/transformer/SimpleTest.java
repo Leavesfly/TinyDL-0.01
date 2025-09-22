@@ -6,9 +6,21 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.layer.dnn.LinearLayer;
 
 /**
- * 简单测试LinearLayer
+ * LinearLayer简单测试示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示如何使用LinearLayer（全连接层）处理不同维度的输入数据。
+ * LinearLayer是神经网络中最基础的层之一，用于执行线性变换。
  */
 public class SimpleTest {
+    
+    /**
+     * 主函数，执行LinearLayer测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== 测试LinearLayer ===");
         

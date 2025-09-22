@@ -6,9 +6,21 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.layer.transformer.TransformerEncoderLayer;
 
 /**
- * 测试Transformer编码器层
+ * Transformer编码器层测试示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示如何使用Transformer编码器层，这是Transformer架构中编码器部分的基本构建块。
+ * 编码器层由多头自注意力机制和前馈神经网络组成，通过残差连接和层归一化进行连接。
  */
 public class TransformerEncoderLayerTest {
+    
+    /**
+     * 主函数，执行Transformer编码器层测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== 测试Transformer编码器层 ===");
         

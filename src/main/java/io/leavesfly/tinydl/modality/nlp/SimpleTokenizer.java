@@ -6,31 +6,73 @@ import java.util.regex.Pattern;
 /**
  * 简单的文本分词器
  * 
- * 提供基本的文本分词和编码功能，用于GPT-2模型的数据预处理
- * 支持：
- * 1. 词汇表构建
- * 2. 文本到token ID的转换
- * 3. token ID到文本的转换
- * 4. 特殊token处理（如<pad>, <unk>, <bos>, <eos>等）
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * SimpleTokenizer类提供了基本的文本分词和编码功能，用于GPT-2模型的数据预处理。
+ * 支持词汇表构建、文本到token ID的转换、token ID到文本的转换以及特殊token处理。
  */
 public class SimpleTokenizer {
     
-    // 特殊token定义
+    /**
+     * 填充token
+     */
     public static final String PAD_TOKEN = "<pad>";
-    public static final String UNK_TOKEN = "<unk>";
-    public static final String BOS_TOKEN = "<bos>";  // Beginning of sequence
-    public static final String EOS_TOKEN = "<eos>";  // End of sequence
     
-    // 特殊token ID
+    /**
+     * 未知token
+     */
+    public static final String UNK_TOKEN = "<unk>";
+    
+    /**
+     * 序列开始token
+     */
+    public static final String BOS_TOKEN = "<bos>";
+    
+    /**
+     * 序列结束token
+     */
+    public static final String EOS_TOKEN = "<eos>";
+    
+    /**
+     * 填充token ID
+     */
     public static final int PAD_ID = 0;
+    
+    /**
+     * 未知token ID
+     */
     public static final int UNK_ID = 1;
+    
+    /**
+     * 序列开始token ID
+     */
     public static final int BOS_ID = 2;
+    
+    /**
+     * 序列结束token ID
+     */
     public static final int EOS_ID = 3;
     
-    private Map<String, Integer> vocab;          // 词汇到ID的映射
-    private Map<Integer, String> reverseVocab;   // ID到词汇的映射
+    /**
+     * 词汇到ID的映射
+     */
+    private Map<String, Integer> vocab;
+    
+    /**
+     * ID到词汇的映射
+     */
+    private Map<Integer, String> reverseVocab;
+    
+    /**
+     * 词汇表大小
+     */
     private int vocabSize;
-    private Pattern tokenPattern;                // 分词正则表达式
+    
+    /**
+     * 分词正则表达式
+     */
+    private Pattern tokenPattern;
     
     /**
      * 构造分词器
@@ -105,6 +147,9 @@ public class SimpleTokenizer {
     
     /**
      * 添加token到词汇表
+     * 
+     * @param token 要添加的token
+     * @param id token对应的ID
      */
     private void addToken(String token, int id) {
         vocab.put(token, id);
@@ -170,6 +215,9 @@ public class SimpleTokenizer {
     
     /**
      * 将文本编码为token ID数组（默认添加特殊token）
+     * 
+     * @param text 输入文本
+     * @return token ID数组
      */
     public int[] encode(String text) {
         return encode(text, true);
@@ -201,6 +249,9 @@ public class SimpleTokenizer {
     
     /**
      * 将token ID数组解码为文本（默认跳过特殊token）
+     * 
+     * @param tokenIds token ID数组
+     * @return 解码后的文本
      */
     public String decode(int[] tokenIds) {
         return decode(tokenIds, true);
@@ -208,6 +259,9 @@ public class SimpleTokenizer {
     
     /**
      * 检查是否为特殊token
+     * 
+     * @param token 要检查的token
+     * @return 如果是特殊token返回true，否则返回false
      */
     private boolean isSpecialToken(String token) {
         return token.equals(PAD_TOKEN) || token.equals(UNK_TOKEN) || 
@@ -248,6 +302,8 @@ public class SimpleTokenizer {
     
     /**
      * 获取词汇表大小
+     * 
+     * @return 词汇表大小
      */
     public int getVocabSize() {
         return vocabSize;
@@ -255,6 +311,9 @@ public class SimpleTokenizer {
     
     /**
      * 获取token对应的ID
+     * 
+     * @param token 要查询的token
+     * @return token对应的ID，如果不存在则返回UNK_ID
      */
     public int getTokenId(String token) {
         return vocab.getOrDefault(token, UNK_ID);
@@ -262,6 +321,9 @@ public class SimpleTokenizer {
     
     /**
      * 获取ID对应的token
+     * 
+     * @param id 要查询的ID
+     * @return ID对应的token，如果不存在则返回UNK_TOKEN
      */
     public String getToken(int id) {
         return reverseVocab.getOrDefault(id, UNK_TOKEN);
@@ -269,6 +331,9 @@ public class SimpleTokenizer {
     
     /**
      * 检查词汇表是否包含指定token
+     * 
+     * @param token 要检查的token
+     * @return 如果包含返回true，否则返回false
      */
     public boolean containsToken(String token) {
         return vocab.containsKey(token);

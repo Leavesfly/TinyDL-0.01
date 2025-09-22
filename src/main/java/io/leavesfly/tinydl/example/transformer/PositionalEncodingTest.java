@@ -6,9 +6,21 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.layer.transformer.PositionalEncoding;
 
 /**
- * 测试位置编码层
+ * 位置编码层测试示例
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示如何使用位置编码层，这是Transformer架构中用于注入序列位置信息的重要组件。
+ * 由于Transformer模型本身不包含循环或卷积结构，需要位置编码来为模型提供序列中词的位置信息。
  */
 public class PositionalEncodingTest {
+    
+    /**
+     * 主函数，执行位置编码层测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== 测试位置编码层 ===");
         

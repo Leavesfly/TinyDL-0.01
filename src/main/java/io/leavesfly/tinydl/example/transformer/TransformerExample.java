@@ -10,11 +10,25 @@ import io.leavesfly.tinydl.nnet.block.transformer.TransformerEncoder;
 /**
  * Transformer使用示例
  * 
- * 这个示例展示了如何使用完整的Transformer模型进行序列到序列的转换任务，
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例展示了如何使用完整的Transformer模型进行序列到序列的转换任务，
  * 例如机器翻译、文本摘要等。
+ * 
+ * Transformer模型由编码器和解码器两部分组成：
+ * 1. 编码器：将输入序列转换为一系列隐藏表示
+ * 2. 解码器：基于编码器的输出和已生成的部分输出序列，生成目标序列
+ * 
+ * Transformer的核心创新是自注意力机制，它允许模型在处理序列时关注序列中的不同位置。
  */
 public class TransformerExample {
     
+    /**
+     * 主函数，执行Transformer模型示例
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         // 模型参数
         int dModel = 512;      // 模型维度
@@ -53,7 +67,7 @@ public class TransformerExample {
         );
         
         // 创建示例输入数据
-        System.out.println("\\n=== 创建输入数据 ===");
+        System.out.println("\n=== 创建输入数据 ===");
         
         // 编码器输入（源序列）
         NdArray encoderInput = NdArray.likeRandom(0.0f, 1.0f, 
@@ -68,24 +82,24 @@ public class TransformerExample {
         System.out.println("解码器输入形状: " + decoderInput.getShape());
         
         // 前向传播
-        System.out.println("\\n=== 前向传播 ===");
+        System.out.println("\n=== 前向传播 ===");
         try {
             Variable output = transformer1.layerForward(encInput, decInput);
             System.out.println("Transformer输出形状: " + output.getValue().getShape());
             System.out.println("前向传播成功！");
             
             // 测试仅编码功能
-            System.out.println("\\n=== 测试仅编码功能 ===");
+            System.out.println("\n=== 测试仅编码功能 ===");
             Variable encoderOutput = transformer1.encodeOnly(encInput);
             System.out.println("编码器输出形状: " + encoderOutput.getValue().getShape());
             
             // 测试仅解码功能
-            System.out.println("\\n=== 测试仅解码功能 ===");
+            System.out.println("\n=== 测试仅解码功能 ===");
             Variable decoderOutput = transformer1.decodeOnly(decInput, encoderOutput);
             System.out.println("解码器输出形状: " + decoderOutput.getValue().getShape());
             
             // 验证结果一致性
-            System.out.println("\\n=== 验证结果一致性 ===");
+            System.out.println("\n=== 验证结果一致性 ===");
             boolean isConsistent = compareOutputs(output.getValue(), decoderOutput.getValue());
             System.out.println("完整前向传播与分步骤结果一致: " + isConsistent);
             
@@ -95,7 +109,7 @@ public class TransformerExample {
         }
         
         // 展示模型结构信息
-        System.out.println("\\n=== 模型结构信息 ===");
+        System.out.println("\n=== 模型结构信息 ===");
         System.out.println("模型维度: " + dModel);
         System.out.println("注意力头数: " + numHeads);
         System.out.println("编码器层数: " + ((TransformerEncoder)transformer1.getEncoder()).getNumLayers());
@@ -103,11 +117,15 @@ public class TransformerExample {
         System.out.println("前馈网络隐藏维度: " + ((TransformerEncoder)transformer1.getEncoder()).getDFF());
         System.out.println("最大序列长度: " + ((TransformerEncoder)transformer1.getEncoder()).getMaxSeqLength());
         
-        System.out.println("\\n=== 示例完成 ===");
+        System.out.println("\n=== 示例完成 ===");
     }
     
     /**
      * 比较两个输出是否一致（简单版本）
+     * 
+     * @param output1 第一个输出
+     * @param output2 第二个输出
+     * @return 如果两个输出一致则返回true，否则返回false
      */
     private static boolean compareOutputs(NdArray output1, NdArray output2) {
         if (!output1.shape.equals(output2.shape)) {

@@ -19,9 +19,24 @@ import java.util.List;
 
 /**
  * 完整的RNN示例，比较不同RNN层的性能
- * 包含SimpleRNN、LSTM和GRU的实现和对比
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 该示例演示并比较三种不同的递归神经网络架构：
+ * 1. SimpleRNN - 基础递归网络
+ * 2. LSTM - 长短期记忆网络，能够处理长序列依赖
+ * 3. GRU - 门控递归单元，LSTM的简化版本
+ * 
+ * 所有模型都用于拟合正弦曲线序列数据，以比较它们的性能差异。
  */
 public class CompleteRnnExample {
+    
+    /**
+     * 主函数，执行三种RNN模型的训练和比较
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         // 比较不同类型的RNN
         System.out.println("=== Simple RNN ===");
@@ -36,6 +51,8 @@ public class CompleteRnnExample {
 
     /**
      * 测试SimpleRNN
+     * 
+     * SimpleRNN是最基础的递归网络结构，具有简单的循环连接
      */
     public static void testSimpleRNN() {
         // 定义超参数
@@ -64,6 +81,8 @@ public class CompleteRnnExample {
 
     /**
      * 测试LSTM
+     * 
+     * LSTM(长短期记忆网络)通过门控机制解决梯度消失问题，能够学习长期依赖关系
      */
     public static void testLSTM() {
         // 定义超参数
@@ -92,6 +111,8 @@ public class CompleteRnnExample {
 
     /**
      * 测试GRU
+     * 
+     * GRU(门控递归单元)是LSTM的简化版本，具有更少的参数和计算复杂度
      */
     public static void testGRU() {
         // 定义超参数
@@ -120,6 +141,12 @@ public class CompleteRnnExample {
 
     /**
      * 通用训练函数
+     * 
+     * @param model 模型
+     * @param optimizer 优化器
+     * @param lossFunc 损失函数
+     * @param batches 训练批次
+     * @param maxEpoch 最大训练轮数
      */
     private static void trainModel(Model model, Adam optimizer, Loss lossFunc, 
                                   List<Batch> batches, int maxEpoch) {

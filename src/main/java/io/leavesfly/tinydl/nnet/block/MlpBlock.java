@@ -13,10 +13,27 @@ import java.util.Objects;
 
 /**
  * 多层全连接的BP神经网络
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * MlpBlock是一个多层感知机块，由多个全连接层和激活函数层组成，
+ * 可以构建任意深度的前馈神经网络。
  */
 public class MlpBlock extends Block {
+    /**
+     * 激活函数类型配置
+     */
     Config.ActiveFunc activeFunc;
 
+    /**
+     * 构造函数，创建一个多层感知机块
+     * 
+     * @param _name 块的名称
+     * @param batchSize 批处理大小
+     * @param _activeFunc 激活函数类型
+     * @param layerSizes 各层的大小数组，从输入层到输出层
+     */
     public MlpBlock(String _name, int batchSize, Config.ActiveFunc _activeFunc, int... layerSizes) {
         super(_name, new Shape(batchSize, layerSizes[0]), new Shape(-1, layerSizes[layerSizes.length - 1]));
 

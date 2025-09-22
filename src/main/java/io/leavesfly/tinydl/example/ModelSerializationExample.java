@@ -12,10 +12,25 @@ import java.util.Map;
 
 /**
  * 模型序列化示例
- * 演示完整的模型保存和加载功能
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 演示完整的模型保存和加载功能，包括：
+ * 1. 创建示例模型
+ * 2. 测试各种保存格式（完整模型、压缩模型、参数文件、检查点）
+ * 3. 测试模型加载功能
+ * 4. 测试参数操作功能
+ * 5. 测试JSON导出功能
+ * 6. 测试检查点功能
  */
 public class ModelSerializationExample {
     
+    /**
+     * 主函数，执行所有序列化测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== TinyDL 模型序列化示例 ===");
         
@@ -56,6 +71,8 @@ public class ModelSerializationExample {
     
     /**
      * 创建示例模型
+     * 
+     * @return 创建的模型实例
      */
     private static Model createSampleModel() {
         // 创建一个简单的MLP网络
@@ -74,6 +91,8 @@ public class ModelSerializationExample {
     
     /**
      * 初始化随机参数
+     * 
+     * @param model 要初始化参数的模型
      */
     private static void initializeRandomParameters(Model model) {
         Map<String, Parameter> params = model.getAllParams();
@@ -86,6 +105,8 @@ public class ModelSerializationExample {
     
     /**
      * 设置模型信息
+     * 
+     * @param model 要设置信息的模型
      */
     private static void setupModelInfo(Model model) {
         ModelInfo info = model.getModelInfo();
@@ -107,6 +128,8 @@ public class ModelSerializationExample {
     
     /**
      * 测试模型保存
+     * 
+     * @param model 要保存的模型
      */
     private static void testModelSaving(Model model) {
         System.out.println("\n2. 测试模型保存...");
@@ -166,6 +189,8 @@ public class ModelSerializationExample {
     
     /**
      * 测试参数操作
+     * 
+     * @param originalModel 原始模型
      */
     private static void testParameterOperations(Model originalModel) {
         System.out.println("\n4. 测试参数操作...");
@@ -202,6 +227,8 @@ public class ModelSerializationExample {
     
     /**
      * 测试JSON导出
+     * 
+     * @param model 要导出的模型
      */
     private static void testJsonExport(Model model) {
         System.out.println("\n5. 测试JSON导出...");
@@ -232,6 +259,8 @@ public class ModelSerializationExample {
     
     /**
      * 测试检查点功能
+     * 
+     * @param originalModel 原始模型
      */
     private static void testCheckpointFunctionality(Model originalModel) {
         System.out.println("\n6. 测试检查点功能...");
@@ -263,6 +292,9 @@ public class ModelSerializationExample {
     
     /**
      * 显示文件信息
+     * 
+     * @param filePath 文件路径
+     * @param description 文件描述
      */
     private static void showFileInfo(String filePath, String description) {
         File file = new File(filePath);

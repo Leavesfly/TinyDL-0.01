@@ -7,9 +7,22 @@ import io.leavesfly.tinydl.nnet.layer.cnn.ConvLayer;
 
 /**
  * 简单的卷积层测试
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 用于测试卷积层的基本功能，包括：
+ * 1. 卷积层的创建
+ * 2. 输入输出形状的验证
+ * 3. 前向传播功能的验证
  */
 public class SimpleConvLayerTest {
     
+    /**
+     * 主函数，执行卷积层测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== ConvLayer 简单测试 ===");
         

@@ -7,10 +7,22 @@ import io.leavesfly.tinydl.ndarr.Shape;
 
 /**
  * SimpleConvNet 测试示例
- * 验证深度卷积网络的前向传播功能
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 验证深度卷积网络的前向传播功能，测试不同配置的SimpleConvNet模型：
+ * 1. MNIST卷积网络
+ * 2. CIFAR-10卷积网络
+ * 3. 自定义卷积网络
  */
 public class SimpleConvNetTest {
     
+    /**
+     * 主函数，执行SimpleConvNet测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== SimpleConvNet 深度卷积网络测试 ===");
         

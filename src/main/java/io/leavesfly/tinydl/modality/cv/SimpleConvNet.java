@@ -13,58 +13,135 @@ import io.leavesfly.tinydl.nnet.layer.norm.BatchNormLayer;
 
 /**
  * 增强的深度卷积神经网络实现
- * 包含多个卷积层、池化层、全连接层和正则化层的深度架构
- * 支持批量归一化、残差连接和灵活配置
- * 适用于图像分类等计算机视觉任务
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * SimpleConvNet类实现了增强的深度卷积神经网络，包含多个卷积层、池化层、全连接层和正则化层的深度架构。
+ * 支持批量归一化、残差连接和灵活配置，适用于图像分类等计算机视觉任务。
  */
 public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 网络配置类
+     * 
+     * 用于配置卷积神经网络的各种超参数，包括批量归一化、残差连接、偏置使用、Dropout率等。
      */
     public static class ConvNetConfig {
-        public boolean useBatchNorm = true;      // 是否使用批量归一化
-        public boolean useResidual = false;      // 是否使用残差连接
-        public boolean useBias = true;           // 卷积层是否使用偏置
-        public float dropoutRate = 0.5f;         // Dropout率
-        public int[] filterNums = {32, 64, 128}; // 每个块的滤波器数量
-        public int filterSize = 3;               // 卷积核大小
-        public int stride = 1;                   // 步长
-        public int pad = 1;                      // 填充
-        public int fcHiddenSize = 512;           // 全连接层隐藏单元数
+        /**
+         * 是否使用批量归一化
+         */
+        public boolean useBatchNorm = true;
         
+        /**
+         * 是否使用残差连接
+         */
+        public boolean useResidual = false;
+        
+        /**
+         * 卷积层是否使用偏置
+         */
+        public boolean useBias = true;
+        
+        /**
+         * Dropout率
+         */
+        public float dropoutRate = 0.5f;
+        
+        /**
+         * 每个块的滤波器数量
+         */
+        public int[] filterNums = {32, 64, 128};
+        
+        /**
+         * 卷积核大小
+         */
+        public int filterSize = 3;
+        
+        /**
+         * 步长
+         */
+        public int stride = 1;
+        
+        /**
+         * 填充
+         */
+        public int pad = 1;
+        
+        /**
+         * 全连接层隐藏单元数
+         */
+        public int fcHiddenSize = 512;
+        
+        /**
+         * 默认构造函数
+         */
         public ConvNetConfig() {}
         
+        /**
+         * 设置是否使用批量归一化
+         * 
+         * @param use 是否使用批量归一化
+         * @return 当前配置对象
+         */
         public ConvNetConfig useBatchNorm(boolean use) {
             this.useBatchNorm = use;
             return this;
         }
         
+        /**
+         * 设置是否使用残差连接
+         * 
+         * @param use 是否使用残差连接
+         * @return 当前配置对象
+         */
         public ConvNetConfig useResidual(boolean use) {
             this.useResidual = use;
             return this;
         }
         
+        /**
+         * 设置Dropout率
+         * 
+         * @param rate Dropout率
+         * @return 当前配置对象
+         */
         public ConvNetConfig dropoutRate(float rate) {
             this.dropoutRate = rate;
             return this;
         }
         
+        /**
+         * 设置每个块的滤波器数量
+         * 
+         * @param nums 滤波器数量数组
+         * @return 当前配置对象
+         */
         public ConvNetConfig filterNums(int... nums) {
             this.filterNums = nums;
             return this;
         }
         
+        /**
+         * 设置全连接层隐藏单元数
+         * 
+         * @param size 隐藏单元数
+         * @return 当前配置对象
+         */
         public ConvNetConfig fcHiddenSize(int size) {
             this.fcHiddenSize = size;
             return this;
         }
     }
     
+    /**
+     * 网络配置实例
+     */
     private ConvNetConfig config;
     
     /**
      * 构造函数（使用默认配置）
+     * 
      * @param _name 网络名称
      * @param _xInputShape 输入形状，通常为 [batch_size, channels, height, width]
      * @param _yOutputShape 输出形状，通常为 [batch_size, num_classes]
@@ -75,6 +152,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 完整构造函数（使用自定义配置）
+     * 
      * @param _name 网络名称
      * @param _xInputShape 输入形状，通常为 [batch_size, channels, height, width]
      * @param _yOutputShape 输出形状，通常为 [batch_size, num_classes]
@@ -89,6 +167,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 构建增强的深度卷积网络架构
+     * 
      * 网络结构：
      * - 多个卷积块（可配置数量和参数）
      * - 每个块包含：Conv -> BatchNorm(可选) -> ReLU -> Conv -> BatchNorm(可选) -> ReLU -> MaxPool -> Dropout
@@ -121,6 +200,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 添加增强的卷积块
+     * 
      * @param inputShape 输入形状
      * @param filterNum 卷积核数量
      * @param blockName 块名称
@@ -179,6 +259,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 添加残差块（简化版本）
+     * 
      * @param inputShape 输入形状
      * @param filterNum 卷积核数量
      * @param blockName 块名称
@@ -192,6 +273,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 添加增强的分类器部分
+     * 
      * @param inputShape 从卷积部分输出的形状
      */
     private void addEnhancedClassifier(Shape inputShape) {
@@ -219,6 +301,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 添加卷积块
+     * 
      * @param inputShape 输入形状
      * @param filterNum 卷积核数量
      * @param filterSize 卷积核大小
@@ -257,6 +340,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 添加分类器部分
+     * 
      * @param inputShape 从卷积部分输出的形状
      */
     private void addClassifier(Shape inputShape) {
@@ -285,6 +369,7 @@ public class SimpleConvNet extends SequentialBlock {
     /**
      * 创建用于MNIST数据集的深度卷积网络
      * 输入：28x28x1，输出：10个类别
+     * 
      * @return 构建好的卷积网络
      */
     public static SimpleConvNet buildMnistConvNet() {
@@ -302,6 +387,7 @@ public class SimpleConvNet extends SequentialBlock {
     /**
      * 创建用于CIFAR-10数据集的深度卷积网络
      * 输入：32x32x3，输出：10个类别
+     * 
      * @return 构建好的卷积网络
      */
     public static SimpleConvNet buildCifar10ConvNet() {
@@ -318,6 +404,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 创建带残差连接的深度卷积网络
+     * 
      * @return 构建好的卷积网络
      */
     public static SimpleConvNet buildResNetStyle() {
@@ -336,6 +423,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 创建自定义的深度卷积网络
+     * 
      * @param name 网络名称
      * @param channels 输入通道数
      * @param height 输入高度
@@ -351,6 +439,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 创建自定义的深度卷积网络（带配置）
+     * 
      * @param name 网络名称
      * @param channels 输入通道数
      * @param height 输入高度
@@ -367,6 +456,7 @@ public class SimpleConvNet extends SequentialBlock {
     
     /**
      * 保持向后兼容的静态方法
+     * 
      * @return 构建好的卷积网络
      * @deprecated 建议使用具体的构建方法如 buildMnistConvNet()
      */

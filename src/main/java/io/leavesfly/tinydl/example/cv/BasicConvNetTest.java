@@ -12,10 +12,20 @@ import io.leavesfly.tinydl.nnet.layer.norm.FlattenLayer;
 
 /**
  * 简单的卷积网络测试
- * 测试一个基本的卷积网络：Conv -> ReLU -> Pool -> Flatten -> FC
+ * 
+ * @author leavesfly
+ * @version 0.01
+ * 
+ * 测试一个基本的卷积网络结构：Conv -> ReLU -> Pool -> Flatten -> FC
+ * 用于验证卷积层、池化层、激活层和全连接层的基本功能和形状变换。
  */
 public class BasicConvNetTest {
     
+    /**
+     * 主函数，执行基本卷积网络测试
+     * 
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         System.out.println("=== 基本卷积网络测试 ===");
         
