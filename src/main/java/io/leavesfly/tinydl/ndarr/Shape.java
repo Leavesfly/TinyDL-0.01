@@ -65,10 +65,10 @@ public class Shape implements Serializable {
         this.multipliers = new int[_dimension.length];
         int accumulator = 1;
         for (int i = _dimension.length - 1; i >= 0; i--) {
-            // 检查维度是否为非负数
-            if (_dimension[i] < 0) {
-                throw new IllegalArgumentException("维度大小不能为负数: " + _dimension[i]);
-            }
+//            // 检查维度是否为非负数
+//            if (_dimension[i] < 0) {
+//                throw new IllegalArgumentException("维度大小不能为负数: " + _dimension[i]);
+//            }
             multipliers[i] = accumulator;
             accumulator *= _dimension[i];
         }
