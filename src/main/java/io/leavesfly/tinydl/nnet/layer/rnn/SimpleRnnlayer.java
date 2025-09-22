@@ -6,13 +6,14 @@ import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.Parameter;
 import io.leavesfly.tinydl.nnet.RnnLayer;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * 递归网络层
  */
-public class SimpleRnnlayer extends RnnLayer {
+public class SimpleRnnLayer extends RnnLayer {
 
     Parameter x2h;
 
@@ -21,19 +22,26 @@ public class SimpleRnnlayer extends RnnLayer {
     Parameter h2h;
 
     private Variable state;
+    private NdArray stateValue;
+
+    // 用于反向传播的缓存变量
+    private Variable prevState;
+    private Variable preTanh;
+    private Variable xLinear;
+    private Variable hLinear;
 
     private int hiddeSize;
 
-    public SimpleRnnlayer(String _name, Shape _xInputShape, Shape _yOutputShape) {
+    public SimpleRnnLayer(String _name, Shape _xInputShape, Shape _yOutputShape) {
         super(_name, _xInputShape, _yOutputShape);
         hiddeSize = _yOutputShape.getColumn();
         init();
     }
 
-
     @Override
     public void resetState() {
         state = null;
+        stateValue = null;
     }
 
     @Override
@@ -64,21 +72,72 @@ public class SimpleRnnlayer extends RnnLayer {
     public Variable layerForward(Variable... inputs) {
         Variable x = inputs[0];
         if (Objects.isNull(state)) {
-            state = x.linear(x2h, b).tanh();
+            prevState = null;
+            xLinear = x.linear(x2h, b);
+            state = xLinear.tanh();
+            stateValue = state.getValue();
+            preTanh = state;
         } else {
-            state = x.linear(x2h, b).add(state.linear(h2h, null)).tanh();
+            prevState = state;
+            xLinear = x.linear(x2h, b);
+            hLinear = new Variable(stateValue).linear(h2h, null);
+            state = xLinear.add(hLinear).tanh();
+            stateValue = state.getValue();
+            preTanh = state;
         }
         return state;
     }
 
     @Override
     public NdArray forward(NdArray... inputs) {
-        return null;
+        NdArray x = inputs[0];
+        if (stateValue == null) {
+            // 第一次前向传播
+            NdArray linearResult = x.dot(x2h.getValue()).add(b.getValue().broadcastTo(x.getShape()));
+            stateValue = linearResult.tanh();
+        } else {
+            // 后续前向传播，包含前一状态
+            NdArray xLinear = x.dot(x2h.getValue()).add(b.getValue().broadcastTo(x.getShape()));
+            NdArray hLinear = stateValue.dot(h2h.getValue());
+            NdArray linearResult = xLinear.add(hLinear);
+            stateValue = linearResult.tanh();
+        }
+        return stateValue;
     }
 
     @Override
     public List<NdArray> backward(NdArray yGrad) {
-        return null;
+        // 计算tanh的梯度
+        NdArray tanhGrad = yGrad.mul(NdArray.ones(preTanh.getValue().getShape()).sub(preTanh.getValue().square()));
+        
+        // 计算线性变换的梯度
+        NdArray xLinearGrad = tanhGrad;
+        NdArray hLinearGrad = tanhGrad;
+        
+        // 计算输入x的梯度
+        NdArray xGrad = xLinearGrad.dot(x2h.getValue().transpose());
+        
+        // 计算参数梯度
+        NdArray x2hGrad = inputs[0].getValue().transpose().dot(xLinearGrad);
+        NdArray bGrad = xLinearGrad.sumTo(b.getValue().getShape());
+        
+        NdArray h2hGrad = null;
+        NdArray hGrad = null;
+        
+        if (prevState != null) {
+            // 如果有前一状态，计算h2h的梯度
+            h2hGrad = prevState.getValue().transpose().dot(hLinearGrad);
+            // 计算前一状态的梯度
+            hGrad = hLinearGrad.dot(h2h.getValue().transpose());
+            // 将梯度相加
+            xGrad = xGrad.add(hGrad);
+        }
+        
+        if (prevState != null) {
+            return Arrays.asList(xGrad, x2hGrad, bGrad, h2hGrad);
+        } else {
+            return Arrays.asList(xGrad, x2hGrad, bGrad);
+        }
     }
 
 }

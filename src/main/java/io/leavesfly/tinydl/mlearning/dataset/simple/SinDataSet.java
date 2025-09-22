@@ -4,7 +4,7 @@ import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.mlearning.dataset.ArrayDataset;
 import io.leavesfly.tinydl.mlearning.dataset.DataSet;
 
-import java.util.Random;
+import java.util.Arrays;
 
 public class SinDataSet extends ArrayDataset {
     public SinDataSet(int batchSize) {
@@ -21,14 +21,28 @@ public class SinDataSet extends ArrayDataset {
 
     @Override
     public void doPrepare() {
-        int size = 100;
-        Random random = new Random(0);
-        xs = new NdArray[size];
-        ys = new NdArray[size];
-        for (int i = 0; i < size; i++) {
-            float random1 = random.nextFloat();
-            xs[i] = new NdArray(random1);
-            ys[i] = new NdArray(Math.sin(random1 * Math.PI * 2) + random.nextFloat());
+        int size = 1000;
+        int tmpSize = size + 1;
+        NdArray tmp = NdArray.linSpace(0f, (float) (Math.PI * 4), tmpSize);
+
+        //训练数据构造
+        NdArray[] tmpArray = new NdArray[tmpSize];
+        for (int i = 0; i < tmpSize; i++) {
+            tmpArray[i] = new NdArray((float) Math.sin(tmp.getMatrix()[0][i]));
         }
+        NdArray[] _xs = Arrays.copyOfRange(tmpArray, 0, size);
+        NdArray[] _ys = Arrays.copyOfRange(tmpArray, 1, size + 1);
+        DataSet trainDataset = build(batchSize, _xs, _ys);
+        splitDatasetMap.put(Usage.TRAIN.name(), trainDataset);
+
+        //测试数据构造
+        tmpArray = new NdArray[tmpSize];
+        for (int i = 0; i < tmpSize; i++) {
+            tmpArray[i] = new NdArray((float) Math.cos(tmp.getMatrix()[0][i]));
+        }
+        _xs = Arrays.copyOfRange(tmpArray, 0, size);
+        _ys = Arrays.copyOfRange(tmpArray, 1, size + 1);
+        DataSet testDataset = build(batchSize, _xs, _ys);
+        splitDatasetMap.put(Usage.TEST.name(), testDataset);
     }
 }

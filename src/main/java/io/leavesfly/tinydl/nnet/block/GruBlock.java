@@ -4,25 +4,23 @@ import io.leavesfly.tinydl.func.Variable;
 import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.Block;
 import io.leavesfly.tinydl.nnet.layer.dnn.LinearLayer;
-import io.leavesfly.tinydl.nnet.layer.rnn.SimpleRnnLayer;
+import io.leavesfly.tinydl.nnet.layer.rnn.GruLayer;
 
 /**
- * 简单的递归神经网络的实现
+ * GRU块，包含一个GRU层和一个线性输出层
  */
-public class SimpleRnnBlock extends Block {
-    private SimpleRnnLayer rnnLayer;
+public class GruBlock extends Block {
+    private GruLayer gruLayer;
     private LinearLayer linearLayer;
 
-    public SimpleRnnBlock(String name, int inputSize, int hiddenSize, int outputSize) {
+    public GruBlock(String name, int inputSize, int hiddenSize, int outputSize) {
         super(name, new Shape(-1, inputSize), new Shape(-1, outputSize));
 
-        rnnLayer = new SimpleRnnLayer("rnn", new Shape(-1, inputSize), new Shape(-1, hiddenSize));
-
-        addLayer(rnnLayer);
+        gruLayer = new GruLayer("gru", new Shape(-1, inputSize), new Shape(-1, hiddenSize));
+        addLayer(gruLayer);
 
         linearLayer = new LinearLayer("line", hiddenSize, outputSize, true);
         addLayer(linearLayer);
-
     }
 
     @Override
@@ -32,8 +30,11 @@ public class SimpleRnnBlock extends Block {
 
     @Override
     public Variable layerForward(Variable... inputs) {
-
-        Variable state = rnnLayer.layerForward(inputs);
+        Variable state = gruLayer.layerForward(inputs);
         return linearLayer.layerForward(state);
+    }
+
+    public void resetState() {
+        gruLayer.resetState();
     }
 }
