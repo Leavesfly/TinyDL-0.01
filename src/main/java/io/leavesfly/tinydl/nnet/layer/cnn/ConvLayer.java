@@ -31,7 +31,7 @@ public class ConvLayer extends Layer {
     // 缓存变量，提高内存效率
     private NdArray colInput;
     private NdArray colInputW;
-    private NdArray reshapedOutput;
+//    private NdArray reshapedOutput;
 
     /**
      * 构造函数（不使用偏置）

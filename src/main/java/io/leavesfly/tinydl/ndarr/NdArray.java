@@ -39,8 +39,8 @@ public class NdArray implements Serializable {
      */
     public float[] buffer;
 
-    // 优化的随机数生成器，避免重复创建
-    private static final Random RANDOM = new Random();
+//    // 优化的随机数生成器，避免重复创建
+//    private static final Random RANDOM = new Random();
 
     // 常用的数学常数，用于数值计算中的比较
     private static final float EPSILON = 1e-7f;
