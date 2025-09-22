@@ -7,12 +7,22 @@ import java.util.*;
 
 /**
  * 能全量装载到内存的DataSet的简单实现
+ * 
+ * 该类是DataSet的抽象实现，适用于能够完全加载到内存中的数据集。
+ * 提供了批次处理、数据分割和数据打乱等基本功能。
+ * 
+ * @author TinyDL
+ * @version 1.0
  */
 public abstract class ArrayDataset extends DataSet {
 
     protected NdArray[] xs;
     protected NdArray[] ys;
 
+    /**
+     * 构造函数
+     * @param batchSize 批次大小
+     */
     public ArrayDataset(int batchSize) {
         super(batchSize);
     }
@@ -90,6 +100,13 @@ public abstract class ArrayDataset extends DataSet {
         ys = _ys;
     }
 
+    /**
+     * 构建数据集
+     * @param batchSize 批次大小
+     * @param xs 输入数据数组
+     * @param ys 输出数据数组
+     * @return 数据集实例
+     */
     protected abstract DataSet build(int batchSize, NdArray[] xs, NdArray[] ys);
 
     @Override
@@ -98,18 +115,34 @@ public abstract class ArrayDataset extends DataSet {
     }
 
 
+    /**
+     * 获取输入数据数组
+     * @return 输入数据数组
+     */
     public NdArray[] getXs() {
         return xs;
     }
 
+    /**
+     * 获取输出数据数组
+     * @return 输出数据数组
+     */
     public NdArray[] getYs() {
         return ys;
     }
 
+    /**
+     * 设置输入数据数组
+     * @param xs 输入数据数组
+     */
     public void setXs(NdArray[] xs) {
         this.xs = xs;
     }
 
+    /**
+     * 设置输出数据数组
+     * @param ys 输出数据数组
+     */
     public void setYs(NdArray[] ys) {
         this.ys = ys;
     }

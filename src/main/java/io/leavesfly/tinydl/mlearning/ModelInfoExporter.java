@@ -10,14 +10,22 @@ import java.util.Map;
 
 /**
  * JSON格式的模型信息导出器
- * 提供模型信息的JSON格式导出功能，便于查看和分析
+ * 
+ * 提供模型信息的JSON格式导出功能，便于查看和分析模型的详细信息。
+ * 支持多种导出模式：
+ * 1. 完整信息导出：包含模型的所有元数据
+ * 2. 简化报告导出：仅包含关键信息
+ * 3. 比较报告导出：用于比较两个模型的差异
+ * 
+ * @author TinyDL
+ * @version 1.0
  */
 public class ModelInfoExporter {
     
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     /**
-     * 将模型信息导出为JSON格式
+     * 将模型信息导出为JSON格式（默认包含参数详细信息）
      * @param model 模型
      * @param filePath 保存路径
      */
@@ -263,6 +271,12 @@ public class ModelInfoExporter {
     
     // 辅助方法
     
+    /**
+     * 写入模型摘要信息
+     * @param writer PrintWriter对象
+     * @param model 模型
+     * @param indent 缩进字符串
+     */
     private static void writeModelSummary(PrintWriter writer, Model model, String indent) {
         ModelInfo info = model.getModelInfo();
         writeJsonField(writer, "name", info.getModelName(), true, indent);
@@ -273,10 +287,25 @@ public class ModelInfoExporter {
         writeJsonField(writer, "finalLoss", info.getFinalLoss(), false, indent);
     }
     
+    /**
+     * 写入JSON字段
+     * @param writer PrintWriter对象
+     * @param key 字段键
+     * @param value 字段值
+     * @param hasNext 是否有后续字段
+     */
     private static void writeJsonField(PrintWriter writer, String key, Object value, boolean hasNext) {
         writeJsonField(writer, key, value, hasNext, "    ");
     }
     
+    /**
+     * 写入JSON字段（带缩进）
+     * @param writer PrintWriter对象
+     * @param key 字段键
+     * @param value 字段值
+     * @param hasNext 是否有后续字段
+     * @param indent 缩进字符串
+     */
     private static void writeJsonField(PrintWriter writer, String key, Object value, boolean hasNext, String indent) {
         writer.print(indent + "\"" + key + "\": ");
         
@@ -298,6 +327,11 @@ public class ModelInfoExporter {
         writer.println();
     }
     
+    /**
+     * 转义JSON字符串
+     * @param str 原始字符串
+     * @return 转义后的字符串
+     */
     private static String escapeJsonString(String str) {
         if (str == null) return "";
         return str.replace("\\", "\\\\")
@@ -307,10 +341,20 @@ public class ModelInfoExporter {
                   .replace("\t", "\\t");
     }
     
+    /**
+     * 格式化日期
+     * @param date 日期对象
+     * @return 格式化后的日期字符串
+     */
     private static String formatDate(Date date) {
         return date != null ? DATE_FORMAT.format(date) : null;
     }
     
+    /**
+     * 形状转字符串
+     * @param shape 形状对象
+     * @return 形状字符串表示
+     */
     private static String shapeToString(Shape shape) {
         return shape != null ? shape.toString() : null;
     }

@@ -9,10 +9,25 @@ import io.leavesfly.tinydl.mlearning.loss.Classify;
 
 import java.util.List;
 
+/**
+ * 准确率评估器
+ * 
+ * 用于评估分类模型的准确率性能指标。
+ * 通过计算模型在测试数据集上的预测准确率来评估模型性能。
+ * 
+ * @author TinyDL
+ * @version 1.0
+ */
 public class AccuracyEval extends Evaluator {
 
     private Classify classify;
 
+    /**
+     * 构造函数
+     * @param _classify 分类损失函数
+     * @param _model 模型
+     * @param _dataSet 数据集
+     */
     public AccuracyEval(Classify _classify, Model _model, DataSet _dataSet) {
         this.model = _model;
         this.dataSet = _dataSet;

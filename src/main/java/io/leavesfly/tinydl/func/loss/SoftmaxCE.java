@@ -9,9 +9,20 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * SoftmaxCE
+ * Softmax交叉熵损失函数
+ * 
+ * 用于多分类问题的损失函数，结合了Softmax激活函数和交叉熵损失。
  */
 public class SoftmaxCE extends Function {
+    /**
+     * 前向传播计算Softmax交叉熵损失
+     * 
+     * 计算公式：Loss = -Σ(yi*log(σ(xi)))
+     * 其中σ(x)为Softmax函数，y为真实标签
+     * 
+     * @param inputs 输入的NdArray数组，包含预测值和真实标签
+     * @return Softmax交叉熵损失值
+     */
     @Override
     public NdArray forward(NdArray... inputs) {
 
@@ -34,6 +45,16 @@ public class SoftmaxCE extends Function {
         return new NdArray(-sum / (float) row);
     }
 
+    /**
+     * 反向传播计算梯度
+     * 
+     * 对于Softmax交叉熵损失函数，梯度计算公式为：
+     * ∂Loss/∂x = (σ(x) - y) / n
+     * 其中σ(x)为Softmax函数，y为真实标签，n为批次大小
+     * 
+     * @param yGrad 输出变量的梯度
+     * @return 输入变量的梯度列表
+     */
     @Override
     public List<NdArray> backward(NdArray yGrad) {
 
@@ -53,6 +74,13 @@ public class SoftmaxCE extends Function {
         return Arrays.asList(y, label.like(1));
     }
 
+    /**
+     * 获取所需输入参数个数
+     * 
+     * Softmax交叉熵损失函数需要两个输入参数：预测值和真实标签。
+     * 
+     * @return 输入参数个数，固定为2
+     */
     @Override
     public int requireInputNum() {
         return 2;

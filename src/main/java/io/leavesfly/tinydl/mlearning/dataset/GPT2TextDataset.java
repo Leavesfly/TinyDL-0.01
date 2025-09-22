@@ -13,6 +13,9 @@ import java.util.*;
  * 1. 文本序列的自回归训练数据生成
  * 2. 输入序列和目标序列的准备
  * 3. 批次数据的生成和管理
+ * 
+ * @author TinyDL
+ * @version 1.0
  */
 public class GPT2TextDataset extends DataSet {
     
@@ -27,6 +30,12 @@ public class GPT2TextDataset extends DataSet {
     
     /**
      * 构造GPT-2文本数据集
+     * @param name 数据集名称
+     * @param texts 原始文本列表
+     * @param tokenizer 分词器
+     * @param maxSeqLength 最大序列长度
+     * @param batchSize 批次大小
+     * @param shuffle 是否打乱数据
      */
     public GPT2TextDataset(String name, List<String> texts, SimpleTokenizer tokenizer, 
                           int maxSeqLength, int batchSize, boolean shuffle) {
@@ -50,6 +59,7 @@ public class GPT2TextDataset extends DataSet {
     
     /**
      * 预处理文本数据
+     * 将原始文本转换为token序列，并进行填充或截断处理
      */
     private void preprocessTexts() {
         for (String text : texts) {
@@ -145,6 +155,8 @@ public class GPT2TextDataset extends DataSet {
     
     /**
      * 创建生成批次
+     * @param prompt 提示文本
+     * @return 生成批次
      */
     public Batch createGenerationBatch(String prompt) {
         int[] tokens = tokenizer.encode(prompt, true);
@@ -159,7 +171,9 @@ public class GPT2TextDataset extends DataSet {
     }
     
     /**
-     * 示例数据集
+     * 创建示例数据集
+     * @param tokenizer 分词器
+     * @return 示例数据集
      */
     public static GPT2TextDataset createSampleDataset(SimpleTokenizer tokenizer) {
         List<String> sampleTexts = new ArrayList<>();
@@ -176,8 +190,27 @@ public class GPT2TextDataset extends DataSet {
     }
     
     // Getters
+    /**
+     * 获取分词器
+     * @return 分词器
+     */
     public SimpleTokenizer getTokenizer() { return tokenizer; }
+    
+    /**
+     * 获取最大序列长度
+     * @return 最大序列长度
+     */
     public int getMaxSeqLength() { return maxSeqLength; }
+    
+    /**
+     * 获取Token序列列表
+     * @return Token序列列表
+     */
     public List<int[]> getTokenSequences() { return new ArrayList<>(tokenSequences); }
+    
+    /**
+     * 获取原始文本列表
+     * @return 原始文本列表
+     */
     public List<String> getTexts() { return new ArrayList<>(texts); }
 }

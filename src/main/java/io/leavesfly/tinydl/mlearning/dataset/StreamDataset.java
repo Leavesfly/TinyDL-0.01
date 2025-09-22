@@ -3,9 +3,21 @@ package io.leavesfly.tinydl.mlearning.dataset;
 import java.util.List;
 import java.util.Map;
 
-// todo 一次无法装载到内存的数据源,只能流式访问
+/**
+ * 流式数据集实现
+ * 
+ * 用于处理无法一次性装载到内存中的大型数据集，支持流式访问数据。
+ * TODO: 当前实现尚未完成，需要进一步实现流式数据处理逻辑。
+ * 
+ * @author TinyDL
+ * @version 1.0
+ */
 public class StreamDataset extends DataSet {
 
+    /**
+     * 构造函数
+     * @param batchSize 批次大小
+     */
     public StreamDataset(int batchSize) {
         super(batchSize);
     }

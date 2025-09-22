@@ -20,7 +20,20 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 模型训练器的简单实现
+ * 模型训练器
+ * 
+ * 该类是TinyDL框架中模型训练的核心组件，提供了完整的训练流程管理功能，
+ * 支持单线程和并行训练两种模式。
+ * 
+ * 主要功能：
+ * 1. 训练流程管理：控制训练的轮次、批次处理等
+ * 2. 单线程训练：传统的顺序训练模式
+ * 3. 并行训练：支持多线程并行处理批次数据
+ * 4. 训练监控：与Monitor配合收集训练过程信息
+ * 5. 模型评估：与Evaluator配合进行模型性能评估
+ * 
+ * @author TinyDL
+ * @version 1.0
  */
 public class Trainer {
 
@@ -43,6 +56,12 @@ public class Trainer {
     private ExecutorService executorService;
     private boolean enableParallelTraining;
 
+    /**
+     * 构造器（默认不启用并行训练）
+     * @param _maxEpoch 最大训练轮次
+     * @param _monitor 监控器
+     * @param _evaluator 评估器
+     */
     public Trainer(int _maxEpoch, Monitor _monitor, Evaluator _evaluator) {
         this.maxEpoch = _maxEpoch;
         monitor = _monitor;
@@ -71,6 +90,13 @@ public class Trainer {
                                    ParallelTrainingUtils.getRecommendedThreadCount(4);
     }
 
+    /**
+     * 初始化训练器
+     * @param _dataSet 数据集
+     * @param _model 模型
+     * @param _loss 损失函数
+     * @param _optimizer 优化器
+     */
     public void init(DataSet _dataSet, Model _model, Loss _loss, Optimizer _optimizer) {
         dataSet = _dataSet;
         _dataSet.prepare();
@@ -198,6 +224,8 @@ public class Trainer {
     
     /**
      * 并行处理批次数据
+     * @param batches 批次列表
+     * @param epoch 当前轮次
      */
     private void processBatchesInParallel(List<Batch> batches, int epoch) {
         int batchCount = batches.size();
@@ -276,6 +304,8 @@ public class Trainer {
     
     /**
      * 顺序处理批次数据（备用方案）
+     * @param batches 批次列表
+     * @param epoch 当前轮次
      */
     private void processBatchesSequentially(List<Batch> batches, int epoch) {
         float lossSum = 0f;
@@ -303,6 +333,9 @@ public class Trainer {
     }
 
 
+    /**
+     * 模型评估
+     */
     public void evaluate() {
         evaluator.evaluate();
     }

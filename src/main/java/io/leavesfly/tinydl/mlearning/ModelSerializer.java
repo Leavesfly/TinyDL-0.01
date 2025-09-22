@@ -14,11 +14,16 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * 模型序列化器 - 提供完整的模型保存和加载功能
- * 支持多种保存格式：
+ * 
+ * 该类提供了多种模型序列化和反序列化的方法，支持：
  * 1. 完整模型保存（包含架构和参数）
  * 2. 仅参数保存
  * 3. 压缩保存
  * 4. 模型检查点
+ * 5. 模型验证和比较
+ * 
+ * @author TinyDL
+ * @version 1.0
  */
 public class ModelSerializer {
     

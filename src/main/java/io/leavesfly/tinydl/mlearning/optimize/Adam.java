@@ -8,7 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Momentum 与 AdaGrad 的融合
+ * Adam优化器
+ * 
+ * 实现了Adam优化算法，融合了Momentum和AdaGrad的优点。
+ * Adam通过计算梯度的一阶矩估计和二阶矩估计来动态调整学习率。
+ * 
+ * 更新公式：
+ * m = β1 * m + (1 - β1) * g
+ * v = β2 * v + (1 - β2) * g^2
+ * θ = θ - lr * m_hat / (sqrt(v_hat) + ε)
+ * 
+ * @author TinyDL
+ * @version 1.0
  */
 public class Adam extends Optimizer {
     private float learningRate = 0.001f;
@@ -20,6 +31,14 @@ public class Adam extends Optimizer {
     private Map<Integer, NdArray> vs;
     private int t = 0;
 
+    /**
+     * 构造函数
+     * @param target 目标模型
+     * @param _learningRate 学习率
+     * @param _beta1 一阶矩估计衰减率
+     * @param _beta2 二阶矩估计衰减率
+     * @param _epsilon 防止除零的小常数
+     */
     public Adam(Model target, float _learningRate, float _beta1, float _beta2, float _epsilon) {
         super(target);
         learningRate = _learningRate;
@@ -30,12 +49,19 @@ public class Adam extends Optimizer {
         vs = new HashMap<>();
     }
 
+    /**
+     * 构造函数（使用默认参数）
+     * @param target 目标模型
+     */
     public Adam(Model target) {
         super(target);
         ms = new HashMap<>();
         vs = new HashMap<>();
     }
 
+    /**
+     * 更新所有参数
+     */
     public void update() {
         t++;
         super.update();
@@ -64,6 +90,10 @@ public class Adam extends Optimizer {
 
     }
 
+    /**
+     * 计算调整后的学习率
+     * @return 调整后的学习率
+     */
     private float lr() {
         float fix1 = (float) (1. - Math.pow(beta1, t));
         float fix2 = (float) (1. - Math.pow(beta2, t));

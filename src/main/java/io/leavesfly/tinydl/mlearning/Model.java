@@ -13,7 +13,19 @@ import java.io.*;
 import java.util.Map;
 
 /**
- * 机器模型的表示
+ * 机器学习模型类
+ * 
+ * 该类是TinyDL框架中模型的核心表示，提供了模型的完整生命周期管理功能，
+ * 包括模型的创建、训练、保存、加载、推理等操作。
+ * 
+ * 主要功能：
+ * 1. 模型结构管理：封装神经网络的架构（Block）
+ * 2. 模型序列化：支持完整模型、参数、检查点等多种保存方式
+ * 3. 模型推理：提供预测接口
+ * 4. 模型信息管理：维护模型的元数据信息
+ * 
+ * @author TinyDL
+ * @version 1.0
  */
 public class Model implements Serializable {
 
@@ -28,6 +40,11 @@ public class Model implements Serializable {
 
     public transient Variable tmpPredict;
 
+    /**
+     * 构造函数
+     * @param _name 模型名称
+     * @param _block 模型的神经网络结构
+     */
     public Model(String _name, Block _block) {
         name = _name;
         block = _block;
@@ -37,6 +54,7 @@ public class Model implements Serializable {
     
     /**
      * 初始化模型信息
+     * 包括输入输出形状、参数数量、架构类型等基本信息
      */
     private void initializeModelInfo() {
         if (block != null) {
@@ -57,6 +75,10 @@ public class Model implements Serializable {
         }
     }
 
+    /**
+     * 绘制模型计算图
+     * 通过可视化方式展示模型的前向传播计算过程
+     */
     public void plot() {
         Shape xInputShape = block.getInputShape();
         if (xInputShape != null) {
@@ -66,6 +88,10 @@ public class Model implements Serializable {
         System.out.println(Uml.getDotGraph(tmpPredict));
     }
 
+    /**
+     * 保存模型到文件（传统方式）
+     * @param modelFile 模型文件
+     */
     public void save(File modelFile) {
         try (FileOutputStream fileOut = new FileOutputStream(modelFile); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             out.writeObject(this);
@@ -116,6 +142,11 @@ public class Model implements Serializable {
         ModelSerializer.saveCheckpoint(this, epoch, loss, filePath);
     }
 
+    /**
+     * 从文件加载模型（传统方式）
+     * @param modelFile 模型文件
+     * @return 加载的模型
+     */
     public static Model load(File modelFile) {
         try (FileInputStream fileIn = new FileInputStream(modelFile); ObjectInputStream in = new ObjectInputStream(fileIn)) {
             return (Model) in.readObject();
@@ -150,31 +181,60 @@ public class Model implements Serializable {
         return ModelSerializer.resumeFromCheckpoint(filePath);
     }
 
+    /**
+     * 重置模型状态
+     * 主要用于RNN等有状态的模型，清除历史状态信息
+     */
     public void resetState() {
         block.resetState();
     }
 
+    /**
+     * 模型前向传播
+     * @param inputs 输入变量
+     * @return 输出变量
+     */
     public Variable forward(Variable... inputs) {
-
         return block.layerForward(inputs);
     }
 
+    /**
+     * 清除梯度
+     * 在每次反向传播前调用，清除历史梯度信息
+     */
     public void clearGrads() {
         block.clearGrads();
     }
 
+    /**
+     * 获取所有参数
+     * @return 参数映射
+     */
     public Map<String, Parameter> getAllParams() {
         return block.getAllParams();
     }
 
+    /**
+     * 获取预测器
+     * @param translator 翻译器
+     * @return 预测器
+     */
     public <I, O> Predictor<I, O> getPredictor(Translator<I, O> translator) {
         return new Predictor<>(translator, this);
     }
 
+    /**
+     * 获取模型名称
+     * @return 模型名称
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 获取模型结构
+     * @return 模型结构块
+     */
     public Block getBlock() {
         return block;
     }

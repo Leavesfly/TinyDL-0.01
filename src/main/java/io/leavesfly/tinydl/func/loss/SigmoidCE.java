@@ -9,13 +9,24 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * SigmoidCE
- * 支持二分类
+ * Sigmoid交叉熵损失函数
+ * 
+ * 用于二分类问题的损失函数，结合了Sigmoid激活函数和交叉熵损失。
  */
 public class SigmoidCE extends Function {
 
     private NdArray sigmoid;
 
+    /**
+     * 前向传播计算Sigmoid交叉熵损失
+     * 
+     * 计算公式：Loss = -[y*log(σ(x)) + (1-y)*log(1-σ(x))]
+     * 其中σ(x)为Sigmoid函数，y为真实标签
+     * 
+     * @param inputs 输入的NdArray数组，包含预测值和真实标签
+     * @return Sigmoid交叉熵损失值
+     * @throws RuntimeException 当预测值列数不为1时抛出异常
+     */
     @Override
     public NdArray forward(NdArray... inputs) {
 
@@ -32,6 +43,16 @@ public class SigmoidCE extends Function {
         return new NdArray(loss);
     }
 
+    /**
+     * 反向传播计算梯度
+     * 
+     * 对于Sigmoid交叉熵损失函数，梯度计算公式为：
+     * ∂Loss/∂x = (σ(x) - y) / n
+     * 其中σ(x)为Sigmoid函数，y为真实标签，n为批次大小
+     * 
+     * @param yGrad 输出变量的梯度
+     * @return 输入变量的梯度列表
+     */
     @Override
     public List<NdArray> backward(NdArray yGrad) {
         //要求 预测值只有一个，支持二分类
@@ -44,11 +65,27 @@ public class SigmoidCE extends Function {
         return Arrays.asList(xGrad, label.like(1));
     }
 
+    /**
+     * 获取所需输入参数个数
+     * 
+     * Sigmoid交叉熵损失函数需要两个输入参数：预测值和真实标签。
+     * 
+     * @return 输入参数个数，固定为2
+     */
     @Override
     public int requireInputNum() {
         return 2;
     }
 
+    /**
+     * 计算交叉熵误差
+     * 
+     * 计算预测值与真实标签之间的交叉熵误差。
+     * 
+     * @param predict 预测值
+     * @param labelY 真实标签
+     * @return 交叉熵误差值
+     */
     public static float crossEntropyError(NdArray predict, NdArray labelY) {
 
         if (labelY.getShape().getColumn() != 1) {
