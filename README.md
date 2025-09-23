@@ -326,16 +326,16 @@ java -cp target/classes io.leavesfly.tinydl.example.regress.RnnCosExam
 - ✅ **可视化支持**：JFreeChart集成，训练过程监控
 - ✅ **应用示例**：分类、回归、序列预测等完整示例
 
-### 🚧 开发中功能 (v0.02)
+### 🚧 已完成功能 (v0.02)
 
-- [x] **高维数组支持**：扩展NdArray维度处理能力
-- [x] **CNN完善**：卷积层优化和相关示例
-- [x] **RNN增强**：循环网络层完善和demo
-- [x] **词向量模型**：Word2Vec实现和训练
-- [x] **注意力机制**：Attention机制基础实现
-- [x] **Transformer架构**：完整Transformer模型
-- [x] **GPT-2支持**：小规模语言模型实现
-- [x] **并行训练**：多线程训练优化
+- ✅ **高维数组支持**：扩展NdArray维度处理能力
+- ✅ **CNN完善**：卷积层优化和相关示例
+- ✅ **RNN增强**：循环网络层完善和demo
+- ✅ **词向量模型**：Word2Vec实现和训练
+- ✅ **注意力机制**：Attention机制基础实现
+- ✅ **Transformer架构**：完整Transformer模型
+- ✅ **GPT-2支持**：小规模语言模型实现
+- ✅ **并行训练**：多线程训练优化
 
 ### 🔮 未来规划 (v0.03+)
 
