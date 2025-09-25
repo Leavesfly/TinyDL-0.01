@@ -1040,16 +1040,16 @@ public class NdArray implements Serializable {
      *
      * @param _shape 目标形状
      * @return 压缩累加结果数组
-     * @throws RuntimeException 当数组不是矩阵或形状不合法时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或形状不合法时抛出
      */
     public NdArray sumTo(Shape _shape) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (_shape.getRow() > this.shape.getRow() || _shape.getColumn() > this.shape.getColumn()) {
-            throw new RuntimeException("_shape is error!");
+            throw new IllegalArgumentException(
+                    String.format("目标形状 %s 不能大于当前形状 %s", _shape, this.shape));
         }
         NdArray ndArray = new NdArray(new Shape(_shape.getRow(), _shape.getColumn()));
         for (int i = 0; i < shape.getRow(); i++) {
@@ -1067,16 +1067,16 @@ public class NdArray implements Serializable {
      *
      * @param _shape 目标广播形状
      * @return 广播结果数组
-     * @throws RuntimeException 当数组不是矩阵或形状不合法时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或形状不合法时抛出
      */
     public NdArray broadcastTo(Shape _shape) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (_shape.getRow() < this.shape.getRow() || _shape.getColumn() < this.shape.getColumn()) {
-            throw new RuntimeException("_shape is error!");
+            throw new IllegalArgumentException(
+                    String.format("目标形状 %s 不能小于当前形状 %s", _shape, this.shape));
         }
         NdArray ndArray = new NdArray(new Shape(_shape.getRow(), _shape.getColumn()));
 
@@ -1093,12 +1093,11 @@ public class NdArray implements Serializable {
      *
      * @param axis 查找轴，axis=0表示按行查找每列的最大值索引，axis=1表示按列查找每行的最大值索引
      * @return 最大值索引数组
-     * @throws RuntimeException 当数组不是矩阵时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或轴参数无效时抛出
      */
     public NdArray argMax(int axis) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (axis == 0) {
@@ -1133,7 +1132,8 @@ public class NdArray implements Serializable {
             }
             return ndArray;
         }
-        throw new RuntimeException("not impl!");
+        throw new IllegalArgumentException(
+                String.format("不支持的轴参数: %d，仅支持 0(列) 或 1(行)", axis));
     }
 
     /**
@@ -1143,16 +1143,17 @@ public class NdArray implements Serializable {
      *
      * @param other 另一个矩阵
      * @return 矩阵乘法结果
-     * @throws RuntimeException 当数组不是矩阵或维度不匹配时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或维度不匹配时抛出
      */
     public NdArray dot(NdArray other) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (shape.getColumn() != other.shape.getRow()) {
-            throw new RuntimeException("NdArray dot shape.column !=other.shape.row");
+            throw new IllegalArgumentException(
+                    String.format("矩阵乘法维度不匹配：%s × %s，第一个矩阵的列数(%d)必须等于第二个矩阵的行数(%d)",
+                            this.shape, other.shape, shape.getColumn(), other.shape.getRow()));
         }
 
         NdArray ndArray = new NdArray(new Shape(shape.getRow(), other.shape.getColumn()));
@@ -1179,17 +1180,18 @@ public class NdArray implements Serializable {
      * @param _rowSlices 行索引数组，null表示选择所有行
      * @param _colSlices 列索引数组，null表示选择所有列
      * @return 切片结果数组
-     * @throws RuntimeException 当数组不是矩阵时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或参数不合法时抛出
      */
     public NdArray getItem(int[] _rowSlices, int[] _colSlices) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (_rowSlices != null && _colSlices != null) {
             if (_rowSlices.length != _colSlices.length) {
-                throw new RuntimeException("_rowSlices.length != _colSlices.length !");
+                throw new IllegalArgumentException(
+                        String.format("行索引数组长度(%d)必须等于列索引数组长度(%d)",
+                                _rowSlices.length, _colSlices.length));
             }
 
             NdArray ndArray = new NdArray(new Shape(1, _colSlices.length));
@@ -1223,17 +1225,18 @@ public class NdArray implements Serializable {
      * @param _colSlices 列索引数组，null表示选择所有列
      * @param data 要设置的数据
      * @return 当前数组实例
-     * @throws RuntimeException 当数组不是矩阵时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或参数不合法时抛出
      */
     public NdArray setItem(int[] _rowSlices, int[] _colSlices, float[] data) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (_rowSlices != null && _colSlices != null) {
             if (_rowSlices.length != _colSlices.length) {
-                throw new RuntimeException("_rowSlices.length != _colSlices.length !");
+                throw new IllegalArgumentException(
+                        String.format("行索引数组长度(%d)必须等于列索引数组长度(%d)",
+                                _rowSlices.length, _colSlices.length));
             }
 
             for (int i = 0; i < _colSlices.length; i++) {
@@ -1242,7 +1245,7 @@ public class NdArray implements Serializable {
             return this;
         }
 
-        throw new RuntimeException("not impl !");
+        throw new IllegalArgumentException("功能尚未实现：不支持的参数组合");
     }
 
     /**
@@ -1250,12 +1253,11 @@ public class NdArray implements Serializable {
      *
      * @param axis 查找轴，axis=0表示按行查找每列的最大值，axis=1表示按列查找每行的最大值
      * @return 最大值数组
-     * @throws RuntimeException 当数组不是矩阵时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或轴参数无效时抛出
      */
     public NdArray max(int axis) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (axis == 1) {
@@ -1271,10 +1273,21 @@ public class NdArray implements Serializable {
             }
             return ndArray;
         } else if (axis == 0) {
-            //todo
-
+            // 按列找最大值（按行方向查找每列的最大值）
+            NdArray ndArray = new NdArray(new Shape(1, shape.getColumn()));
+            for (int j = 0; j < shape.getColumn(); j++) {
+                float max = Float.MIN_VALUE;
+                for (int i = 0; i < shape.getRow(); i++) {
+                    if (max < buffer[i * shape.getColumn() + j]) {
+                        max = buffer[i * shape.getColumn() + j];
+                    }
+                }
+                ndArray.buffer[j] = max;
+            }
+            return ndArray;
         }
-        throw new RuntimeException("not impl!");
+        throw new IllegalArgumentException(
+                String.format("不支持的轴参数: %d，仅支持 0(列) 或 1(行)", axis));
     }
 
     /**
@@ -1282,12 +1295,11 @@ public class NdArray implements Serializable {
      *
      * @param axis 查找轴，axis=0表示按行查找每列的最小值，axis=1表示按列查找每行的最小值
      * @return 最小值数组
-     * @throws RuntimeException 当数组不是矩阵时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵或轴参数无效时抛出
      */
     public NdArray min(int axis) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         if (axis == 1) {
@@ -1303,10 +1315,21 @@ public class NdArray implements Serializable {
             }
             return ndArray;
         } else if (axis == 0) {
-            //todo
-
+            // 按列找最小值（按行方向查找每列的最小值）
+            NdArray ndArray = new NdArray(new Shape(1, shape.getColumn()));
+            for (int j = 0; j < shape.getColumn(); j++) {
+                float min = Float.MAX_VALUE;
+                for (int i = 0; i < shape.getRow(); i++) {
+                    if (min > buffer[i * shape.getColumn() + j]) {
+                        min = buffer[i * shape.getColumn() + j];
+                    }
+                }
+                ndArray.buffer[j] = min;
+            }
+            return ndArray;
         }
-        throw new RuntimeException("not impl!");
+        throw new IllegalArgumentException(
+                String.format("不支持的轴参数: %d，仅支持 0(列) 或 1(行)", axis));
     }
 
     /**
@@ -1332,12 +1355,11 @@ public class NdArray implements Serializable {
      * @param startCol 起始列索引（包含）
      * @param endCol 结束列索引（不包含）
      * @return 子数组
-     * @throws RuntimeException 当数组不是矩阵时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵时抛出
      */
     public NdArray subNdArray(int startRow, int endRow, int startCol, int endCol) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         NdArray ndArray = new NdArray(new Shape(endRow - startRow, endCol - startCol));
@@ -1497,12 +1519,11 @@ public class NdArray implements Serializable {
      * @param j 起始列索引
      * @param other 要累加的数组
      * @return 当前数组实例
-     * @throws RuntimeException 当数组不是矩阵时抛出
+     * @throws IllegalArgumentException 当数组不是矩阵时抛出
      */
     public NdArray addTo(int i, int j, NdArray other) {
-
         if (!shape.isMatrix()) {
-            throw new RuntimeException("not matrix !");
+            throw new IllegalArgumentException("操作仅适用于矩阵（二维数组）");
         }
 
         for (int _i = 0; _i < other.getShape().getRow(); _i++) {
@@ -1750,11 +1771,13 @@ public class NdArray implements Serializable {
      *
      * @param value 要设置的值
      * @param _dimension 维度下标数组
-     * @throws RuntimeException 当维度数量不匹配时抛出
+     * @throws IllegalArgumentException 当维度数量不匹配时抛出
      */
     public void set(float value, int... _dimension) {
         if (_dimension.length != shape.dimension.length) {
-            throw new RuntimeException("dimension.length error!");
+            throw new IllegalArgumentException(
+                    String.format("维度数量不匹配：提供%d个维度，需要%d个维度",
+                            _dimension.length, shape.dimension.length));
         }
         buffer[shape.getIndex(_dimension)] = value;
     }
@@ -1764,11 +1787,13 @@ public class NdArray implements Serializable {
      *
      * @param _dimension 维度下标数组
      * @return 对应位置的值
-     * @throws RuntimeException 当维度数量不匹配时抛出
+     * @throws IllegalArgumentException 当维度数量不匹配时抛出
      */
     public float get(int... _dimension) {
         if (_dimension.length != shape.dimension.length) {
-            throw new RuntimeException("dimension.length error!");
+            throw new IllegalArgumentException(
+                    String.format("维度数量不匹配：提供%d个维度，需要%d个维度",
+                            _dimension.length, shape.dimension.length));
         }
         return buffer[shape.getIndex(_dimension)];
     }
