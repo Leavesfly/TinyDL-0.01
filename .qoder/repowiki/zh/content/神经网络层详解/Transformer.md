@@ -2,16 +2,21 @@
 
 <cite>
 **本文档中引用的文件**
-- [Transformer.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/transformer/Transformer.java)
-- [Encoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Encoder.java)
-- [Decoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Decoder.java)
-- [EncoderDecoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/EncoderDecoder.java)
-- [Seq2SeqEncoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Seq2SeqEncoder.java)
-- [Seq2SeqDecoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Seq2SeqDecoder.java)
-- [Embedding.java](file://src/main/java/io/leavesfly/tinydl/nnet/layer/embedd/Embedding.java)
-- [Word2Vec.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/Word2Vec.java)
-- [RnnCosExam.java](file://src/main/java/io/leavesfly/tinydl/example/regress/RnnCosExam.java)
+- [MoETransformerBlock.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/block/MoETransformerBlock.java) - *新增支持MoE的Transformer Block*
+- [Encoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Encoder.java) - *编码器组件改进*
+- [Decoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Decoder.java) - *解码器组件改进*
+- [MultiHeadAttention.java](file://src/main/java/io/leavesfly/tinydl/nnet/layer/transformer/MultiHeadAttention.java) - *多头注意力层实现*
+- [LayerNorm.java](file://src/main/java/io/leavesfly/tinydl/nnet/layer/transformer/LayerNorm.java) - *层归一化层实现*
+- [MoELayer.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/layer/MoELayer.java) - *MoE层实现*
 </cite>
+
+## 更新摘要
+**变更内容**
+- 新增了对MoE（Mixture of Experts）Transformer Block的支持，替换了传统的FeedForward层
+- 更新了编码器和解码器组件的文档说明
+- 添加了新的架构图以展示MoE Transformer Block的内部结构
+- 修正了关于自注意力机制和位置编码的过时信息
+- 增加了对新功能的详细分析和依赖关系说明
 
 ## 目录
 1. [引言](#引言)
@@ -153,12 +158,84 @@ Linear --> End2([解码器出口])
 - [Seq2SeqEncoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Seq2SeqEncoder.java)
 - [Seq2SeqDecoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Seq2SeqDecoder.java)
 
-### 自注意力机制与位置编码
-根据文档目标，标准的Transformer应包含自注意力和位置编码。然而，在当前代码库中，`Seq2SeqEncoder`和`Seq2SeqDecoder`使用的是`LstmLayer`而非自注意力层。这表明自注意力机制尚未在`nnet/layer`包中实现。同样，位置编码（Positional Encoding）作为一个独立的层也未找到。因此，当前的`Transformer`类虽然具有正确的接口和架构模式，但其内部实现仍基于传统的RNN，而非真正的自注意力机制。
+### MoE Transformer Block分析
+新增的`MoETransformerBlock`类实现了支持混合专家（Mixture of Experts）的Transformer块，取代了传统的FeedForward层。该块采用Pre-LayerNorm架构，包含两个主要子层：多头自注意力机制和MoE层。
+
+```mermaid
+graph TD
+A[输入] --> B[LayerNorm1]
+B --> C[多头注意力]
+C --> D[Dropout]
+D --> E[残差连接]
+E --> F[LayerNorm2]
+F --> G[MoE层]
+G --> H[Dropout]
+H --> I[残差连接]
+I --> J[输出]
+A --> E
+E --> I
+```
+
+**图源**
+- [MoETransformerBlock.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/block/MoETransformerBlock.java#L173-L206)
 
 **节源**
-- [Seq2SeqEncoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Seq2SeqEncoder.java)
-- [Seq2SeqDecoder.java](file://src/main/java/io/leavesfly/tinydl/nnet/block/seq2seq/Seq2SeqDecoder.java)
+- [MoETransformerBlock.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/block/MoETransformerBlock.java)
+
+### 自注意力机制与位置编码
+根据代码库中的实现，现在已包含完整的自注意力机制。`MultiHeadAttention`类实现了带掩码的多头自注意力，用于GPT式的自回归生成。每个注意力头独立计算QKV变换，然后通过缩放点积计算注意力分数，并应用因果掩码防止未来信息泄露。
+
+```mermaid
+classDiagram
+class MultiHeadAttention {
+-private int numHeads
+-private int dModel
+-private LinearLayer queryLayer
+-private LinearLayer keyLayer
+-private LinearLayer valueLayer
+-private LinearLayer outputLayer
+-private boolean useMask
++MultiHeadAttention(name, dModel, numHeads, useMask)
++layerForward(query, key, value) Variable
+}
+class LayerNorm {
+-private Parameter gamma
+-private Parameter beta
+-private double epsilon
++LayerNorm(name, normalizedShape, epsilon)
++layerForward(input) Variable
+}
+class MoELayer {
+-private MoEGatingNetwork gatingNetwork
+-private List<MoEExpertNetwork> experts
++MoELayer(name, inputDim, outputDim, numExperts, topK, expertHiddenDim, loadBalancingWeight)
++layerForward(input) Variable
+}
+class MoETransformerBlock {
+-private LayerNorm layerNorm1
+-private MultiHeadAttention attention
+-private LayerNorm layerNorm2
+-private MoELayer moeLayer
++MoETransformerBlock(name, dModel, numHeads, numExperts, topK, expertHiddenDim, dropoutRate, loadBalancingWeight)
++layerForward(x) Variable
+}
+MoETransformerBlock --> LayerNorm : "layerNorm1"
+MoETransformerBlock --> MultiHeadAttention : "attention"
+MoETransformerBlock --> LayerNorm : "layerNorm2"
+MoETransformerBlock --> MoELayer : "moeLayer"
+```
+
+**图源**
+- [MultiHeadAttention.java](file://src/main/java/io/leavesfly/tinydl/nnet/layer/transformer/MultiHeadAttention.java)
+- [LayerNorm.java](file://src/main/java/io/leavesfly/tinydl/nnet/layer/transformer/LayerNorm.java)
+- [MoELayer.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/layer/MoELayer.java)
+- [MoETransformerBlock.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/block/MoETransformerBlock.java)
+
+**节源**
+- [MultiHeadAttention.java](file://src/main/java/io/leavesfly/tinydl/nnet/layer/transformer/MultiHeadAttention.java)
+- [LayerNorm.java](file://src/main/java/io/leavesfly/tinydl/nnet/layer/transformer/LayerNorm.java)
+- [MoELayer.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/layer/MoELayer.java)
+- [MoETransformerBlock.java](file://src/main/java/io/leavesfly/tinydl/modality/nlp/block/MoETransformerBlock.java)
 
 ## 依赖分析
 `Transformer`类直接依赖于`Encoder`和`Decoder`抽象类，这体现了依赖倒置原则。`Seq2SeqEncoder`和`Seq2SeqDecoder`则具体依赖于`Embedding`、`LstmLayer`、`Dropout`和`LinearLayer`等底层组件。`Embedding`层依赖于`Parameter`和`NdArray`来存储和管理词向量矩阵。`Word2Vec`模型依赖于`SequentialBlock`和`Embedding`层来构建其网络结构。

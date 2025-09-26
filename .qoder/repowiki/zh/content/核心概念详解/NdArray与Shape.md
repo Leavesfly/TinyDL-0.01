@@ -2,12 +2,21 @@
 
 <cite>
 **本文档中引用的文件**  
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java)
-- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java)
-- [NdArrayUtil.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayUtil.java)
-- [NdArrayGpu.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayGpu.java)
-- [TestNdArray2.java](file://src/test/java/io/leavesfly/tinydl/test/TestNdArray2.java)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java) - *核心数据结构与操作实现*
+- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java) - *维度管理与索引计算*
+- [NdArrayUtil.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayUtil.java) - *数组合并工具方法*
+- [NdArrayGpu.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayGpu.java) - *GPU后端占位符*
+- [TestNdArray2.java](file://src/test/java/io/leavesfly/tinydl/test/TestNdArray2.java) - *功能测试用例*
 </cite>
+
+## 更新摘要
+**变更内容**   
+- 更新了`NdArray`类的构造方法、静态工厂方法和数学运算的实现细节
+- 新增了`addAt`和`clip`等重要方法的详细说明
+- 扩展了`NdArrayUtil.merge`方法的功能描述和使用示例
+- 修正了张量变形与广播机制部分的内容准确性
+- 增强了性能考量与内存布局部分的分析深度
+- 更新了所有受影响的代码示例以反映最新API
 
 ## 目录
 1. [引言](#引言)
@@ -29,8 +38,8 @@
 NdArray是TinyDL框架中所有张量数据的基础载体，作为多维数组的核心实现，它不仅封装了底层数据存储，还提供了丰富的数学运算和变形操作。NdArray与Shape类协同工作，精确描述数组的维度结构，支持从标量、向量到高维张量的统一表示。本文档将深入解析NdArray的设计原理、功能特性及其在深度学习计算中的关键作用。
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L1-L1351)
-- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L101)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L1-L1801)
+- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L224)
 
 ## NdArray核心作用与设计
 
@@ -72,13 +81,13 @@ NdArrayUtil --> NdArray : "manipulates"
 ```
 
 **Diagram sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
-- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L101)
-- [NdArrayUtil.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayUtil.java#L1-L54)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
+- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L224)
+- [NdArrayUtil.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayUtil.java#L1-L160)
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
-- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L101)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
+- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L224)
 
 ## Shape类与维度管理
 
@@ -101,11 +110,11 @@ SHAPE ||--o{ NDARRAY : "defines"
 ```
 
 **Diagram sources**
-- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L101)
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L224)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 **Section sources**
-- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L101)
+- [Shape.java](file://src/main/java/io/leavesfly/tinydl/ndarr/Shape.java#L1-L224)
 
 ## NdArray的构造与初始化
 
@@ -131,10 +140,10 @@ GenerateRandom --> End
 ```
 
 **Diagram sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 ## 数据访问与互操作性
 
@@ -143,7 +152,7 @@ NdArray提供了丰富的数据访问接口，支持按多维索引读写单个�
 为了与Java生态系统互操作，NdArray提供了`getMatrix()`, `get3dArray()`, `get4dArray()`等方法，将内部的一维buffer转换为对应的Java多维数组。这些转换方法在需要与外部库交互或进行数据可视化时非常有用。同时，`toString()`方法提供了友好的字符串表示，便于调试和日志记录。
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 ## 基本数学运算与逻辑操作
 
@@ -172,10 +181,10 @@ NdArray-->>User : 返回result
 ```
 
 **Diagram sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 ## 张量变形与广播机制
 
@@ -196,10 +205,10 @@ G --> J["新NdArray [1,3]"]
 ```
 
 **Diagram sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 ## NdArrayUtil辅助方法
 
@@ -207,8 +216,16 @@ NdArrayUtil类提供了静态辅助方法，用于更复杂的数组操作。`me
 
 例如，在数据加载器中，可以将多个样本的特征向量沿第一维（batch dimension）合并，形成一个批次的输入张量。NdArrayUtil的设计体现了工具类的职责分离原则，将不直接属于NdArray核心功能但又常用的算法集中管理。
 
+```java
+// 示例：沿axis=0合并两个矩阵
+NdArray a = new NdArray(new float[][]{{1, 2}, {3, 4}});
+NdArray b = new NdArray(new float[][]{{5, 6}});
+NdArray merged = NdArrayUtil.merge(0, a, b);
+// 结果: [[1, 2], [3, 4], [5, 6]]
+```
+
 **Section sources**
-- [NdArrayUtil.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayUtil.java#L1-L54)
+- [NdArrayUtil.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayUtil.java#L1-L160)
 
 ## CPU与GPU后端支持
 
@@ -217,8 +234,8 @@ NdArray的设计支持多后端计算。当前实现主要针对CPU，使用Java
 这种架构设计遵循了现代深度学习框架的通用模式：前端提供一致的编程模型，后端负责具体的硬件优化。未来，`NdArrayGpu`将利用CUDA或OpenCL等技术，在GPU上执行高效的并行计算，显著提升大规模矩阵运算的性能。
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
-- [NdArrayGpu.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayGpu.java#L1-L11)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
+- [NdArrayGpu.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArrayGpu.java#L1-L10)
 
 ## 计算图中的数据流动
 
@@ -243,10 +260,10 @@ MatMulBack --> GradX[NdArray dX]
 ```
 
 **Diagram sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 ## 性能考量与内存布局
 
@@ -255,7 +272,7 @@ NdArray的性能关键在于内存布局和访问模式。采用行优先的连�
 在前向传播中，中间结果的NdArray会占用显存/内存；在反向传播中，梯度的累加需要额外的存储空间。因此，优化内存使用是提升性能的关键。建议在可能的情况下复用NdArray实例，或使用原地（in-place）操作来减少内存分配。
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
 
 ## 常见使用错误与优化建议
 
@@ -266,8 +283,8 @@ NdArray的性能关键在于内存布局和访问模式。采用行优先的连�
 4. **及时释放**：虽然Java有GC，但在处理大型张量时，应尽早释放不再使用的引用。
 
 **Section sources**
-- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1351)
-- [TestNdArray2.java](file://src/test/java/io/leavesfly/tinydl/test/TestNdArray2.java#L1-L181)
+- [NdArray.java](file://src/main/java/io/leavesfly/tinydl/ndarr/NdArray.java#L11-L1801)
+- [TestNdArray2.java](file://src/test/java/io/leavesfly/tinydl/test/TestNdArray2.java#L1-L178)
 
 ## 总结
 
