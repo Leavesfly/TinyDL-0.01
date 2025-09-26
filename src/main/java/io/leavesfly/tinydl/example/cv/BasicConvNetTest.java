@@ -8,7 +8,7 @@ import io.leavesfly.tinydl.nnet.layer.activate.ReLuLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.ConvLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.PoolingLayer;
 import io.leavesfly.tinydl.nnet.layer.dnn.AffineLayer;
-import io.leavesfly.tinydl.nnet.layer.norm.FlattenLayer;
+import io.leavesfly.tinydl.nnet.layer.norm.Flatten;
 
 /**
  * 简单的卷积网络测试
@@ -51,7 +51,7 @@ public class BasicConvNetTest {
             System.out.println("池化层输出形状: " + pool.getOutputShape().toString());
             
             // 展平层
-            FlattenLayer flatten = new FlattenLayer("flatten", pool.getOutputShape(), null);
+            Flatten flatten = new Flatten("flatten", pool.getOutputShape(), null);
             convNet.addLayer(flatten);
             System.out.println("展平层输出形状: " + flatten.getOutputShape().toString());
             

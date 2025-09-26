@@ -4,7 +4,7 @@ import io.leavesfly.tinydl.ndarr.NdArray;
 import io.leavesfly.tinydl.ndarr.Shape;
 import io.leavesfly.tinydl.nnet.layer.cnn.ConvLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.PoolingLayer;
-import io.leavesfly.tinydl.nnet.layer.norm.BatchNormLayer;
+import io.leavesfly.tinydl.nnet.layer.norm.BatchNorm;
 import io.leavesfly.tinydl.nnet.layer.cnn.DepthwiseSeparableConvLayer;
 import io.leavesfly.tinydl.modality.cv.SimpleConvNet;
 
@@ -112,7 +112,7 @@ public class OptimizedCnnTest {
         
         // 测试4D输入
         Shape shape4d = new Shape(2, 4, 8, 8);
-        BatchNormLayer bn4d = new BatchNormLayer("bn_4d", shape4d);
+        BatchNorm bn4d = new BatchNorm("bn_4d", shape4d);
         
         assert bn4d.getOutputShape().toString().equals(shape4d.toString()) : "4D批量归一化输出形状错误";
         
@@ -123,7 +123,7 @@ public class OptimizedCnnTest {
         
         // 测试2D输入
         Shape shape2d = new Shape(10, 5);
-        BatchNormLayer bn2d = new BatchNormLayer("bn_2d", shape2d);
+        BatchNorm bn2d = new BatchNorm("bn_2d", shape2d);
         
         NdArray input2d = NdArray.likeRandomN(shape2d);
         NdArray output2d = bn2d.forward(input2d);

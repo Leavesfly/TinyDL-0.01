@@ -6,7 +6,7 @@ import io.leavesfly.tinydl.nnet.layer.cnn.ConvLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.PoolingLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.Im2ColUtil;
 import io.leavesfly.tinydl.nnet.layer.cnn.Col2ImUtil;
-import io.leavesfly.tinydl.nnet.layer.norm.BatchNormLayer;
+import io.leavesfly.tinydl.nnet.layer.norm.BatchNorm;
 import io.leavesfly.tinydl.nnet.layer.cnn.DepthwiseSeparableConvLayer;
 import io.leavesfly.tinydl.modality.cv.SimpleConvNet;
 
@@ -160,11 +160,11 @@ public class CnnPerformanceBenchmark {
         NdArray input2d = NdArray.likeRandomN(inputShape2d);
         
         // 4D批量归一化
-        BatchNormLayer bn4d = new BatchNormLayer("bn_4d", inputShape4d);
+        BatchNorm bn4d = new BatchNorm("bn_4d", inputShape4d);
         long time4d = benchmarkForward(bn4d, input4d, "4D批量归一化");
         
         // 2D批量归一化
-        BatchNormLayer bn2d = new BatchNormLayer("bn_2d", inputShape2d);
+        BatchNorm bn2d = new BatchNorm("bn_2d", inputShape2d);
         long time2d = benchmarkForward(bn2d, input2d, "2D批量归一化");
         
         System.out.println("优化分析：");
@@ -255,8 +255,8 @@ public class CnnPerformanceBenchmark {
                 ((ConvLayer) layer).forward(input);
             } else if (layer instanceof PoolingLayer) {
                 ((PoolingLayer) layer).forward(input);
-            } else if (layer instanceof BatchNormLayer) {
-                ((BatchNormLayer) layer).forward(input);
+            } else if (layer instanceof BatchNorm) {
+                ((BatchNorm) layer).forward(input);
             } else if (layer instanceof DepthwiseSeparableConvLayer) {
                 ((DepthwiseSeparableConvLayer) layer).forward(input);
             }
@@ -269,8 +269,8 @@ public class CnnPerformanceBenchmark {
                 ((ConvLayer) layer).forward(input);
             } else if (layer instanceof PoolingLayer) {
                 ((PoolingLayer) layer).forward(input);
-            } else if (layer instanceof BatchNormLayer) {
-                ((BatchNormLayer) layer).forward(input);
+            } else if (layer instanceof BatchNorm) {
+                ((BatchNorm) layer).forward(input);
             } else if (layer instanceof DepthwiseSeparableConvLayer) {
                 ((DepthwiseSeparableConvLayer) layer).forward(input);
             }
@@ -291,7 +291,7 @@ public class CnnPerformanceBenchmark {
         System.out.println("   ✅ ConvLayer: 偏置支持 + Xavier初始化 + 优化维度变换");
         System.out.println("   ✅ PoolingLayer: 多种池化模式 + 自适应池化");
         System.out.println("   ✅ Im2Col/Col2Im: 缓存机制 + 并行处理");
-        System.out.println("   ✅ 新增: BatchNormLayer + DepthwiseSeparableConvLayer");
+        System.out.println("   ✅ 新增: BatchNorm + DepthwiseSeparableConvLayer");
         System.out.println("   ✅ SimpleConvNet: 灵活配置 + 预定义模板");
         
         System.out.println("\n2. 性能优化:");

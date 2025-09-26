@@ -7,9 +7,9 @@ import io.leavesfly.tinydl.nnet.layer.activate.ReLuLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.ConvLayer;
 import io.leavesfly.tinydl.nnet.layer.cnn.PoolingLayer;
 import io.leavesfly.tinydl.nnet.layer.dnn.AffineLayer;
+import io.leavesfly.tinydl.nnet.layer.norm.BatchNorm;
 import io.leavesfly.tinydl.nnet.layer.norm.Dropout;
-import io.leavesfly.tinydl.nnet.layer.norm.FlattenLayer;
-import io.leavesfly.tinydl.nnet.layer.norm.BatchNormLayer;
+import io.leavesfly.tinydl.nnet.layer.norm.Flatten;
 
 /**
  * 增强的深度卷积神经网络实现
@@ -216,7 +216,7 @@ public class SimpleConvNet extends SequentialBlock {
         
         // 批量归一化（如果启用）
         if (config.useBatchNorm) {
-            Layer bn1 = new BatchNormLayer(blockName + "_bn1", currentShape);
+            Layer bn1 = new BatchNorm(blockName + "_bn1", currentShape);
             addLayer(bn1);
             currentShape = bn1.getOutputShape();
         }
@@ -234,7 +234,7 @@ public class SimpleConvNet extends SequentialBlock {
         
         // 第二个批量归一化（如果启用）
         if (config.useBatchNorm) {
-            Layer bn2 = new BatchNormLayer(blockName + "_bn2", currentShape);
+            Layer bn2 = new BatchNorm(blockName + "_bn2", currentShape);
             addLayer(bn2);
             currentShape = bn2.getOutputShape();
         }
@@ -278,7 +278,7 @@ public class SimpleConvNet extends SequentialBlock {
      */
     private void addEnhancedClassifier(Shape inputShape) {
         // 展平层
-        Layer flatten = new FlattenLayer("flatten", inputShape, null);
+        Layer flatten = new Flatten("flatten", inputShape, null);
         addLayer(flatten);
         
         // 第一个全连接层
@@ -345,7 +345,7 @@ public class SimpleConvNet extends SequentialBlock {
      */
     private void addClassifier(Shape inputShape) {
         // 展平层
-        Layer flatten = new FlattenLayer("flatten", inputShape, null);
+        Layer flatten = new Flatten("flatten", inputShape, null);
         addLayer(flatten);
         
         // 第一个全连接层 (512 units)

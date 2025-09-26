@@ -11,9 +11,9 @@ import java.util.List;
 /**
  * 将矩阵打平
  */
-public class FlattenLayer extends Layer {
+public class Flatten extends Layer {
 
-    public FlattenLayer(String _name, Shape _xInputShape, Shape _yOutputShape) {
+    public Flatten(String _name, Shape _xInputShape, Shape _yOutputShape) {
         super(_name, _xInputShape, _yOutputShape);
     }
 
