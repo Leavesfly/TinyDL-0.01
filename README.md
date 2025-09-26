@@ -3,16 +3,17 @@
 [![Java](https://img.shields.io/badge/Java-8%2B-blue.svg)](https://www.oracle.com/java/)
 [![Maven](https://img.shields.io/badge/Maven-3.6%2B-red.svg)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.02-orange.svg)]()
+[![Version](https://img.shields.io/badge/Version-0.03-orange.svg)]()
 
 ## 📖 项目简介
 
 TinyDL 是一个用 **Java** 实现的轻量级深度学习框架，旨在为深度学习初学者和研究人员提供清晰、简洁的核心功能实现。该框架参考了 **PyTorch** 的设计理念，实现了自动微分、神经网络层、优化器等核心组件，特别适合：
 
-- 🎓 **深度学习教学与学习**：代码结构清晰，注释详尽，便于理解底层原理
+- 🎓 **深度学习教学与学习**：代码结构清晰，中文注释详尽，便于理解底层原理
 - 🔬 **学术研究与实验**：模块化设计，易于扩展和定制
-- 🚀 **快速原型开发**：提供完整的机器学习工具链
+- 🚀 **快速原型开发**：提供完整的机器学习工具链，支持多种AI应用场景
 - 💡 **算法验证**：在JVM环境中进行深度学习算法的验证和调试
+- 🤖 **多模态AI应用**：支持NLP、CV、强化学习等多个AI领域
 
 ## ✨ 核心特性
 
@@ -49,15 +50,18 @@ TinyDL 是一个用 **Java** 实现的轻量级深度学习框架，旨在为深
 
 ### 🚀 并行训练系统
 - **多线程训练**：自动检测模型并行性，智能线程数分配
-- **梯度聚合**：支持并行批次处理和梯度累积
-- **资源管理**：完整的线程池管理和异常处理
-- **性能监控**：并行训练统计和性能分析
+- **梯度聚合**：支持并行批次处理和梯度累积，完整的GradientAggregator实现
+- **资源管理**：完整的线程池管理和异常处理，包含ParallelBatchProcessor
+- **性能监控**：并行训练统计和性能分析，支持训练性能对比
 
 ### 🤖 自然语言处理
-- **Word2Vec实现**：支持Skip-gram和CBOW两种模式
-- **负采样优化**：基于词频的高效负采样算法
-- **GPT-2模型**：完整的小规模语言模型实现
-- **词向量操作**：相似度计算、最相似词查找等
+- **Word2Vec实现**：支持Skip-gram和CBOW两种模式，完整词汇管理
+- **负采样优化**：基于词频的高效负采样算法，专用Word2VecDataSet
+- **GPT-2模型**：完整的小规模语言模型实现，支持Token嵌入和位置编码
+- **MoE架构**：混合专家模型，包含门控网络和专家网络，支持动态专家选择
+- **Transformer组件**：多头注意力、位置编码、层归一化等完整实现
+- **文本生成**：支持自回归文本生成和下一个token预测
+- **词向量操作**：相似度计算、最相似词查找、词向量可视化等
 
 ### 🖼️ 计算机视觉增强
 - **CNN深度优化**：Im2Col/Col2Im缓存机制，性能大幅提升
@@ -70,14 +74,25 @@ TinyDL 是一个用 **Java** 实现的轻量级深度学习框架，旨在为深
 - **结果可视化**：基于 JFreeChart 的图表绘制
 - **模型结构图**：UML 工具可视化网络架构
 - **性能分析**：并行训练效率统计和资源使用监控
+- **强化学习可视化**：支持RL训练过程可视化和性能分析
 
 ### 🎯 丰富应用示例
 - **分类任务**：螺旋数据分类、手写数字识别
 - **回归任务**：曲线拟合、时间序列预测
-- **序列建模**：RNN 序列预测、LSTM 应用
-- **自然语言处理**：Word2Vec训练、GPT-2文本生成
-- **计算机视觉**：卷积网络优化、深度可分离卷积
+- **序列建模**：RNN 序列预测、LSTM 应用、Seq2Seq架构
+- **自然语言处理**：Word2Vec训练、GPT-2文本生成、MoE-GPT实现
+- **计算机视觉**：卷积网络优化、深度可分离卷积、批量归一化
+- **Transformer应用**：多头注意力、位置编码、Transformer编码器
+- **强化学习**：DQN智能体、REINFORCE算法、多臂老虎机问题、CartPole和GridWorld环境
 - **并行训练**：多线程训练演示和性能对比
+- **模型序列化**：完整的模型保存和加载示例
+
+### 🎮 强化学习模块
+- **核心算法**：深度Q网络(DQN)、策略梯度(REINFORCE)、多臂老虎机算法
+- **环境支持**：CartPole倒立摆、GridWorld网格世界、自定义环境接口
+- **训练工具**：经验回放、目标网络、ε-贪婪策略、负载均衡
+- **智能体管理**：完整的Agent抽象和具体实现
+- **性能评估**：实时监控训练指标和性能分析
 
 ## 🏗️ 系统架构
 
@@ -280,7 +295,33 @@ trainer.init(dataSet, model, lossFunc, optimizer);
 trainer.parallelTrain(true); // true表示打乱数据
 ```
 
-#### 4. Word2Vec词向量训练
+#### 4. MoE混合专家模型
+
+实现完整的MoE (Mixture of Experts) 架构：
+
+```java
+// 创建MoE-GPT模型
+MoEGPTModel model = MoEGPTModel.createSmallModel("demo_moe_gpt", vocabSize);
+
+// 模型配置
+// Small模型：256维，6层，4个专家，Top-2选择
+model.printModelInfo();
+
+// 前向传播
+Variable output = model.forward(inputTokens);
+
+// 获取负载均衡损失
+float balancingLoss = model.computeTotalLoadBalancingLoss();
+
+// 查看专家使用统计
+model.printAllExpertStatistics();
+
+// 高级配置
+// Tiny模型：128维，4层，2专家，Top-1
+// Medium模型：512维，8层，8专家，Top-2
+```
+
+#### 5. Word2Vec词向量训练
 
 使用Skip-gram模式训练词向量：
 
@@ -331,7 +372,7 @@ List<String> similarWords = word2vec.mostSimilar("学习", 3);
 System.out.println("与'学习'相似的词: " + similarWords);
 ```
 
-#### 5. GPT-2语言模型
+#### 6. GPT-2语言模型
 
 创建小规模GPT-2模型：
 
@@ -367,9 +408,100 @@ int nextToken = gpt2.predictNextToken(inputTokens);
 System.out.println("预测的下一个token ID: " + nextToken);
 ```
 
-#### 6. 模型序列化和管理
+#### 7. 强化学习示例
 
-完整的模型保存和加载：
+使用DQN解决CartPole问题：
+
+```java
+// 创建环境
+Environment env = new CartPoleEnvironment();
+
+// 创建DQN智能体
+DQNAgent agent = new DQNAgent(
+    "CartPole_DQN",
+    env.getStateDim(),      // 状态维度：4
+    env.getActionDim(),     // 动作维度：2
+    new int[]{128, 128},    // 隐藏层尺寸
+    0.001f,                 // 学习率
+    1.0f,                   // 初始探索率
+    0.99f,                  // 折扣因子
+    32,                     // 批次大小
+    10000,                  // 缓冲区大小
+    100                     // 目标网络更新频率
+);
+
+// 训练循环
+for (int episode = 0; episode < 1000; episode++) {
+    Variable state = env.reset();
+    int totalReward = 0;
+    
+    while (!env.isDone()) {
+        Variable action = agent.selectAction(state);
+        Environment.StepResult result = env.step(action);
+        
+        Experience experience = new Experience(
+            state, action, result.getReward(), 
+            result.getNextState(), result.isDone()
+        );
+        
+        agent.learn(experience);
+        state = result.getNextState();
+        totalReward += result.getReward().getValue().getNumber();
+    }
+    
+    if (episode % 100 == 0) {
+        System.out.println("Episode " + episode + ": Reward=" + totalReward + 
+                          ", Epsilon=" + String.format("%.3f", agent.getCurrentEpsilon()));
+    }
+}
+```
+
+使用REINFORCE解决GridWorld问题：
+
+```java
+// 创建GridWorld环境
+Environment env = GridWorldEnvironment.createSimpleMaze();
+
+// 创建REINFORCE智能体
+REINFORCEAgent agent = new REINFORCEAgent(
+    "GridWorld_REINFORCE",
+    env.getStateDim(),      // 状态维度：2
+    env.getActionDim(),     // 动作维度：4
+    new int[]{64, 64},      // 隐藏层尺寸
+    0.01f,                  // 学习率
+    0.99f,                  // 折扣因子
+    true                    // 使用基线
+);
+
+// 训练循环
+for (int episode = 0; episode < 2000; episode++) {
+    Variable state = env.reset();
+    float episodeReward = 0;
+    
+    while (!env.isDone()) {
+        Variable action = agent.selectAction(state);
+        Environment.StepResult result = env.step(action);
+        
+        Experience experience = new Experience(
+            state, action, result.getReward(), 
+            result.getNextState(), result.isDone()
+        );
+        
+        agent.learn(experience); // 存储经验
+        state = result.getNextState();
+        episodeReward += result.getReward().getValue().getNumber();
+    }
+    
+    // REINFORCE在回合结束时学习
+    agent.learnFromEpisode();
+    
+    if (episode % 200 == 0) {
+        System.out.println("Episode " + episode + ": Reward=" + episodeReward);
+    }
+}
+```
+
+#### 8. 模型序列化和管理
 
 ```java
 // 保存模型
@@ -396,7 +528,7 @@ model.printModelInfo();
 ModelInfoExporter.exportToJson(model, "reports/model_info.json");
 ```
 
-#### 7. CNN优化功能演示
+#### 9. CNN优化功能演示
 
 使用增强的卷积神经网络：
 
@@ -582,15 +714,35 @@ java -cp target/classes io.leavesfly.tinydl.example.transformer.MultiHeadAttenti
 java -cp target/classes io.leavesfly.tinydl.example.transformer.TransformerEncoderLayerTest
 ```
 
-### 10. 模型序列化示例
+### 11. 强化学习示例
+```bash
+# 运行CartPole DQN示例
+java -cp target/classes io.leavesfly.tinydl.example.rl.CartPoleDQNExample
+
+# 运行GridWorld REINFORCE示例
+java -cp target/classes io.leavesfly.tinydl.example.rl.GridWorldREINFORCEExample
+
+# 运行多臂老虎机示例
+java -cp target/classes io.leavesfly.tinydl.example.rl.MultiArmedBanditExample
+
+# RL算法比较
+java -cp target/classes io.leavesfly.tinydl.example.rl.RLAlgorithmComparison
+```
+### 12. 模型序列化示例
 ```bash
 # 运行模型序列化演示
 java -cp target/classes io.leavesfly.tinydl.example.ModelSerializationExample
 ```
 
+### 13. MoE混合专家示例
+```bash
+# 运行MoE-GPT示例
+java -cp target/classes io.leavesfly.tinydl.example.nlp.MoEGPTExample
+```
+
 ## 🛠️ 开发路线图
 
-### ✅ 已完成功能 (v0.02)
+### ✅ 已完成功能 (v0.03)
 
 #### 核心架构
 - ✅ **多维数组计算**：NdArray核心实现，支持CPU计算和序列化
@@ -622,17 +774,29 @@ java -cp target/classes io.leavesfly.tinydl.example.ModelSerializationExample
   - Embedding层实现
   - 位置编码（正弦/余弦和学习式）
   - 多种注意力机制实现
+- ✅ **MoE混合专家模型**：
+  - 完整的MoE架构实现，包含门控网络和专家网络
+  - 支持Top-K专家选择和负载均衡
+  - MoE-GPT模型实现，支持多种规模配置
+- ✅ **强化学习模块**：
+  - 深度Q网络(DQN)和策略梯度(REINFORCE)算法
+  - CartPole和GridWorld环境实现
+  - 经验回放、目标网络、ε-贪婪策略
+  - 多臂老虎机算法实现
+- ✅ **Seq2Seq架构**：
+  - 编码器-解码器模型实现
+  - 支持注意力机制和序列对序列任务
 
-### 🚧 开发中功能 (v0.03)
+### 🚧 开发中功能 (v0.04)
 
 - [ ] **GPU加速支持**：CUDA集成和GPU版本NdArray
 - [ ] **分布式训练**：多机多卡训练支持
 - [ ] **模型压缩**：量化、剪枝、知识蒸馏
 - [ ] **更多Transformer变体**：BERT、T5等模型架构
-- [ ] **强化学习**：RL算法和环境支持
 - [ ] **可视化增强**：TensorBoard集成和模型结构图
+- [ ] **高级RL算法**：A3C、PPO、SAC等主流算法
 
-### 🔮 未来规划 (v0.04+)
+### 🔮 未来规划 (v0.05+)
 
 #### 性能优化
 - [ ] **GPU加速**：CUDA支持和GPU版本NdArray
@@ -704,17 +868,39 @@ src/main/java/io/leavesfly/tinydl/
 │   ├── Monitor.java          # 训练监控器
 │   ├── dataset/
 │   │   ├── simple/           # 内置数据集
-│   │   └── Word2VecDataSet.java # 专用词向量数据集
+│   │   ├── Word2VecDataSet.java # 专用词向量数据集
+│   │   └── GPT2TextDataset.java # GPT-2文本数据集
 │   ├── loss/                 # 损失函数
 │   ├── optimize/             # 优化器
 │   ├── evaluator/            # 评估器
+│   ├── inference/            # 推理工具
 │   └── parallel/             # 并行训练工具
+│       ├── GradientAggregator.java
+│       ├── ParallelBatchProcessor.java
+│       └── ParallelTrainingUtils.java
 ├── modality/                 # 应用领域相关
 │   ├── cv/
 │   │   └── SimpleConvNet.java # 增强卷积网络
-│   └── nlp/
-│       ├── Word2Vec.java     # 词向量模型
-│       └── GPT2Model.java    # GPT-2语言模型
+│   ├── nlp/
+│   │   ├── Word2Vec.java     # 词向量模型
+│   │   ├── GPT2Model.java    # GPT-2语言模型
+│   │   ├── MoEGPTModel.java  # MoE-GPT模型
+│   │   ├── layer/            # MoE专用层
+│   │   │   ├── MoELayer.java
+│   │   │   ├── MoEGatingNetwork.java
+│   │   │   └── MoEExpertNetwork.java
+│   │   └── block/
+│   │       └── MoETransformerBlock.java
+│   └── rl/                   # 强化学习模块
+│       ├── Environment.java  # 环境抽象
+│       ├── Agent.java        # 智能体抽象
+│       ├── agent/            # 具体算法
+│       │   ├── DQNAgent.java
+│       │   └── REINFORCEAgent.java
+│       ├── environment/      # 环境实现
+│       │   ├── CartPoleEnvironment.java
+│       │   └── GridWorldEnvironment.java
+│       └── policy/           # 策略实现
 ├── example/                  # 示例代码
 │   ├── classify/             # 分类任务示例
 │   ├── regress/              # 回归任务示例
@@ -723,7 +909,8 @@ src/main/java/io/leavesfly/tinydl/
 │   ├── transformer/          # Transformer示例
 │   ├── parallel/             # 并行训练示例
 │   ├── embedd/               # 嵌入层示例
-│   └── rnn/                  # RNN示例
+│   ├── rnn/                  # RNN示例
+│   │   └── CompleteRnnExample.java
 └── utils/                    # 工具类
     ├── Plot.java             # 绘图工具
     ├── Config.java           # 配置管理
@@ -731,9 +918,12 @@ src/main/java/io/leavesfly/tinydl/
 
 src/test/java/io/leavesfly/tinydl/test/
 ├── cnn/                      # CNN性能测试
+│   ├── CnnPerformanceBenchmark.java
+│   └── OptimizedCnnTest.java
 ├── func/                     # 函数测试
 ├── ndarr/                    # 数组测试
 ├── loss/                     # 损失函数测试
+├── dataset/                  # 数据集测试
 └── ModelSerializationTest.java # 序列化测试
 ```
 
@@ -806,32 +996,34 @@ src/test/java/io/leavesfly/tinydl/test/
 
 ---
 
-## 🌟 v0.02版本技术亮点
+**TinyDL v0.03 版本技术亮点**
 
 ### 🚀 性能突破
-- **并行训练系统**：智能线程分配，多核CPU充分利用
-- **CNN深度优化**：Im2Col缓存机制，性能提升30-50%
-- **序列化系统**：完整的模型管理，支持增量保存
+- **并行训练系统**：完整的梯度聚合器和批次处理器，智能线程分配，多核CPU充分利用
+- **CNN深度优化**：Im2Col缓存机制，批量归一化和深度可分离卷积，性能提升30-50%
+- **序列化系统**：完整的模型管理，支持增量保存和压缩存储
 - **内存优化**：缓存机制和对象复用，内存使用减少40%
 
 ### 🎯 AI技术栈
-- **GPT-2架构**：完整的Transformer解码器实现
-- **Word2Vec优化**：负采样算法和高效词汇管理
-- **多头注意力**：标准Transformer组件
-- **位置编码**：正弦波和学习式两种实现
+- **MoE混合专家模型**：完整的门控网络和专家网络实现，支持动态专家选择和负载均衡
+- **GPT-2架构**：完整的Transformer解码器实现，支持多种规模配置
+- **Word2Vec优化**：负采样算法和高效词汇管理，专用数据集支持
+- **强化学习模块**：DQN和REINFORCE算法，CartPole和GridWorld环境
+- **Seq2Seq架构**：编码器-解码器模型，支持注意力机制
+- **多头注意力**：标准Transformer组件和位置编码实现
 
 ### 🔧 工程质量
-- **企业级序列化**：模型版本管理和元数据
-- **并行训练框架**：生产级别的多线程架构
-- **性能基准测试**：全面的CNN和并行训练评估
-- **完整单元测试**：90%+ 代码覆盖率
+- **企业级序列化**：模型版本管理和元数据，支持JSON导出
+- **并行训练框架**：生产级别的多线程架构，完整的资源管理
+- **性能基准测试**：全面的CNN和并行训练评估工具
+- **完整单元测试**：90%+ 代码覆盖率，包含性能测试
 
 ### 📚 学习友好
-- **70+ 示例程序**：涵盖所有主要功能
-- **详细技术文档**：Word2Vec、并行训练等专项说明
+- **100+ 示例程序**：涵盖所有主要功能，包括MoE和强化学习
+- **详细技术文档**：MoE实现、并行训练、强化学习等专项说明
 - **性能分析工具**：帮助理解各组件的优化效果
-- **渐进式教程**：从基础概念到高级应用
+- **渐进式教程**：从基础概念到高级应用，中文注释详尽
 
 ---
 
-*TinyDL v0.02 - 让深度学习变得简单易懂，支持现代AI技术栈* 🚀
+*TinyDL v0.03 - 让深度学习变得简单易懂，支持现代AI技术栈和多模态应用* 🚀
