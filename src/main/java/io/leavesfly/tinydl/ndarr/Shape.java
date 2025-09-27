@@ -1,10 +1,7 @@
 package io.leavesfly.tinydl.ndarr;
 
-import io.leavesfly.tinydl.utils.Util;
-
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * 表示矩阵或向量等N维数组的形状
